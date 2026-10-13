@@ -172,7 +172,15 @@ def _to_jpg(data: bytes) -> bytes:
 # ---------- Telegram ----------
 
 def cmd_poll(state):
+    if not chat(state):
+        me = telegram._api("getMe")
+        hook = telegram._api("getWebhookInfo")
+        print(f"Бот: @{me.get('username')} ({me.get('first_name')})")
+        if hook.get("url"):
+            print("У бота был включён вебхук — отключаю, иначе сообщения не доходят.")
+            telegram._api("deleteWebhook", json={"drop_pending_updates": False})
     ups = telegram.updates(state["offset"])
+    print(f"Новых сообщений и нажатий: {len(ups)}")
     for up in ups:
         state["offset"] = up["update_id"] + 1
         try:
