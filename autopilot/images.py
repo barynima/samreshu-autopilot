@@ -1,10 +1,9 @@
-"""Картинки через Gemini (Google AI Studio). Эталоны персонажей лежат в refs/sam.png и refs/nado.png."""
+"""Картинки через Gemini (Vertex AI, как в боте для интерьеров). Эталоны персонажей лежат в refs/sam.png и refs/nado.png."""
 import base64
 import os
 from pathlib import Path
 
-import requests
-
+from . import google
 from .characters import NADO, SAM, STYLE
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -13,25 +12,23 @@ REFS = ROOT / "refs"
 
 def _call(parts: list, aspect: str) -> bytes:
     model = os.environ.get("IMAGE_MODEL") or "gemini-3-pro-image"
-    r = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-        params={"key": os.environ["GEMINI_API_KEY"]},
-        json={
-            "contents": [{"role": "user", "parts": parts}],
-            "generationConfig": {
-                "responseModalities": ["IMAGE"],
-                "imageConfig": {"aspectRatio": aspect},
-            },
-        },
-        timeout=300,
-    )
-    r.raise_for_status()
-    for cand in r.json().get("candidates", []):
+    payload = {
+        "contents": [{"role": "user", "parts": parts}],
+        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"], "imageConfig": {"aspectRatio": aspect}},
+    }
+    try:
+        data = google.generate(model, payload)
+    except RuntimeError as e:
+        if "imageConfig" not in str(e) and "aspect" not in str(e).lower():
+            raise
+        payload["generationConfig"].pop("imageConfig")  # модель не знает про пропорции — обрежем сами
+        data = google.generate(model, payload)
+    for cand in data.get("candidates", []):
         for part in cand.get("content", {}).get("parts", []):
-            data = part.get("inlineData") or part.get("inline_data")
-            if data:
-                return base64.b64decode(data["data"])
-    raise RuntimeError(f"Gemini не вернул картинку: {r.text[:500]}")
+            inline = part.get("inlineData") or part.get("inline_data")
+            if inline and inline.get("mimeType", "image/").startswith("image/"):
+                return base64.b64decode(inline["data"])
+    raise RuntimeError(f"Gemini не вернул картинку: {str(data)[:400]}")
 
 
 def _ref_part(name: str):

@@ -148,7 +148,9 @@ def cmd_refs(state, count=3):
         for i in range(1, count + 1):
             data = images.reference_sheet(prompt)
             path = CANDIDATES / f"{key}_{i}.png"
-            path.write_bytes(data)
+            import io
+            from PIL import Image
+            Image.open(io.BytesIO(data)).save(path, "PNG")
             files.append(_to_jpg(data))
         if cid:
             telegram.send_album(cid, files, f"{NAMES[key]}: варианты 1–{count}")

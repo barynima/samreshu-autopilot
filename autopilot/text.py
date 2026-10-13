@@ -1,7 +1,7 @@
 """Сценарий эпизода: 4 кадра + подпись к посту.
 
 Пишет Claude через Cloud.ru (OpenAI-совместимый API). Если ключей Cloud.ru нет —
-пишет Gemini тем же ключом, что и картинки.
+пишет Gemini через Vertex AI тем же ключом, что и картинки.
 """
 import json
 import os
@@ -9,6 +9,7 @@ import re
 
 import requests
 
+from . import google
 from .characters import PASSPORT
 
 SYSTEM = f"""Ты — сценарист Instagram-аккаунта бренда «Сам решу».
@@ -63,19 +64,13 @@ def _cloudru(user: str) -> str:
 
 def _gemini(user: str) -> str:
     model = os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
-    r = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-        params={"key": os.environ["GEMINI_API_KEY"]},
-        json={
-            "systemInstruction": {"parts": [{"text": SYSTEM}]},
-            "contents": [{"role": "user", "parts": [{"text": user}]}],
-            "generationConfig": {"temperature": 0.9, "responseMimeType": "application/json"},
-        },
-        timeout=180,
-    )
-    r.raise_for_status()
-    parts = r.json()["candidates"][0]["content"]["parts"]
-    return "".join(p.get("text", "") for p in parts)
+    data = google.generate(model, {
+        "systemInstruction": {"parts": [{"text": SYSTEM}]},
+        "contents": [{"role": "user", "parts": [{"text": user}]}],
+        "generationConfig": {"temperature": 0.9, "responseMimeType": "application/json"},
+    }, timeout=180)
+    parts = data["candidates"][0]["content"]["parts"]
+    return "".join(p.get("text", "") for p in parts if not p.get("thought"))
 
 
 def write_episode(idea: str, audience: str, feedback: str = "") -> dict:
