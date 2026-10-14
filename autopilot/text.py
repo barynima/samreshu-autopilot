@@ -11,6 +11,10 @@ from . import google
 
 RULES = (Path(__file__).resolve().parent.parent / "strategy" / "rules.md").read_text(encoding="utf-8")
 
+NAMING = ("In scene and motion prompts ALWAYS call the characters exactly 'Sam (a small vinyl toy figure in a coral "
+          "hoodie with the hood up)' and 'Nado (a big puffy grey-blue cloud creature)'. NEVER use the words teenager, "
+          "teen, kid, child, boy, girl, adult, person, he, she — video models block them or redraw the characters. "
+          "Sam has no mouth: no lip movement, show emotion with eyes, eyebrows and body. ")
 SCENE_HINT = ("image prompt in ENGLISH for the first frame: who is where, poses, Nado's size "
               "(huge/medium/small), emotions, simple background; vertical 9:16")
 MOTION_HINT = ("video prompt in ENGLISH, 1–2 sentences: what moves during ~5 seconds; "
@@ -70,6 +74,8 @@ def _system(fmt: str) -> str:
 
 ФОРМАТ ПОСТА:
 {SCHEMAS[fmt]}
+
+ПРОМПТЫ ДЛЯ КАРТИНОК И ВИДЕО (на английском): {NAMING}
 
 {CAPTION_RULE}
 
