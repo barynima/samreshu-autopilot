@@ -38,6 +38,9 @@ jobs:
           CLOUDRU_API_KEY: ${{ secrets.CLOUDRU_API_KEY }}
           TEXT_MODEL: ${{ vars.TEXT_MODEL }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          VPOSTER_TOKEN: ${{ secrets.VPOSTER_TOKEN }}
+          VPOSTER_TARGETS: ${{ vars.VPOSTER_TARGETS }}
+          VPOSTER_VK_GROUP: ${{ vars.VPOSTER_VK_GROUP }}
           GH_PAT: ${{ secrets.GH_PAT }}
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
           VIDEO_MODE: ${{ vars.VIDEO_MODE }}

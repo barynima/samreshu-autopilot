@@ -17,7 +17,7 @@ from pathlib import Path
 
 import yaml
 
-from . import images, instagram, render, telegram, text, video
+from . import images, instagram, render, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -244,6 +244,15 @@ def publish(state, post_id):
         link = instagram.publish_carousel([media_url(f) for f in job["files"]], job["caption"])
     else:
         link = instagram.publish_reel(media_url(job["video"]), job["caption"], media_url(job["cover"]))
+    if vposter.enabled():
+        try:
+            if job["format"] == "carousel":
+                where = vposter.publish(job["caption"], images=[ROOT / f for f in job["files"]])
+            else:
+                where = vposter.publish(job["caption"], video=ROOT / job["video"])
+            link += "\nТакже отправлено: " + ", ".join(where) + " (выйдет примерно через минуту)."
+        except Exception as e:
+            link += f"\n⚠️ ВКонтакте не получилось: {e}"[:1500]
     state["done"].append(post_id)
     state["pending"] = None
     state["awaiting_feedback"] = None
