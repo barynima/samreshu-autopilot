@@ -1,0 +1,32 @@
+{
+  "id": "intro",
+  "files": [
+    "posts/intro/202610141039_1.jpg",
+    "posts/intro/202610141039_2.jpg",
+    "posts/intro/202610141039_3.jpg",
+    "posts/intro/202610141039_4.jpg"
+  ],
+  "caption": "Знакомься, это Сам. Сам пытается разобраться в себе и понять, куда двигаться после школы. В целом, всё как у всех.\n\nА это… Надо. Огромная туча чужих советов, ожиданий и «ты должен». Она появляется, когда надо принять решение. Знакомо?\n\nСам не испугался и задал вопрос в лоб. Кажется, Надо и сам не знает, что ответить.\n\nЧто будет дальше? Завтра Надо наконец расскажет, кто он такой.\n\nПройти «Сам решу» — ссылка в профиле\n#самрешу #профориентация #огэ #огэ2025 #выборпрофессии #9класс #8класс #ктоя",
+  "panels": [
+    {
+      "speaker": "Сам",
+      "line": "Привет, я Сам. И я пытаюсь понять, чего хочу.",
+      "scene": "A gender-neutral character in a coral hoodie (Sam) stands against a plain background, looking at the viewer with a friendly, thoughtful smile. Minimalist style."
+    },
+    {
+      "speaker": "Надо",
+      "line": "НАДО! НАДО! НАДО!",
+      "scene": "A huge, dark grey-blue cloud (Nado) looms over Sam from behind. Papers with the word 'НАДО' written on them are stuck to the cloud and flutter down. Sam looks surprised, feeling the shadow."
+    },
+    {
+      "speaker": "Сам",
+      "line": "Ого. А ты ещё кто?",
+      "scene": "Sam has turned around and is looking up at Nado. Sam's expression is not scared, but genuinely curious. Nado is still huge but looks taken aback by the direct question."
+    },
+    {
+      "speaker": "Надо",
+      "line": "Я? Я…",
+      "scene": "Close-up on Nado, which has shrunk to a medium size. It looks thoughtful and a bit flustered, as if collecting its thoughts. Sam is visible at the bottom of the frame, looking up patiently."
+    }
+  ]
+}
