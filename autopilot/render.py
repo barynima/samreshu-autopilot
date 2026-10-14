@@ -228,3 +228,24 @@ def text_card(title: str, body: str, page: str, final: bool = False) -> bytes:
     out = io.BytesIO()
     img.save(out, "JPEG", quality=92)
     return out.getvalue()
+
+
+# ---------- сторис для «Актуального» ----------
+
+def story(image_bytes: bytes, text: str) -> bytes:
+    """Сторис 1080×1920: крупный текст в плашке под шапкой Instagram, персонажи ниже."""
+    img = fit_vertical(image_bytes).convert("RGBA")
+    draw = ImageDraw.Draw(img, "RGBA")
+    font, lines, size = _fit_lines(draw, text, RW - 220, 72, 40, 7)
+    lh = int(size * 1.25)
+    h = len(lines) * lh + 100
+    top = 260  # ниже полосок прогресса и аватарки
+    _box(draw, (70, top, RW - 70, top + h), (255, 255, 255, 240))
+    y = top + 50
+    for l in lines:
+        w = draw.textlength(l, font=font)
+        draw.text(((RW - w) / 2, y), l, font=font, fill=INK)
+        y += lh
+    out = io.BytesIO()
+    img.convert("RGB").save(out, "JPEG", quality=92)
+    return out.getvalue()

@@ -1,0 +1,58 @@
+# Сторис для «Актуального». Команда боту: /stories (все) или /stories kto-my (один хайлайт).
+# scene — что нарисовать (на английском, персонажи по эталонам), text — крупный текст на сторис,
+# sticker — подсказка, какой стикер добавить вручную в Instagram (на картинку не попадает).
+# «Как это работает» и «Отзывы» здесь нет: для них нужны настоящие скриншоты и отзывы.
+
+highlights:
+  - id: kto-my
+    title: Кто мы
+    stories:
+      - scene: "Sam sits behind a half-open bedroom door wearing big headphones, looking away; cozy dim room"
+        text: "«Кем хочешь быть?» — «Не знаю». Знакомо?"
+        sticker: "Опрос: «Да, это мы» / «У нас иначе»"
+      - scene: "Nado is huge and dark, puffed up, holding stacks of papers and brochures, looming in a room"
+        text: "А вокруг шум: «все уже знают», «иди туда, где платят», «колледж на всякий случай»"
+      - scene: "Nado deflating to medium size, eyebrows raised in worry, papers slipping from his arms"
+        text: "Это Надо. Он не злой. Он просто боится, что ребёнок выберет не то"
+      - scene: "Sam taking off big headphones and looking up with curious glowing eyes"
+        text: "А это Сам. Он правда пока не знает. И это нормально"
+      - scene: "Sam and a small light-blue calm Nado standing side by side, friendly, soft warm background"
+        text: "«Сам решу» — разговор, после которого ребёнок понимает, что ему интересно, а вы — какие предметы и куда"
+      - scene: "Sam waving hello cheerfully, small calm Nado next to him waving too"
+        text: "Здесь: вопросы для разговора без ссор, ОГЭ без паники, «колледж или 10 класс»"
+        sticker: "Ссылка или «Подпишитесь»"
+
+  - id: roditelyam
+    title: Родителям
+    stories:
+      - scene: "Small light-blue Nado sitting alone on a sofa, hugging a pillow, slightly worried"
+        text: "Переживаете за выбор сильнее, чем он? Вы не одна"
+      - scene: "Small Nado holding a big sign with the number 14% (only the digits and percent sign, nothing else)"
+        text: "Только 14% родителей готовы принять любой выбор ребёнка. Тревога — это нормально"
+      - scene: "Sam at a desk focused on a computer game, glowing screen, relaxed posture"
+        text: "Он не ленивый. Он пока не понимает, ради чего стараться"
+      - scene: "Nado puffed up and dark talking loudly, Sam turned away with arms crossed"
+        text: "Разговоры кончаются ссорой, потому что подросток сопротивляется не профессии, а давлению"
+      - scene: "Sam at a kitchen table at dinner, listening and smiling a little, warm light"
+        text: "Вместо «кем хочешь стать?» спросите: «Что тебе сейчас интересно, даже если это кажется ерундой?»"
+      - scene: "Sam and small calm Nado sitting together on a sofa, peaceful"
+        text: "Вы остаётесь главной. Мы помогаем ребёнку сформулировать то, что ему трудно сказать вам"
+        sticker: "Опрос: что сложнее — начать разговор / не поругаться / понять, что ему интересно"
+
+  - id: oge
+    title: ОГЭ
+    stories:
+      - scene: "Sam thinking with a hand on chin, a calendar on the wall behind him"
+        text: "ОГЭ без паники: что и когда решать в 9 классе"
+      - scene: "Nado holding a blank sign, looking unsure, Sam next to him thinking"
+        text: "Предметы ОГЭ — первое решение о будущем. Выбирать «полегче» — значит закрыть двери"
+      - scene: "Sam holding a school certificate folder, looking at it seriously"
+        text: "В колледжи берут по среднему баллу аттестата. На популярные специальности — 4,5–4,8"
+      - scene: "Sam standing next to a big wall calendar with four colored sections, no text"
+        text: "Ноябрь–декабрь — предметы под направление. Январь–февраль — собеседование и заявление. Март–апрель — правила приёма. Июнь — документы"
+        sticker: "Вопрос: «Что непонятно про ОГЭ?»"
+      - scene: "Nado surprised with wide eyes, holding a small history book"
+        text: "Нынешним 8-классникам с 2027 года для допуска понадобится ещё и устная история"
+      - scene: "Sam at a fork in a path choosing a direction, hopeful, soft colors"
+        text: "Сначала 2–3 направления, потом предметы. Помогаем найти направление до заявления"
+        sticker: "Ссылка на samreshu.pro"

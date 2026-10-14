@@ -4,6 +4,7 @@ python -m autopilot.main prepare   — подготовить пост дня и
 python -m autopilot.main poll      — обработать кнопки и сообщения из Telegram (и опубликовать)
 python -m autopilot.main refs      — сгенерировать варианты эталонов Сама и Надо
 python -m autopilot.main refresh   — продлить маркер Instagram
+python -m autopilot.main stories   — нарисовать сторис для «Актуального» (highlights.yaml)
 """
 import json
 import os
@@ -306,6 +307,49 @@ def _to_jpg(data: bytes) -> bytes:
     return out.getvalue()
 
 
+# ---------- сторис для «Актуального» ----------
+
+HIGHLIGHTS = ROOT / "highlights.yaml"
+STORY_LAYOUT = ("characters in the lower 60% of the frame; keep the top 35% calm, plain and empty "
+                "for a big text block; no text, letters or numbers anywhere except where the scene asks for them")
+
+
+def cmd_stories(state, only: str = ""):
+    import zipfile
+    import io
+    cid = chat(state)
+    data = yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"]
+    if only:
+        data = [h for h in data if h["id"] == only]
+        if not data and cid:
+            ids = ", ".join(h["id"] for h in yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"])
+            telegram.send_text(cid, f"Нет такого хайлайта. Есть: {ids}")
+            return
+    for h in data:
+        folder = POSTS / "stories" / h["id"]
+        folder.mkdir(parents=True, exist_ok=True)
+        files, notes = [], []
+        for i, s in enumerate(h["stories"], 1):
+            pic = render.story(images.frame(s["scene"], "9:16", STORY_LAYOUT), s["text"])
+            (folder / f"{i:02d}.jpg").write_bytes(pic)
+            files.append(pic)
+            if s.get("sticker"):
+                notes.append(f"Сторис {i}: добавьте стикер — {s['sticker']}")
+        if not cid:
+            continue
+        for start in range(0, len(files), 10):
+            telegram.send_album(cid, files[start:start + 10], f"«{h['title']}»: {len(files)} сторис по порядку")
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            for i, pic in enumerate(files, 1):
+                z.writestr(f"{h['id']}-{i:02d}.jpg", pic)
+        telegram.send_document(cid, buf.getvalue(), f"{h['id']}.zip", "Файлы в полном качестве — для загрузки в сторис")
+        tips = "\n".join(notes) if notes else "Стикеры не нужны."
+        telegram.send_text(cid, f"Как выложить «{h['title']}»: опубликуйте сторис по порядку, затем "
+                                f"«Добавить в актуальное» → «{h['title']}».\n{tips}\n"
+                                f"Не нравится? /stories {h['id']} — нарисую заново.")
+
+
 # ---------- Telegram ----------
 
 def process(state, ups):
@@ -354,7 +398,8 @@ def handle(state, up):
     if not state.get("chat_id") and src.get("type") == "private":
         state["chat_id"] = src["id"]
         telegram.send_text(src["id"], "Привет! Я автопилот «Сам решу». Буду присылать сюда посты на проверку.\n"
-                                      "Команды: /post — сделать пост сейчас, /refs — нарисовать эталоны персонажей.")
+                                      "Команды: /post — сделать пост сейчас, /refs — нарисовать эталоны персонажей, "
+                                      "/stories — сторис для «Актуального».")
         return
     if str(src.get("id")) != str(chat(state)):
         return  # чужие чаты игнорируем
@@ -416,6 +461,10 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/stories"):
+        only = body[len("/stories"):].strip()
+        telegram.send_text(cid, "Рисую сторис для «Актуального», это займёт 5–10 минут…")
+        cmd_stories(state, only)
     elif body.startswith("/refs"):
         telegram.send_text(cid, "Рисую эталоны персонажей, это займёт пару минут…")
         cmd_refs(state)
@@ -460,7 +509,8 @@ def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "poll"
     state = load_state()
     try:
-        {"prepare": cmd_prepare, "poll": cmd_poll, "refs": cmd_refs, "refresh": cmd_refresh}[cmd](state)
+        {"prepare": cmd_prepare, "poll": cmd_poll, "refs": cmd_refs, "refresh": cmd_refresh,
+         "stories": cmd_stories}[cmd](state)
     except Exception as e:
         if chat(state):
             try:
