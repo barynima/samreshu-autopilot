@@ -232,20 +232,56 @@ def text_card(title: str, body: str, page: str, final: bool = False) -> bytes:
 
 # ---------- сторис для «Актуального» ----------
 
+def _fit_paragraphs(draw, text, max_w, size, min_size, max_lines):
+    """Как _fit_lines, но сохраняет переносы строк из текста (\n)."""
+    while True:
+        font = _font(size)
+        lines = []
+        for para in text.split("\n"):
+            lines += _wrap(draw, para, font, max_w) or [""]
+        if len(lines) <= max_lines or size <= min_size:
+            return font, lines, size
+        size -= 4
+
+
+def _draw_centered(draw, lines, font, size, top, fill, left=None):
+    lh = int(size * 1.28)
+    y = top
+    for l in lines:
+        x = left if left is not None else (RW - draw.textlength(l, font=font)) / 2
+        draw.text((x, y), l, font=font, fill=fill)
+        y += lh
+    return y
+
+
+def _jpeg(img) -> bytes:
+    out = io.BytesIO()
+    img.convert("RGB").save(out, "JPEG", quality=92)
+    return out.getvalue()
+
+
 def story(image_bytes: bytes, text: str) -> bytes:
     """Сторис 1080×1920: крупный текст в плашке под шапкой Instagram, персонажи ниже."""
     img = fit_vertical(image_bytes).convert("RGBA")
     draw = ImageDraw.Draw(img, "RGBA")
-    font, lines, size = _fit_lines(draw, text, RW - 220, 72, 40, 7)
-    lh = int(size * 1.25)
-    h = len(lines) * lh + 100
+    font, lines, size = _fit_paragraphs(draw, text, RW - 240, 76, 44, 6)
+    h = len(lines) * int(size * 1.28) + 100
     top = 260  # ниже полосок прогресса и аватарки
     _box(draw, (70, top, RW - 70, top + h), (255, 255, 255, 240))
-    y = top + 50
-    for l in lines:
-        w = draw.textlength(l, font=font)
-        draw.text(((RW - w) / 2, y), l, font=font, fill=INK)
-        y += lh
-    out = io.BytesIO()
-    img.convert("RGB").save(out, "JPEG", quality=92)
-    return out.getvalue()
+    _draw_centered(draw, lines, font, size, top + 50, INK)
+    return _jpeg(img)
+
+
+def story_card(text: str, bg: str = "coral") -> bytes:
+    """Сторис только с текстом: коралловый или кремовый фон, текст в верхней половине (ниже — место для стикера)."""
+    coral = bg != "cream"
+    img = Image.new("RGB", (RW, RH), CORAL if coral else CREAM)
+    draw = ImageDraw.Draw(img)
+    ink = (255, 255, 255) if coral else INK
+    numbered = any(l.strip()[:2].rstrip(".").isdigit() for l in text.split("\n")[1:])
+    font, lines, size = _fit_paragraphs(draw, text, RW - 220, 84 if not numbered else 64, 44, 12)
+    draw.rectangle((110, 330, 200, 342), fill=(255, 255, 255) if coral else CORAL)
+    _draw_centered(draw, lines, font, size, 400, ink, left=110)
+    f = _font(34)
+    draw.text((110, RH - 170), "Сам решу", font=f, fill=(255, 255, 255) if coral else CORAL)
+    return _jpeg(img)

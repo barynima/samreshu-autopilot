@@ -330,7 +330,10 @@ def cmd_stories(state, only: str = ""):
         folder.mkdir(parents=True, exist_ok=True)
         files, notes = [], []
         for i, s in enumerate(h["stories"], 1):
-            pic = render.story(images.frame(s["scene"], "9:16", STORY_LAYOUT), s["text"])
+            if s.get("scene"):
+                pic = render.story(images.frame(s["scene"], "9:16", STORY_LAYOUT), s["text"])
+            else:
+                pic = render.story_card(s["text"], s.get("bg", "coral"))
             (folder / f"{i:02d}.jpg").write_bytes(pic)
             files.append(pic)
             if s.get("sticker"):
@@ -463,7 +466,8 @@ def handle(state, up):
             _prepare(state)
     elif body.startswith("/stories"):
         only = body[len("/stories"):].strip()
-        telegram.send_text(cid, "Рисую сторис для «Актуального», это займёт 5–10 минут…")
+        telegram.send_text(cid, "Рисую сторис для «Актуального», это займёт 5–10 минут…\n"
+                                "По одному хайлайту: /stories chto-eto, kto-ya, roditelyam или oge")
         cmd_stories(state, only)
     elif body.startswith("/refs"):
         telegram.send_text(cid, "Рисую эталоны персонажей, это займёт пару минут…")

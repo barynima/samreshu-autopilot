@@ -1,58 +1,65 @@
-# Сторис для «Актуального». Команда боту: /stories (все) или /stories kto-my (один хайлайт).
-# scene — что нарисовать (на английском, персонажи по эталонам), text — крупный текст на сторис,
+# Сторис для «Актуального». Команда боту: /stories (все) или /stories chto-eto (один хайлайт).
+# scene — что нарисовать (на английском, персонажи по эталонам); без scene — сторис только с текстом.
+# bg — фон текстовой сторис: coral или cream. text — текст на сторис (до ~15 слов, \n — новая строка).
 # sticker — подсказка, какой стикер добавить вручную в Instagram (на картинку не попадает).
-# «Как это работает» и «Отзывы» здесь нет: для них нужны настоящие скриншоты и отзывы.
+# Сам — без рода: не пишем «он», пишем «ребёнок».
+# «Как это работает» и «Отзывы» здесь нет: нужны настоящие скриншоты и настоящие отзывы.
 
 highlights:
-  - id: kto-my
-    title: Кто мы
+  - id: chto-eto
+    title: Что это
     stories:
       - scene: "Sam sits behind a half-open bedroom door wearing big headphones, looking away; cozy dim room"
-        text: "«Кем хочешь быть?» — «Не знаю». Знакомо?"
+        text: "«Кем хочешь быть?» — «Не знаю».\nЗнакомо?"
         sticker: "Опрос: «Да, это мы» / «У нас иначе»"
-      - scene: "Nado is huge and dark, puffed up, holding stacks of papers and brochures, looming in a room"
-        text: "А вокруг шум: «все уже знают», «иди туда, где платят», «колледж на всякий случай»"
-      - scene: "Nado deflating to medium size, eyebrows raised in worry, papers slipping from his arms"
-        text: "Это Надо. Он не злой. Он просто боится, что ребёнок выберет не то"
-      - scene: "Sam taking off big headphones and looking up with curious glowing eyes"
-        text: "А это Сам. Он правда пока не знает. И это нормально"
-      - scene: "Sam and a small light-blue calm Nado standing side by side, friendly, soft warm background"
-        text: "«Сам решу» — разговор, после которого ребёнок понимает, что ему интересно, а вы — какие предметы и куда"
-      - scene: "Sam waving hello cheerfully, small calm Nado next to him waving too"
-        text: "Здесь: вопросы для разговора без ссор, ОГЭ без паники, «колледж или 10 класс»"
-        sticker: "Ссылка или «Подпишитесь»"
+      - bg: coral
+        text: "Это не тест на 40 вопросов.\nЭто разговор с ИИ на языке школьника. Чату не страшно сказать «не знаю»"
+      - scene: "Sam sitting at a laptop with a glowing screen, curious glowing eyes, a small calm light-blue Nado peeking from behind"
+        text: "15–20 минут.\nНа выходе — 2–3 направления и какие предметы ОГЭ под них брать"
+      - scene: "Sam waving hello cheerfully, a small calm light-blue Nado next to Sam waving too"
+        text: "500 ₽. Анонимно: без имени и телефона"
+        sticker: "Ссылка на samreshu.pro"
+
+  - id: kto-ya
+    title: Кто я
+    # ЧЕРНОВИК: перепишите своими словами. Перед этими сторис выложите своё фото или видео-селфи.
+    stories:
+      - bg: cream
+        text: "Я Марина. Инженер по диплому — и профессию в школе выбрала неудачно"
+      - bg: cream
+        text: "Хотела быть врачом или учителем. Выбрала «компромисс».\nТеперь знаю: выбирать надо по тому, что нравится"
+      - bg: coral
+        text: "Первым «Сам решу» прошёл мой сын. И заинтересовался IT-аналитикой — о ней он раньше даже не думал"
+        sticker: "Ссылка на samreshu.pro"
 
   - id: roditelyam
     title: Родителям
     stories:
       - scene: "Small light-blue Nado sitting alone on a sofa, hugging a pillow, slightly worried"
-        text: "Переживаете за выбор сильнее, чем он? Вы не одна"
-      - scene: "Small Nado holding a big sign with the number 14% (only the digits and percent sign, nothing else)"
-        text: "Только 14% родителей готовы принять любой выбор ребёнка. Тревога — это нормально"
-      - scene: "Sam at a desk focused on a computer game, glowing screen, relaxed posture"
-        text: "Он не ленивый. Он пока не понимает, ради чего стараться"
-      - scene: "Nado puffed up and dark talking loudly, Sam turned away with arms crossed"
-        text: "Разговоры кончаются ссорой, потому что подросток сопротивляется не профессии, а давлению"
-      - scene: "Sam at a kitchen table at dinner, listening and smiling a little, warm light"
-        text: "Вместо «кем хочешь стать?» спросите: «Что тебе сейчас интересно, даже если это кажется ерундой?»"
-      - scene: "Sam and small calm Nado sitting together on a sofa, peaceful"
-        text: "Вы остаётесь главной. Мы помогаем ребёнку сформулировать то, что ему трудно сказать вам"
-        sticker: "Опрос: что сложнее — начать разговор / не поругаться / понять, что ему интересно"
+        text: "Переживаете за выбор больше, чем ребёнок?\nВы не одна"
+        sticker: "Опрос: что сложнее — начать разговор / не поругаться"
+      - bg: coral
+        text: "Вместо «Кем хочешь стать?» спросите за ужином:"
+      - bg: cream
+        text: "1. Что тебе сейчас интересно, даже если кажется ерундой?\n2. На каком уроке время летит быстрее?\n3. Что у тебя получается легче, чем у других?"
+        sticker: "Надпись «Сделайте скриншот»"
+      - scene: "Sam and a small calm light-blue Nado sitting together on a sofa, peaceful, warm light"
+        text: "Не давить и не бросать.\nРебёнок разбирается сам, вы — рядом"
+        sticker: "Ссылка на samreshu.pro"
 
   - id: oge
-    title: ОГЭ
+    title: ОГЭ-2027
     stories:
-      - scene: "Sam thinking with a hand on chin, a calendar on the wall behind him"
-        text: "ОГЭ без паники: что и когда решать в 9 классе"
-      - scene: "Nado holding a blank sign, looking unsure, Sam next to him thinking"
-        text: "Предметы ОГЭ — первое решение о будущем. Выбирать «полегче» — значит закрыть двери"
+      - scene: "Sam thinking with a hand on the chin, a big wall calendar behind, no text on the calendar"
+        text: "Предметы ОГЭ выбрали, потому что «все так выбрали»?"
+        sticker: "Опрос: «Уже выбрали» / «Ещё думаем»"
+      - bg: coral
+        text: "Заявление с предметами — до 1 марта.\nИтоговое собеседование — в феврале.\nВремени меньше, чем кажется"
       - scene: "Sam holding a school certificate folder, looking at it seriously"
-        text: "В колледжи берут по среднему баллу аттестата. На популярные специальности — 4,5–4,8"
-      - scene: "Sam standing next to a big wall calendar with four colored sections, no text"
-        text: "Ноябрь–декабрь — предметы под направление. Январь–февраль — собеседование и заявление. Март–апрель — правила приёма. Июнь — документы"
-        sticker: "Вопрос: «Что непонятно про ОГЭ?»"
-      - scene: "Nado surprised with wide eyes, holding a small history book"
-        text: "Нынешним 8-классникам с 2027 года для допуска понадобится ещё и устная история"
+        text: "Оценки за ОГЭ влияют на аттестат.\nА в колледж берут по среднему баллу аттестата"
       - scene: "Sam at a fork in a path choosing a direction, hopeful, soft colors"
-        text: "Сначала 2–3 направления, потом предметы. Помогаем найти направление до заявления"
+        text: "Поэтому сначала 2–3 направления — потом предметы. Не наоборот"
         sticker: "Ссылка на samreshu.pro"
+      - scene: "Nado surprised with wide eyes, holding a small history book"
+        text: "Нынешним 8-классникам: с 2027/28 учебного года для допуска к ОГЭ — ещё и устная история"
+        sticker: "Вопрос: «Что непонятно про ОГЭ?»"
