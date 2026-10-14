@@ -110,21 +110,105 @@ def tts(speaker: str, line: str) -> bytes:
     return base64.b64decode(r.json()["audioContent"])
 
 
+# ---------- музыка ----------
+
+MUSIC_PROMPT = ("soft warm lo-fi piano with gentle plucked guitar, calm and hopeful, light and airy, "
+                "slow tempo around 80 bpm, instrumental background for a short social video")
+
+
+def music(prompt: str = MUSIC_PROMPT) -> bytes:
+    """Фоновая музыка без слов через Lyria на Vertex AI (WAV ~30 с)."""
+    creds = google._credentials()
+    project = os.environ.get("GOOGLE_PROJECT_ID") or creds.project_id
+    loc = google.LOCATION
+    model = os.environ.get("MUSIC_MODEL") or "lyria-002"
+    url = (f"https://{loc}-aiplatform.googleapis.com/v1/projects/{project}/locations/{loc}"
+           f"/publishers/google/models/{model}:predict")
+    r = requests.post(url, headers={"Authorization": f"Bearer {creds.token}"}, timeout=180, json={
+        "instances": [{"prompt": prompt, "negative_prompt": "vocals, singing, heavy drums, aggressive, distorted"}],
+        "parameters": {"sample_count": 1}})
+    if r.status_code != 200:
+        raise RuntimeError(f"Музыка (Lyria): HTTP {r.status_code} {r.text[:300]}")
+    pred = (r.json().get("predictions") or [{}])[0]
+    b64 = pred.get("bytesBase64Encoded") or pred.get("audioContent")
+    if not b64:
+        raise RuntimeError(f"Музыка (Lyria): пустой ответ {str(pred)[:200]}")
+    return base64.b64decode(b64)
+
+
 # ---------- сборка ----------
 
-def assemble(shots: list, hook: str, out_path: Path, voices: bool = True) -> list:
-    """shots: [{"clip": Path | None, "frame": bytes, "speaker", "line"}]. Возвращает список предупреждений."""
+SILENCE = ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
+ENC = ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "20",
+       "-c:a", "aac", "-b:a", "128k", "-ar", "48000"]
+
+
+def read_time(text: str) -> float:
+    return max(2.6, min(5.5, len(text) / 13 + 1.6))
+
+
+def _still(img_png: Path, overlay_png: Path, dur: float, out: Path, zoom: bool = True):
+    """Картинка + надпись. zoom — очень медленное приближение (без смены ракурса)."""
+    n = int(dur * FPS)
+    if zoom:
+        base = (f"[0:v]scale={render.RW * 2}:{render.RH * 2},"
+                f"zoompan=z='1+0.05*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:"
+                f"s={render.RW}x{render.RH}:fps={FPS},setsar=1[b];")
+    else:
+        base = f"[0:v]scale={render.RW}:{render.RH},fps={FPS},setsar=1,loop={n}:1:0[b];"
+    fc = base + "[b][2:v]overlay=0:0,trim=duration={d:.2f},setpts=PTS-STARTPTS[v]".format(d=dur)
+    _run(["-i", str(img_png), *SILENCE, "-i", str(overlay_png), "-filter_complex", fc,
+          "-map", "[v]", "-map", "1:a", "-t", f"{dur:.2f}", *ENC, str(out)])
+
+
+def _end_part(tmp: Path, text: str, out: Path, dur: float = 3.2):
+    card = tmp / "end.png"
+    card.write_bytes(render.end_card(text))
+    empty = tmp / "empty.png"
+    empty.write_bytes(render.empty_overlay())
+    _still(card, empty, dur, out, zoom=False)
+
+
+def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
+    warnings = []
+    lst = tmp / "list.txt"
+    lst.write_text("".join(f"file '{p}'\n" for p in parts))
+    joined = tmp / "joined.mp4"
+    _run(["-f", "concat", "-safe", "0", "-i", str(lst), "-r", str(FPS), *ENC, str(joined)])
+    track = None
+    if with_music:
+        try:
+            track = tmp / "music.wav"
+            track.write_bytes(music())
+        except Exception as e:
+            track = None
+            warnings.append(f"Ролик без музыки: {e}")
+    if track:
+        d = duration(joined)
+        fc = (f"[1:a]aloop=loop=-1:size=2000000000,atrim=duration={d:.2f},"
+              f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume=0.45[m];"
+              f"[0:a][m]amix=inputs=2:duration=first:normalize=0[a]")
+        _run(["-i", str(joined), "-i", str(track), "-filter_complex", fc, "-map", "0:v", "-map", "[a]",
+              "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(out_path)])
+    else:
+        _run(["-i", str(joined), "-c", "copy", "-movflags", "+faststart", str(out_path)])
+    return warnings
+
+
+def assemble(shots: list, hook: str, out_path: Path, voices: bool = False, end_text: str = "",
+             with_music: bool = True) -> list:
+    """Сценка с персонажами. shots: [{"clip": Path | None, "frame": bytes, "speaker", "line"}]."""
     warnings = []
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         parts = []
+        hook_png = tmp / "hook.png"
+        hook_png.write_bytes(render.hook_overlay(hook))
         for i, s in enumerate(shots):
             frame_png = tmp / f"frame{i}.png"
             render.fit_vertical(s["frame"]).save(frame_png)
             sub_png = tmp / f"sub{i}.png"
             sub_png.write_bytes(render.subtitle_overlay(s.get("speaker", ""), s.get("line", "")))
-            hook_png = tmp / "hook.png"
-            hook_png.write_bytes(render.hook_overlay(hook))
 
             voice = None
             if voices and s.get("line"):
@@ -132,46 +216,55 @@ def assemble(shots: list, hook: str, out_path: Path, voices: bool = True) -> lis
                     voice = tmp / f"voice{i}.wav"
                     voice.write_bytes(tts(s["speaker"], s["line"]))
                 except Exception as e:
-                    voice = None
-                    voices = False
+                    voice, voices = None, False
                     warnings.append(f"Голоса отключены: {e}")
 
             clip = s.get("clip")
             clip_len = duration(clip) if clip else 0
-            voice_len = duration(voice) if voice else 0
+            need = read_time(s.get("line", "")) if s.get("line") else 4.0
+            if i == 0:
+                need = max(need, 3.5)  # крючок должен успеть прочитаться
             if voice:
-                dur = max(voice_len + 0.7, 2.5)
-            elif s.get("line"):
-                dur = max(2.5, min(6.0, len(s["line"]) / 14 + 1.2))  # время прочитать субтитр
-            else:
-                dur = clip_len or 5.0
-            if clip and not voice and s.get("line"):
-                dur = max(dur, min(clip_len, 6.0))
+                need = max(need, duration(voice) + 0.8)
+            dur = max(need, min(clip_len, 6.0)) if clip else need
 
             v_in = (["-i", str(clip)] if clip else ["-loop", "1", "-framerate", str(FPS), "-i", str(frame_png)])
-            a_in = (["-i", str(voice)] if voice else
-                    ["-f", "lavfi", "-t", f"{dur:.2f}", "-i", "anullsrc=r=48000:cl=stereo"])
+            a_in = ["-i", str(voice)] if voice else SILENCE
             fc = (f"[0:v]scale={render.RW}:{render.RH}:force_original_aspect_ratio=increase,"
                   f"crop={render.RW}:{render.RH},fps={FPS},setsar=1,"
                   f"tpad=stop_mode=clone:stop_duration={dur:.2f},trim=duration={dur:.2f},setpts=PTS-STARTPTS[v0];"
                   f"[v0][2:v]overlay=0:0[v1];")
-            if i == 0:
-                fc += f"[v1][3:v]overlay=0:0:enable='lt(t,2.4)'[v];"
-            else:
-                fc += "[v1]null[v];"
+            fc += ("[v1][3:v]overlay=0:0:enable='lt(t,3.2)'[v];" if i == 0 else "[v1]null[v];")
             delay = 200 if voice else 0
             fc += (f"[1:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay={delay}|{delay},"
                    f"apad,atrim=duration={dur:.2f}[a]")
             part = tmp / f"part{i}.mp4"
             _run([*v_in, *a_in, "-i", str(sub_png), "-i", str(hook_png), "-filter_complex", fc,
-                  "-map", "[v]", "-map", "[a]", "-t", f"{dur:.2f}",
-                  "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "21",
-                  "-c:a", "aac", "-b:a", "128k", "-ar", "48000", str(part)])
+                  "-map", "[v]", "-map", "[a]", "-t", f"{dur:.2f}", *ENC, str(part)])
             parts.append(part)
-
-        lst = tmp / "list.txt"
-        lst.write_text("".join(f"file '{p}'\n" for p in parts))
-        _run(["-f", "concat", "-safe", "0", "-i", str(lst), "-r", str(FPS), "-c:v", "libx264", "-pix_fmt", "yuv420p",
-              "-profile:v", "high", "-crf", "21", "-c:a", "aac", "-b:a", "128k", "-ar", "48000",
-              "-movflags", "+faststart", str(out_path)])
+        if end_text:
+            end = tmp / "end.mp4"
+            _end_part(tmp, end_text, end)
+            parts.append(end)
+        warnings += _finish(parts, tmp, out_path, with_music)
     return warnings
+
+
+def assemble_slides(slides: list, end_text: str, out_path: Path, with_music: bool = True) -> list:
+    """Текстовый Reels. slides: [{"image": bytes, "text": str}] — первый слайд это крючок."""
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        parts = []
+        for i, sl in enumerate(slides):
+            img = tmp / f"img{i}.png"
+            render.fit_vertical(sl["image"]).save(img)
+            over = tmp / f"over{i}.png"
+            over.write_bytes(render.slide_overlay(sl["text"], big=(i == 0)))
+            part = tmp / f"part{i}.mp4"
+            _still(img, over, min(read_time(sl["text"]), 4.5), part)
+            parts.append(part)
+        if end_text:
+            end = tmp / "end.mp4"
+            _end_part(tmp, end_text, end)
+            parts.append(end)
+        return _finish(parts, tmp, out_path, with_music)

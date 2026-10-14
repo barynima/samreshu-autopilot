@@ -47,4 +47,5 @@ jobs:
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
           VIDEO_MODE: ${{ vars.VIDEO_MODE }}
           VOICES: ${{ vars.VOICES }}
+          MUSIC: ${{ vars.MUSIC }}
           VEO_MODEL: ${{ vars.VEO_MODEL }}

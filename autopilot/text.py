@@ -14,7 +14,17 @@ RULES = (Path(__file__).resolve().parent.parent / "strategy" / "rules.md").read_
 NAMING = ("In scene and motion prompts ALWAYS call the characters exactly 'Sam (a small vinyl toy figure in a coral "
           "hoodie with the hood up)' and 'Nado (a big puffy grey-blue cloud creature)'. NEVER use the words teenager, "
           "teen, kid, child, boy, girl, adult, person, he, she — video models block them or redraw the characters. "
-          "Sam has no mouth: no lip movement, show emotion with eyes, eyebrows and body. ")
+          "Sam has no mouth: no lip movement, show emotion with eyes, eyebrows and body. "
+          "All shots of one video happen in ONE place (same room, same light): describe that place identically "
+          "in every scene. Nado must be visible in every shot where Nado speaks. ")
+END_HINT = ("финальная карточка ролика, до 80 символов: вывод, который снимает вину, и призыв "
+            "(«ссылка в профиле», «сохраните», «перешлите»); можно перенос строки \\n")
+STORY_RULES = """Требования к ролику:
+- Крючок описывает то, что зритель ВИДИТ в первом кадре, и цепляет маму за 1 секунду.
+- Есть конфликт и поворот: давление → честный ответ/признание → неожиданный вывод. Без поворота ролик не нужен.
+- Реплики — живая разговорная речь, как дома на кухне, не лозунги.
+- О ребёнке не пиши «он» или «она»: Сам без пола. Пиши «ребёнок», «мой», «наш».
+- Последний кадр должен перетекать в первый (ролик пересматривают по кругу)."""
 SCENE_HINT = ("image prompt in ENGLISH for the first frame: who is where, poses, Nado's size "
               "(huge/medium/small), emotions, simple background; vertical 9:16")
 MOTION_HINT = ("video prompt in ENGLISH, 1–2 sentences: what moves during ~5 seconds; "
@@ -28,10 +38,11 @@ SCHEMAS = {
     {{"speaker": "Надо" | "Сам", "line": "реплика по-русски, до 60 символов, звучит вслух",
       "scene": "{SCENE_HINT}", "motion": "{MOTION_HINT}"}}
   ],
+  "end": "{END_HINT}",
   "caption": "подпись"
 }}
 Последний план — поворот: Надо сдувается и говорит честное, или Сам делает маленький шаг.
-Конец ролика должен визуально перетекать в начало.""",
+{STORY_RULES}""",
     "reel_confess": f"""Reels «Надо признаётся» 10–15 секунд: Надо крупным планом.
 {{
   "hook": "крючок на экране с первой секунды, 3–7 слов",
@@ -39,16 +50,31 @@ SCHEMAS = {
     {{"speaker": "Надо", "line": "реплика по-русски, до 70 символов",
       "scene": "{SCENE_HINT}", "motion": "{MOTION_HINT}"}}
   ],
+  "end": "{END_HINT}",
   "caption": "подпись"
-}}""",
+}}
+{STORY_RULES}""",
     "reel_pov": f"""Reels «POV» 7–10 секунд: одна сцена без слов, всё держится на надписи-крючке.
 {{
   "hook": "надпись на экране, обычно начинается с «POV:», до 10 слов",
   "shots": [  // ровно 1
     {{"speaker": "", "line": "", "scene": "{SCENE_HINT}", "motion": "{MOTION_HINT}; loopable"}}
   ],
+  "end": "{END_HINT}",
   "caption": "подпись"
 }}""",
+    "reel_text": f"""Текстовый Reels 12–18 секунд: крупные фразы поверх спокойных домашних кадров БЕЗ людей и персонажей.
+{{
+  "hook": "первая фраза на экране, 4–9 слов: мама узнаёт свою ситуацию за секунду",
+  "slides": [  // 3–4 слайда ПОСЛЕ крючка, каждый — одна мысль, до 14 слов
+    {{"text": "фраза по-русски", "scene": "photo prompt in ENGLISH: one everyday home detail without people, e.g. a closed bedroom door with light under it, headphones on a messy desk, a phone face down on a kitchen table, a school backpack in a hallway"}}
+  ],
+  "first_scene": "photo prompt in ENGLISH for the hook slide, same rules",
+  "end": "{END_HINT}",
+  "caption": "подпись"
+}}
+Цепочка слайдов: узнавание → «с вами всё нормально» → один конкретный ход на сегодня → неожиданный вывод.
+О ребёнке не пиши «он» или «она» — пиши «ребёнок». Никаких персонажей Сам и Надо в этом формате.""",
     "carousel": f"""Текстовая карусель 4:5.
 {{
   "hook": "заголовок обложки, 3–6 слов",
@@ -88,6 +114,13 @@ def _validate(fmt: str, data: dict) -> dict:
     if fmt == "carousel":
         if not data.get("cover_scene") or not (3 <= len(data.get("cards") or []) <= 8) or not data.get("final"):
             raise ValueError("неполная карусель")
+        return data
+    if not data.get("end"):
+        raise ValueError("нет финальной карточки end")
+    if fmt == "reel_text":
+        sl = data.get("slides") or []
+        if not (2 <= len(sl) <= 5) or not data.get("first_scene") or any(not x.get("text") or not x.get("scene") for x in sl):
+            raise ValueError("неполный текстовый Reels")
         return data
     need = {"reel_scene": 3, "reel_confess": 2, "reel_pov": 1}[fmt]
     shots = data.get("shots") or []

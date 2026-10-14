@@ -97,7 +97,7 @@ def save_job(job: dict):
 
 
 FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
-                "carousel": "Карусель"}
+                "carousel": "Карусель", "reel_text": "Текстовый Reels"}
 FRAME_LAYOUT = ("characters centered in the middle of the frame with full bodies visible, "
                 "keep the top fifth of the frame calm and empty")
 
@@ -130,15 +130,32 @@ def build_post(item: dict, feedback: str = "") -> dict:
         save_job(job)
         return job
 
+    job["end"] = script.get("end", "")
+    job["base"] = base
+
+    if fmt == "reel_text":
+        job["slides"] = []
+        for i, sl in enumerate([{"text": script["hook"], "scene": script["first_scene"]}] + script["slides"]):
+            rel = f"{base}_slide{i + 1}.png"
+            (ROOT / rel).write_bytes(images.still_life(sl["scene"]))
+            job["slides"].append({**sl, "image": rel})
+        cover = f"{base}_cover.jpg"
+        (ROOT / cover).write_bytes(render.reel_cover((ROOT / job["slides"][0]["image"]).read_bytes(), script["hook"]))
+        job["cover"] = cover
+        assemble(job)
+        return job
+
     job["shots"] = []
+    first = None
     for i, shot in enumerate(script["shots"]):
         rel = f"{base}_frame{i + 1}.png"
-        (ROOT / rel).write_bytes(images.frame(shot["scene"], "9:16", FRAME_LAYOUT))
+        data = images.frame(shot["scene"], "9:16", FRAME_LAYOUT, prev=first)
+        first = first or data
+        (ROOT / rel).write_bytes(data)
         job["shots"].append({**shot, "frame": rel, "clip": None})
     cover = f"{base}_cover.jpg"
     (ROOT / cover).write_bytes(render.reel_cover((ROOT / job["shots"][0]["frame"]).read_bytes(), script["hook"]))
     job["cover"] = cover
-    job["base"] = base
     mode = (os.environ.get("VIDEO_MODE") or "syntx").lower()
     if mode == "veo":
         animate_with_veo(job)
@@ -163,12 +180,22 @@ def animate_with_veo(job):
 
 
 def assemble(job):
+    music = (os.environ.get("MUSIC") or "on").lower() != "off"
+    if job["format"] == "reel_text":
+        slides = [{"image": (ROOT / sl["image"]).read_bytes(), "text": sl["text"]} for sl in job["slides"]]
+        rel = f"{job['base']}_reel.mp4"
+        job["warnings"] = video.assemble_slides(slides, job.get("end", ""), ROOT / rel, with_music=music)
+        job["video"] = rel
+        job["stage"] = "ready"
+        save_job(job)
+        return
     shots = [{"clip": (ROOT / s["clip"]) if s.get("clip") else None,
               "frame": (ROOT / s["frame"]).read_bytes(),
               "speaker": s.get("speaker", ""), "line": s.get("line", "")} for s in job["shots"]]
     rel = f"{job['base']}_reel.mp4"
-    voices = (os.environ.get("VOICES") or "on").lower() != "off" and job["format"] != "reel_pov"
-    job["warnings"] = video.assemble(shots, job["hook"], ROOT / rel, voices=voices)
+    voices = (os.environ.get("VOICES") or "off").lower() == "on" and job["format"] != "reel_pov"
+    job["warnings"] = video.assemble(shots, job["hook"], ROOT / rel, voices=voices,
+                                     end_text=job.get("end", ""), with_music=music)
     job["video"] = rel
     job["stage"] = "ready"
     save_job(job)
@@ -473,6 +500,18 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/rebuild"):
+        pid = state.get("pending")
+        if not pid or not (POSTS / pid / "post.json").exists() or load_job(pid)["format"] == "carousel":
+            telegram.send_text(cid, "Сейчас нечего пересобирать.")
+        else:
+            job = load_job(pid)
+            telegram.send_text(cid, "Пересобираю ролик из готовых кадров и клипов, пара минут…")
+            job["cover"] = f"{job['base']}_cover.jpg"
+            first = (ROOT / (job["shots"][0]["frame"] if job.get("shots") else job["slides"][0]["image"])).read_bytes()
+            (ROOT / job["cover"]).write_bytes(render.reel_cover(first, job["hook"]))
+            assemble(job)
+            send_draft(state, job)
     elif body.startswith("/stories"):
         only = body[len("/stories"):].strip()
         telegram.send_text(cid, "Рисую сторис для «Актуального», это займёт 5–10 минут…\n"

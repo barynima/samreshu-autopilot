@@ -42,7 +42,9 @@ def reference_sheet(prompt: str) -> bytes:
     return _call([{"text": prompt}], "1:1")
 
 
-def frame(scene: str, aspect: str = "4:5", layout: str = "leave the top quarter calm and empty for a caption") -> bytes:
+def frame(scene: str, aspect: str = "4:5", layout: str = "leave the top quarter calm and empty for a caption",
+          prev: bytes = None) -> bytes:
+    """prev — первый кадр ролика: следующие кадры рисуем в той же комнате, с тем же светом и ракурсом."""
     parts, notes = [], []
     for name, label in (("sam", "Sam (small kid in coral hoodie)"), ("nado", "Nado (grey-blue cloud)")):
         ref = _ref_part(name)
@@ -53,6 +55,11 @@ def frame(scene: str, aspect: str = "4:5", layout: str = "leave the top quarter 
         f"Use the attached images as character references for {' and '.join(notes)}; "
         "keep their look exactly the same. " if notes else ""
     )
+    if prev:
+        parts.append({"inlineData": {"mimeType": "image/png", "data": base64.b64encode(prev).decode()}})
+        keep += ("The LAST attached image is the previous shot of the same video: keep exactly the same room, "
+                 "furniture, background, lighting, colors and camera distance; change only the characters' "
+                 "poses, sizes and emotions as the scene says. ")
     orientation = "Vertical 9:16" if aspect == "9:16" else f"Vertical {aspect}"
     prompt = (
         f"{keep}Characters (draw only those the scene mentions): {SAM} {NADO}\nScene: {scene}\n"
@@ -64,3 +71,11 @@ def frame(scene: str, aspect: str = "4:5", layout: str = "leave the top quarter 
 
 def panel(scene: str) -> bytes:
     return frame(scene, "4:5")
+
+
+def still_life(scene: str) -> bytes:
+    """Фон для текстового Reels: обычная домашняя деталь без людей и персонажей."""
+    prompt = (f"Scene: {scene}\nVertical 9:16 photo. Warm, cozy, realistic home atmosphere, soft natural light, "
+              "shallow depth of field, calm muted colors, slightly blurred so big text can sit on top. "
+              "No people, no hands, no faces, no characters, no text, no letters, no logos.")
+    return _call([{"text": prompt}], "9:16")

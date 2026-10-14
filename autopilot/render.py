@@ -32,7 +32,13 @@ def _fit_cover(img: Image.Image) -> Image.Image:
 
 def _wrap(draw, text, font, max_w):
     lines, cur = [], ""
-    for word in text.split():
+    words = []
+    for w in text.split():  # тире и короткие предлоги не отрываем
+        if words and (w in ("—", "–") or len(words[-1]) <= 2 and words[-1].isalpha()):
+            words[-1] += " " + w
+        else:
+            words.append(w)
+    for word in words:
         trial = f"{cur} {word}".strip()
         if draw.textlength(trial, font=font) <= max_w:
             cur = trial
@@ -143,7 +149,7 @@ def subtitle_overlay(speaker: str, line: str) -> bytes:
     lh = int(size * 1.25)
     name_font = _font(40)
     h = 40 + 56 + len(lines) * lh + 30
-    top = 1160
+    top = 1300  # ниже персонажей, но выше подписи и кнопок Reels
     _box(draw, (70, top, RW - 110, top + h), (255, 255, 255, 240), radius=40)
     color = CORAL if speaker == "Сам" else SLATE
     draw.text((110, top + 32), speaker, font=name_font, fill=color)
@@ -285,3 +291,40 @@ def story_card(text: str, bg: str = "coral") -> bytes:
     f = _font(34)
     draw.text((110, RH - 170), "Сам решу", font=f, fill=(255, 255, 255) if coral else CORAL)
     return _jpeg(img)
+
+
+# ---------- текстовые Reels ----------
+
+def empty_overlay() -> bytes:
+    out = io.BytesIO()
+    Image.new("RGBA", (RW, RH), (0, 0, 0, 0)).save(out, "PNG")
+    return out.getvalue()
+
+
+def slide_overlay(text: str, big: bool = False) -> bytes:
+    """Крупная надпись в плашке чуть выше центра кадра — прозрачный PNG."""
+    img = Image.new("RGBA", (RW, RH), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    font, lines, size = _fit_paragraphs(draw, text, RW - 240, 84 if big else 72, 46, 6)
+    h = len(lines) * int(size * 1.28) + 110
+    top = max(300, 760 - h // 2)
+    _box(draw, (70, top, RW - 70, top + h), (255, 255, 255, 242))
+    _draw_centered(draw, lines, font, size, top + 55, INK)
+    out = io.BytesIO()
+    img.save(out, "PNG")
+    return out.getvalue()
+
+
+def end_card(text: str) -> bytes:
+    """Финальная карточка ролика: вывод и призыв на коралловом фоне."""
+    img = Image.new("RGB", (RW, RH), CORAL)
+    draw = ImageDraw.Draw(img)
+    font, lines, size = _fit_paragraphs(draw, text, RW - 220, 80, 48, 7)
+    h = len(lines) * int(size * 1.28)
+    _draw_centered(draw, lines, font, size, max(360, 820 - h // 2), (255, 255, 255))
+    f = _font(40)
+    t = "Сам решу"
+    draw.text(((RW - draw.textlength(t, font=f)) / 2, 1420), t, font=f, fill=(255, 255, 255))
+    out = io.BytesIO()
+    img.save(out, "PNG")
+    return out.getvalue()
