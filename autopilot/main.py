@@ -98,8 +98,8 @@ def save_job(job: dict):
 
 FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
                 "carousel": "Карусель", "reel_text": "Текстовый Reels"}
-FRAME_LAYOUT = ("characters centered in the middle of the frame with full bodies visible, "
-                "keep the top fifth of the frame calm and empty")
+FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodies visible, both clearly visible "
+                "and not overlapping; the top quarter of the frame is a plain empty wall (space for captions)")
 
 
 # ---------- сборка поста ----------

@@ -186,7 +186,7 @@ def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
     if track:
         d = duration(joined)
         fc = (f"[1:a]aloop=loop=-1:size=2000000000,atrim=duration={d:.2f},"
-              f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume=0.45[m];"
+              f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume=0.9[m];"
               f"[0:a][m]amix=inputs=2:duration=first:normalize=0[a]")
         _run(["-i", str(joined), "-i", str(track), "-filter_complex", fc, "-map", "0:v", "-map", "[a]",
               "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(out_path)])
@@ -223,7 +223,7 @@ def assemble(shots: list, hook: str, out_path: Path, voices: bool = False, end_t
             clip_len = duration(clip) if clip else 0
             need = read_time(s.get("line", "")) if s.get("line") else 4.0
             if i == 0:
-                need = max(need, 3.5)  # крючок должен успеть прочитаться
+                need += 3.2  # сначала крючок, потом субтитр на том же месте
             if voice:
                 need = max(need, duration(voice) + 0.8)
             dur = max(need, min(clip_len, 6.0)) if clip else need
@@ -233,8 +233,11 @@ def assemble(shots: list, hook: str, out_path: Path, voices: bool = False, end_t
             fc = (f"[0:v]scale={render.RW}:{render.RH}:force_original_aspect_ratio=increase,"
                   f"crop={render.RW}:{render.RH},fps={FPS},setsar=1,"
                   f"tpad=stop_mode=clone:stop_duration={dur:.2f},trim=duration={dur:.2f},setpts=PTS-STARTPTS[v0];"
-                  f"[v0][2:v]overlay=0:0[v1];")
-            fc += ("[v1][3:v]overlay=0:0:enable='lt(t,3.2)'[v];" if i == 0 else "[v1]null[v];")
+                  )
+            if i == 0:
+                fc += "[v0][3:v]overlay=0:0:enable='lt(t,3.2)'[v1];[v1][2:v]overlay=0:0:enable='gte(t,3.2)'[v];"
+            else:
+                fc += "[v0][2:v]overlay=0:0[v];"
             delay = 200 if voice else 0
             fc += (f"[1:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay={delay}|{delay},"
                    f"apad,atrim=duration={dur:.2f}[a]")

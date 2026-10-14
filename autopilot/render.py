@@ -138,24 +138,29 @@ def hook_overlay(text: str) -> bytes:
 
 
 def subtitle_overlay(speaker: str, line: str) -> bytes:
-    """Субтитр с именем говорящего — в верхней части нижней трети, выше подписи и кнопок Reels."""
+    """Субтитр вверху кадра (там, где по композиции пустая стена), чтобы не закрывать персонажей."""
     img = Image.new("RGBA", (RW, RH), (0, 0, 0, 0))
     if not line:
         out = io.BytesIO()
         img.save(out, "PNG")
         return out.getvalue()
     draw = ImageDraw.Draw(img)
-    font, lines, size = _fit_lines(draw, line, RW - 260, 60, 42, 3)
+    text = f"{speaker}: {line}" if speaker else line
+    font, lines, size = _fit_lines(draw, text, RW - 220, 58, 42, 3)
     lh = int(size * 1.25)
-    name_font = _font(40)
-    h = 40 + 56 + len(lines) * lh + 30
-    top = 1300  # ниже персонажей, но выше подписи и кнопок Reels
-    _box(draw, (70, top, RW - 110, top + h), (255, 255, 255, 240), radius=40)
+    h = len(lines) * lh + 70
+    top = 230  # ниже шапки интерфейса Reels
+    _box(draw, (60, top, RW - 60, top + h), (255, 255, 255, 240), radius=40)
     color = CORAL if speaker == "Сам" else SLATE
-    draw.text((110, top + 32), speaker, font=name_font, fill=color)
-    y = top + 32 + 56
-    for l in lines:
-        draw.text((110, y), l, font=font, fill=INK)
+    y = top + 35
+    for n, l in enumerate(lines):
+        x = 100
+        if n == 0 and speaker and l.startswith(speaker + ":"):
+            name = speaker + ":"
+            draw.text((x, y), name, font=font, fill=color)
+            x += draw.textlength(name + " ", font=font)
+            l = l[len(name):].lstrip()
+        draw.text((x, y), l, font=font, fill=INK)
         y += lh
     out = io.BytesIO()
     img.save(out, "PNG")

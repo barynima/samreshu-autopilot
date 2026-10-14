@@ -14,7 +14,7 @@ SAM = (
 
 NADO = (
     "\"Nado\": a big puffy grey-blue cloud creature (#8A94A6), about three times taller than Sam, "
-    "short stubby arms often holding stacks of papers or brochures, round worried eyes, eyebrows "
+    "short stubby arms with empty hands (never holds objects), round worried eyes, eyebrows "
     "raised in the middle, mouth in an anxious frown; looks strict but secretly scared. "
     "When he pressures he is huge and dark; when Sam asks an honest question he shrinks and gets lighter. "
     "Nado is NEVER evil or monstrous: no red eyes, no glowing eyes, no fangs, no angry scowl — only anxious and "
