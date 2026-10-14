@@ -1,67 +1,67 @@
 {
- "id": "ne-znayu",
- "format": "reel_scene",
- "hook": "Все уже знают. А ваш ребёнок — нет?",
- "caption": "Знакомо? Закрытая дверь и «не знаю» на любой вопрос о будущем. Кажется, что ребёнка вообще ничего не волнует, кроме телефона.\n\nВыдыхайте, с вами всё нормально. Не знать, кем быть, в 15 лет — это как раз нормально. За этим «не знаю» стоит не лень, а растерянность. А когда все вокруг давят, хочется закрыться ещё сильнее.\n\nВместо «Кем хочешь стать?» попробуйте сегодня задать другие вопросы. Те, что помогут ребёнку самому нащупать интерес:\n1. Что тебе нравится делать просто так, для себя?\n2. Про что ты готов смотреть видео часами?\n3. Если бы друг попросил тебя чему-то научить, что бы это было?\n\nЭто может стать началом спокойного разговора, а не ссоры.\n\nА у вас чаще «не знаю» или «отстань»?\n\nСохраните, чтобы не потерять.\n\n#самрешу #профориентация #9класс #огэ2027 #подростки #выборпрофессии",
- "script": {
-  "hook": "Закрытая дверь и «не знаю»?",
+  "id": "ne-znayu",
+  "format": "reel_scene",
+  "hook": "Все уже определились, а у вас — «не знаю»?",
+  "caption": "Закрытая дверь, наушники и «не знаю» на любой вопрос о будущем. Знакомо?\n\nС вами всё нормально. И с ребёнком тоже. «Не знаю» — это не приговор и не лень. Это защитная реакция, когда вопросов больше, чем ответов.\n\nПопробуйте вместо «Кем хочешь быть?» задать другие вопросы:\n1. Что тебе интересно делать, даже если бы за это не платили?\n2. Какое дело кажется тебе важным для других людей?\n3. О чём ты мог бы говорить часами с друзьями?\n\nТакие вопросы не требуют готового решения, а помогают нащупать интересы, которые прячутся за «не знаю».\n\nКакой ответ на эти вопросы вас удивил бы больше всего?\n\nСохраните, чтобы вернуться к разговору в подходящий момент.\n\n#самрешу #профориентация #9класс #огэ2026 #подросткииродители",
+  "script": {
+    "hook": "Все уже определились, а у вас — «не знаю»?",
+    "shots": [
+      {
+        "speaker": "Надо",
+        "line": "У Светки сын уже на курсы ходит!",
+        "scene": "Huge Nado (a big puffy grey-blue cloud creature) looms over Sam (a small vinyl toy figure in a coral hoodie with the hood up). Sam sits on the floor, looking down and away. Simple living room background. Vertical 9:16.",
+        "motion": "Nado vibrates with anxious energy, gesturing emphatically. Sam remains small and still, withdrawn, not looking at Nado."
+      },
+      {
+        "speaker": "Сам",
+        "line": "Не знаю.",
+        "scene": "Nado leans in closer, looking frustrated. Sam looks up slightly with tired, blank eyes, but not directly at Nado. Same simple living room background. Vertical 9:16.",
+        "motion": "Sam gives a tiny, almost imperceptible shrug. Nado's puffy form jiggles in frustration."
+      },
+      {
+        "speaker": "Надо",
+        "line": "Просто страшно, если выбор будет не тот.",
+        "scene": "Nado has shrunk to be eye-level with Sam, looking sad and deflated. Sam looks up, surprised, and makes eye contact with Nado for the first time. Same simple living room background. Vertical 9:16.",
+        "motion": "Nado slowly deflates, its form getting smaller and softer. Sam's eyes widen slightly in surprise. The scene becomes still and quiet."
+      }
+    ],
+    "end": "Не знать, кем быть, в 15 — нормально.\nСохраните, чтобы начать разговор без ссор.",
+    "caption": "Закрытая дверь, наушники и «не знаю» на любой вопрос о будущем. Знакомо?\n\nС вами всё нормально. И с ребёнком тоже. «Не знаю» — это не приговор и не лень. Это защитная реакция, когда вопросов больше, чем ответов.\n\nПопробуйте вместо «Кем хочешь быть?» задать другие вопросы:\n1. Что тебе интересно делать, даже если бы за это не платили?\n2. Какое дело кажется тебе важным для других людей?\n3. О чём ты мог бы говорить часами с друзьями?\n\nТакие вопросы не требуют готового решения, а помогают нащупать интересы, которые прячутся за «не знаю».\n\nКакой ответ на эти вопросы вас удивил бы больше всего?\n\nСохраните, чтобы вернуться к разговору в подходящий момент.\n\n#самрешу #профориентация #9класс #огэ2026 #подросткииродители"
+  },
+  "warnings": [],
+  "end": "Не знать, кем быть, в 15 — нормально.\nСохраните, чтобы начать разговор без ссор.",
+  "base": "posts/ne-znayu/202610141927",
   "shots": [
-   {
-    "speaker": "Надо",
-    "line": "Все уже знают, куда поступают!",
-    "scene": "A huge, looming, translucent figure of an anxious adult (Nado) stands over a teenager (Sam) sitting at a desk in a simple room. Nado is gesticulating wildly. Sam is looking away, indifferent. Vertical 9:16.",
-    "motion": "Nado's figure shimmers and its mouth moves as it speaks. Sam, sitting at the desk, slowly turns his head further away, ignoring Nado. Static shot, no camera movement."
-   },
-   {
-    "speaker": "Сам",
-    "line": "Не знаю.",
-    "scene": "Close-up on the teenager (Sam) at his desk, shrugging with an indifferent expression. The huge, translucent figure of Nado looms behind him, slightly out of focus. Simple room background. Vertical 9:16.",
-    "motion": "The teenager (Sam) shrugs and mouths the words. The large Nado figure behind him gestures impatiently. Static shot, no camera movement."
-   },
-   {
-    "speaker": "Надо",
-    "line": "Я просто боюсь, что он выберет не то.",
-    "scene": "The huge Nado figure has shrunk to a small, worried, translucent adult figure standing near the teenager's desk. The teenager (Sam) is looking at the small figure. Simple room background. Vertical 9:16.",
-    "motion": "The giant Nado figure rapidly deflates into a small, worried figure that speaks its line. Sam looks at it for a moment, then sighs and turns his head away, back towards his desk, creating a loop with the first shot."
-   }
+    {
+      "speaker": "Надо",
+      "line": "У Светки сын уже на курсы ходит!",
+      "scene": "Huge Nado (a big puffy grey-blue cloud creature) looms over Sam (a small vinyl toy figure in a coral hoodie with the hood up). Sam sits on the floor, looking down and away. Simple living room background. Vertical 9:16.",
+      "motion": "Nado vibrates with anxious energy, gesturing emphatically. Sam remains small and still, withdrawn, not looking at Nado.",
+      "frame": "posts/ne-znayu/202610141927_frame1.png",
+      "clip": null
+    },
+    {
+      "speaker": "Сам",
+      "line": "Не знаю.",
+      "scene": "Nado leans in closer, looking frustrated. Sam looks up slightly with tired, blank eyes, but not directly at Nado. Same simple living room background. Vertical 9:16.",
+      "motion": "Sam gives a tiny, almost imperceptible shrug. Nado's puffy form jiggles in frustration.",
+      "frame": "posts/ne-znayu/202610141927_frame2.png",
+      "clip": null
+    },
+    {
+      "speaker": "Надо",
+      "line": "Просто страшно, если выбор будет не тот.",
+      "scene": "Nado has shrunk to be eye-level with Sam, looking sad and deflated. Sam looks up, surprised, and makes eye contact with Nado for the first time. Same simple living room background. Vertical 9:16.",
+      "motion": "Nado slowly deflates, its form getting smaller and softer. Sam's eyes widen slightly in surprise. The scene becomes still and quiet.",
+      "frame": "posts/ne-znayu/202610141927_frame3.png",
+      "clip": null
+    }
   ],
-  "caption": "Знакомо? Закрытая дверь и «не знаю» на любой вопрос о будущем. Кажется, что ребёнка вообще ничего не волнует, кроме телефона.\n\nВыдыхайте, с вами всё нормально. Не знать, кем быть, в 15 лет — это как раз нормально. За этим «не знаю» стоит не лень, а растерянность. А когда все вокруг давят, хочется закрыться ещё сильнее.\n\nВместо «Кем хочешь стать?» попробуйте сегодня задать другие вопросы. Те, что помогут ему самому нащупать интерес:\n1. Что тебе нравится делать просто так, для себя?\n2. О чём ты мог бы смотреть видео часами?\n3. Если бы друг попросил тебя чему-то научить, что бы это было?\n\nЭто может стать началом спокойного разговора, а не ссоры.\n\nА у вас чаще «не знаю» или «отстань»?\n\nСохраните, чтобы не потерять.\n\n#самрешу #профориентация #9класс #огэ2027 #подростки #выборпрофессии"
- },
- "warnings": [],
- "shots": [
-  {
-   "speaker": "Надо",
-   "line": "Все уже знают, куда поступают!",
-   "scene": "A huge, looming, translucent figure of an anxious adult (Nado) stands over a teenager (Sam) sitting at a desk in a simple room. Nado is gesticulating wildly. Sam is looking away, indifferent. Vertical 9:16.",
-   "motion": "Nado's figure shimmers and its mouth moves as it speaks. Sam, sitting at the desk, slowly turns his head further away, ignoring Nado. Static shot, no camera movement.",
-   "frame": "posts/ne-znayu/202610141226_frame1.png",
-   "clip": "posts/ne-znayu/202610141226_clip1.mp4"
-  },
-  {
-   "speaker": "Сам",
-   "line": "Не знаю.",
-   "scene": "Close-up on the teenager (Sam) at his desk, shrugging with an indifferent expression. The huge, translucent figure of Nado looms behind him, slightly out of focus. Simple room background. Vertical 9:16.",
-   "motion": "The teenager (Sam) shrugs and mouths the words. The large Nado figure behind him gestures impatiently. Static shot, no camera movement.",
-   "frame": "posts/ne-znayu/202610141226_frame2.png",
-   "clip": "posts/ne-znayu/202610141226_clip2.mp4"
-  },
-  {
-   "speaker": "Надо",
-   "line": "Я просто боюсь, что ребёнок выберет не то.",
-   "scene": "The huge Nado figure has shrunk to a small, worried, translucent adult figure standing near the teenager's desk. The teenager (Sam) is looking at the small figure. Simple room background. Vertical 9:16.",
-   "motion": "The giant Nado figure rapidly deflates into a small, worried figure that speaks its line. Sam looks at it for a moment, then sighs and turns his head away, back towards his desk, creating a loop with the first shot.",
-   "frame": "posts/ne-znayu/202610141226_frame3.png",
-   "clip": "posts/ne-znayu/202610141226_clip3.mp4"
+  "cover": "posts/ne-znayu/202610141927_cover.jpg",
+  "stage": "clips",
+  "clip_msgs": {
+    "46": 0,
+    "47": 1,
+    "48": 2
   }
- ],
- "cover": "posts/ne-znayu/202610141226_cover.jpg",
- "base": "posts/ne-znayu/202610141226",
- "stage": "ready",
- "clip_msgs": {
-  "30": 0,
-  "31": 1,
-  "32": 2
- },
- "video": "posts/ne-znayu/202610141226_reel.mp4",
- "end": "Не знать в 15 лет — нормально.\nРазобраться за 20 минут — ссылка в профиле"
 }
