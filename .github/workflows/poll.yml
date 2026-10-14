@@ -1,8 +1,8 @@
-name: Кнопки из Telegram
+name: Кнопки из Telegram (бот на связи 30 минут)
 
 on:
   schedule:
-    - cron: "*/10 4-20 * * *"   # каждые 10 минут с 07:00 до 23:59 по Москве
+    - cron: "13 5-19/2 * * *"   # запасная проверка раз в 2 часа днём; GitHub может пропускать такие запуски
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,3 +42,4 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_PAT: ${{ secrets.GH_PAT }}
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
+          SESSION_MINUTES: ${{ github.event_name == 'schedule' && '15' || '30' }}

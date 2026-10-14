@@ -15,9 +15,14 @@ def _api(method: str, **kwargs):
     return data["result"]
 
 
-def updates(offset: int):
-    return _api("getUpdates", json={"offset": offset, "timeout": 0,
-                                   "allowed_updates": ["message", "callback_query"]})
+def updates(offset: int, wait: int = 0):
+    """wait > 0 — держим соединение до wait секунд, пока не придёт сообщение или нажатие."""
+    r = requests.post(f"https://api.telegram.org/bot{os.environ['TG_BOT_TOKEN']}/getUpdates", timeout=wait + 30,
+                      json={"offset": offset, "timeout": wait, "allowed_updates": ["message", "callback_query"]})
+    data = r.json()
+    if not data.get("ok"):
+        raise RuntimeError(f"Telegram getUpdates: {data}")
+    return data["result"]
 
 
 def send_text(chat_id, text, buttons=None):

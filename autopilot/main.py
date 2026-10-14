@@ -119,6 +119,13 @@ def publish(state, ep_id):
 
 
 def cmd_prepare(state):
+    process(state, telegram.updates(state["offset"]))  # сначала то, что накопилось (выбор эталонов и т.п.)
+    _prepare(state)
+    if chat(state) and state.get("pending"):
+        session(state, 60)  # ждём решения по посту час, каждое нажатие продлевает
+
+
+def _prepare(state):
     if not chat(state):
         print("Чат с ботом ещё не найден: напишите боту в Telegram любое сообщение.")
         return
@@ -171,16 +178,7 @@ def _to_jpg(data: bytes) -> bytes:
 
 # ---------- Telegram ----------
 
-def cmd_poll(state):
-    if not chat(state):
-        me = telegram._api("getMe")
-        hook = telegram._api("getWebhookInfo")
-        print(f"Бот: @{me.get('username')} ({me.get('first_name')})")
-        if hook.get("url"):
-            print("У бота был включён вебхук — отключаю, иначе сообщения не доходят.")
-            telegram._api("deleteWebhook", json={"drop_pending_updates": False})
-    ups = telegram.updates(state["offset"])
-    print(f"Новых сообщений и нажатий: {len(ups)}")
+def process(state, ups):
     for up in ups:
         state["offset"] = up["update_id"] + 1
         try:
@@ -190,6 +188,33 @@ def cmd_poll(state):
                 telegram.send_text(chat(state), f"⚠️ Ошибка: {e}"[:3900])
             print("Ошибка:", e, file=sys.stderr)
         save_state(state)
+    if ups:
+        git_sync("Автопилот: ответы из Telegram")
+
+
+def session(state, minutes: float):
+    """Слушаем Telegram и сразу отвечаем на кнопки. Каждое действие продлевает сеанс на 20 минут."""
+    deadline = time.time() + minutes * 60
+    while True:
+        left = deadline - time.time()
+        ups = telegram.updates(state["offset"], wait=int(max(0, min(50, left))))
+        if ups:
+            print(f"Сообщений и нажатий: {len(ups)}")
+            process(state, ups)
+            deadline = min(max(deadline, time.time() + 20 * 60), time.time() + 90 * 60)
+        elif left <= 0:
+            return
+
+
+def cmd_poll(state):
+    if not chat(state):
+        me = telegram._api("getMe")
+        hook = telegram._api("getWebhookInfo")
+        print(f"Бот: @{me.get('username')} ({me.get('first_name')})")
+        if hook.get("url"):
+            print("У бота был включён вебхук — отключаю, иначе сообщения не доходят.")
+            telegram._api("deleteWebhook", json={"drop_pending_updates": False})
+    session(state, float(os.environ.get("SESSION_MINUTES") or 30))
 
 
 def handle(state, up):
@@ -226,6 +251,10 @@ def handle(state, up):
             key, _, num = arg.partition(":")
             shutil.copy(CANDIDATES / f"{key}_{num}.png", REFS / f"{key}.png")
             telegram.send_text(cid, f"Эталон «{NAMES[key]}» сохранён ✅")
+            git_sync(f"Эталон {key}")
+            if state.get("pending") and (REFS / "sam.png").exists() and (REFS / "nado.png").exists():
+                telegram.send_text(cid, "Оба эталона выбраны. Перерисовать текущий пост уже с ними?",
+                                   [[{"text": "🎨 Перерисовать", "callback_data": f"again:{state['pending']}"}]])
         elif kind == "refs":
             telegram.send_text(cid, "Рисую новые варианты, это займёт пару минут…")
             cmd_refs(state)
@@ -237,7 +266,7 @@ def handle(state, up):
             telegram.send_text(cid, "Сначала решите судьбу предыдущего поста 👆")
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
-            cmd_prepare(state)
+            _prepare(state)
     elif body.startswith("/refs"):
         telegram.send_text(cid, "Рисую эталоны персонажей, это займёт пару минут…")
         cmd_refs(state)
