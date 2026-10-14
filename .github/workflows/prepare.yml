@@ -2,7 +2,7 @@ name: Пост дня
 
 on:
   schedule:
-    - cron: "47 5 * * *"   # каждый день около 09:00 по Москве
+    - cron: "47 5 * * 1-5"   # по будням около 09:00 по Москве
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,3 +42,6 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_PAT: ${{ secrets.GH_PAT }}
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
+          VIDEO_MODE: ${{ vars.VIDEO_MODE }}
+          VOICES: ${{ vars.VOICES }}
+          VEO_MODEL: ${{ vars.VEO_MODEL }}

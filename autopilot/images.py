@@ -42,7 +42,7 @@ def reference_sheet(prompt: str) -> bytes:
     return _call([{"text": prompt}], "1:1")
 
 
-def panel(scene: str) -> bytes:
+def frame(scene: str, aspect: str = "4:5", layout: str = "leave the top quarter calm and empty for a caption") -> bytes:
     parts, notes = [], []
     for name, label in (("sam", "Sam (small kid in coral hoodie)"), ("nado", "Nado (grey-blue cloud)")):
         ref = _ref_part(name)
@@ -53,9 +53,14 @@ def panel(scene: str) -> bytes:
         f"Use the attached images as character references for {' and '.join(notes)}; "
         "keep their look exactly the same. " if notes else ""
     )
+    orientation = "Vertical 9:16" if aspect == "9:16" else f"Vertical {aspect}"
     prompt = (
-        f"{keep}Characters: {SAM} {NADO}\nScene: {scene}\n"
-        f"Vertical 4:5 composition, leave the top quarter calm and empty for a caption. {STYLE}"
+        f"{keep}Characters (draw only those the scene mentions): {SAM} {NADO}\nScene: {scene}\n"
+        f"{orientation} composition, {layout}. {STYLE}"
     )
     parts.append({"text": prompt})
-    return _call(parts, "4:5")
+    return _call(parts, aspect)
+
+
+def panel(scene: str) -> bytes:
+    return frame(scene, "4:5")

@@ -59,3 +59,23 @@ def refresh_token() -> str:
     if "access_token" not in data:
         raise RuntimeError(f"Не удалось продлить маркер: {data}")
     return data["access_token"]
+
+
+def publish_reel(video_url: str, caption: str, cover_url: str = "") -> str:
+    user_id = _get("me", fields="user_id")["user_id"]
+    params = dict(media_type="REELS", video_url=video_url, caption=caption, share_to_feed="true")
+    if cover_url:
+        params["cover_url"] = cover_url
+    container = _post(f"{user_id}/media", **params)["id"]
+    for _ in range(40):  # видео обрабатывается дольше картинок — ждём до 10 минут
+        status = _get(container, fields="status_code,status").get("status_code")
+        if status == "FINISHED":
+            break
+        if status in ("ERROR", "EXPIRED"):
+            info = _get(container, fields="status")
+            raise RuntimeError(f"Instagram не принял ролик: {info.get('status')}")
+        time.sleep(15)
+    else:
+        raise RuntimeError("Instagram обрабатывал ролик дольше 10 минут")
+    media_id = _post(f"{user_id}/media_publish", creation_id=container)["id"]
+    return _get(media_id, fields="permalink").get("permalink", media_id)

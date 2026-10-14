@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from . import images, instagram, render, telegram, text
+from . import images, instagram, render, telegram, text, video
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,7 +31,11 @@ NAMES = {"sam": "Сам", "nado": "Надо"}
 
 def load_state() -> dict:
     if STATE.exists():
-        return json.loads(STATE.read_text(encoding="utf-8"))
+        state = json.loads(STATE.read_text(encoding="utf-8"))
+        if state.get("pending") and state["pending"] not in {p["id"] for p in load_plan()}:
+            state["pending"] = None  # пост из старого плана
+            state["awaiting_feedback"] = None
+        return state
     return {"offset": 0, "chat_id": None, "done": [], "pending": None, "awaiting_feedback": None}
 
 
@@ -55,64 +59,191 @@ def git_sync(message: str):
     raise RuntimeError("Не удалось сохранить изменения в репозиторий")
 
 
-def raw_url(rel_path: str) -> str:
+def media_url(rel_path: str) -> str:
+    """Публичная ссылка на файл через jsDelivr, привязанная к текущему коммиту (правильный тип файла, без кеша)."""
     repo = os.environ["GITHUB_REPOSITORY"]
-    branch = os.environ.get("GITHUB_REF_NAME") or "main"
-    return f"https://raw.githubusercontent.com/{repo}/{branch}/{rel_path}"
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    return f"https://cdn.jsdelivr.net/gh/{repo}@{sha}/{rel_path}"
 
 
 def chat(state):
     return os.environ.get("TG_CHAT_ID") or state.get("chat_id")
 
 
-# ---------- посты ----------
+# ---------- план ----------
 
-def next_episode(state):
-    plan = yaml.safe_load((ROOT / "plan.yaml").read_text(encoding="utf-8"))["episodes"]
-    for ep in plan:
-        if ep["id"] not in state["done"]:
-            return ep
-    return None
+def load_plan():
+    data = yaml.safe_load((ROOT / "plan.yaml").read_text(encoding="utf-8"))
+    return data.get("posts") or data.get("episodes") or []
 
 
-def episode_by_id(ep_id):
-    plan = yaml.safe_load((ROOT / "plan.yaml").read_text(encoding="utf-8"))["episodes"]
-    return next(ep for ep in plan if ep["id"] == ep_id)
+def next_post(state):
+    return next((p for p in load_plan() if p["id"] not in state["done"]), None)
 
 
-def build_post(ep: dict, feedback: str = "") -> dict:
-    script = text.write_episode(ep["idea"], ep.get("audience", "school"), feedback)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
-    folder = POSTS / ep["id"]
+def post_by_id(post_id):
+    return next(p for p in load_plan() if p["id"] == post_id)
+
+
+def load_job(post_id) -> dict:
+    return json.loads((POSTS / post_id / "post.json").read_text(encoding="utf-8"))
+
+
+def save_job(job: dict):
+    folder = POSTS / job["id"]
     folder.mkdir(parents=True, exist_ok=True)
-    files = []
-    for i, p in enumerate(script["panels"], 1):
-        raw = images.panel(p["scene"])
-        jpg = render.compose(raw, p["speaker"], p["line"], f"{i}/4")
-        rel = f"posts/{ep['id']}/{stamp}_{i}.jpg"
-        (ROOT / rel).write_bytes(jpg)
-        files.append(rel)
-    post = {"id": ep["id"], "files": files, "caption": script["caption"], "panels": script["panels"]}
-    (folder / "post.json").write_text(json.dumps(post, ensure_ascii=False, indent=2), encoding="utf-8")
-    return post
+    (folder / "post.json").write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def send_draft(state, post):
+FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
+                "carousel": "Карусель"}
+FRAME_LAYOUT = ("characters centered in the middle of the frame with full bodies visible, "
+                "keep the top fifth of the frame calm and empty")
+
+
+# ---------- сборка поста ----------
+
+def build_post(item: dict, feedback: str = "") -> dict:
+    fmt = item.get("format", "reel_scene")
+    script = text.write_post(item, feedback)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
+    base = f"posts/{item['id']}/{stamp}"
+    (POSTS / item["id"]).mkdir(parents=True, exist_ok=True)
+    job = {"id": item["id"], "format": fmt, "hook": script["hook"], "caption": script["caption"],
+           "script": script, "warnings": []}
+
+    if fmt == "carousel":
+        cover = render.carousel_cover(images.frame(script["cover_scene"], "4:5",
+                                                   "leave the top third calm and empty for a title"), script["hook"])
+        cards = script["cards"]
+        n = len(cards) + 2
+        blobs = [cover] + [render.text_card(c.get("title", ""), c["text"], f"{i}/{n}")
+                           for i, c in enumerate(cards, 2)]
+        blobs.append(render.text_card("", script["final"], f"{n}/{n}", final=True))
+        job["files"] = []
+        for i, b in enumerate(blobs, 1):
+            rel = f"{base}_{i}.jpg"
+            (ROOT / rel).write_bytes(b)
+            job["files"].append(rel)
+        job["stage"] = "ready"
+        save_job(job)
+        return job
+
+    job["shots"] = []
+    for i, shot in enumerate(script["shots"]):
+        rel = f"{base}_frame{i + 1}.png"
+        (ROOT / rel).write_bytes(images.frame(shot["scene"], "9:16", FRAME_LAYOUT))
+        job["shots"].append({**shot, "frame": rel, "clip": None})
+    cover = f"{base}_cover.jpg"
+    (ROOT / cover).write_bytes(render.reel_cover((ROOT / job["shots"][0]["frame"]).read_bytes(), script["hook"]))
+    job["cover"] = cover
+    job["base"] = base
+    mode = (os.environ.get("VIDEO_MODE") or "syntx").lower()
+    if mode == "veo":
+        animate_with_veo(job)
+    elif mode == "still":
+        assemble(job)
+    else:
+        job["stage"] = "clips"
+        save_job(job)
+    return job
+
+
+def animate_with_veo(job):
+    for i, shot in enumerate(job["shots"]):
+        if shot.get("clip"):
+            continue
+        frame = (ROOT / shot["frame"]).read_bytes()
+        seconds = 8 if job["format"] == "reel_pov" else 6
+        rel = f"{job['base']}_clip{i + 1}.mp4"
+        (ROOT / rel).write_bytes(video.veo_clip(frame, shot["motion"], seconds))
+        shot["clip"] = rel
+    assemble(job)
+
+
+def assemble(job):
+    shots = [{"clip": (ROOT / s["clip"]) if s.get("clip") else None,
+              "frame": (ROOT / s["frame"]).read_bytes(),
+              "speaker": s.get("speaker", ""), "line": s.get("line", "")} for s in job["shots"]]
+    rel = f"{job['base']}_reel.mp4"
+    voices = (os.environ.get("VOICES") or "on").lower() != "off" and job["format"] != "reel_pov"
+    job["warnings"] = video.assemble(shots, job["hook"], ROOT / rel, voices=voices)
+    job["video"] = rel
+    job["stage"] = "ready"
+    save_job(job)
+
+
+# ---------- Telegram: черновики ----------
+
+def send_draft(state, job):
     cid = chat(state)
-    telegram.send_album(cid, [(ROOT / f).read_bytes() for f in post["files"]])
-    telegram.send_text(cid, post["caption"][:3900])
+    pid = job["id"]
+    title = f"{FORMAT_NAMES.get(job['format'], '')}: «{job['hook']}»"
+    if job.get("stage") == "clips":
+        n = len(job["shots"])
+        telegram.send_text(cid, f"🎬 {title}\n\nНужно оживить {n} кадр(а) в SYNTX: режим «фото в видео», "
+                                "9:16, 5–8 секунд, без звука. Под каждым кадром — промпт для копирования. "
+                                "Готовый клип пришлите ОТВЕТОМ на сообщение с кадром.")
+        job["clip_msgs"] = {}
+        for i, shot in enumerate(job["shots"]):
+            prompt = (f"{shot['motion']} Soft matte 3D vinyl toy style, keep the characters exactly as in "
+                      f"the image, static camera, no text.")
+            m = telegram.send_photo(cid, _to_jpg((ROOT / shot["frame"]).read_bytes()),
+                                    f"Кадр {i + 1} из {n}. Промпт:\n\n{prompt}")
+            job["clip_msgs"][str(m["message_id"])] = i
+        telegram.send_text(cid, "Нет времени на SYNTX?", [
+            [{"text": "⚡ Оживить через Veo (≈$1)", "callback_data": f"veo:{pid}"}],
+            [{"text": "🖼 Собрать без анимации", "callback_data": f"still:{pid}"}],
+            [{"text": "🔁 Другой сценарий", "callback_data": f"redo:{pid}"},
+             {"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}]])
+        save_job(job)
+        return
+    if job["format"] == "carousel":
+        telegram.send_album(cid, [(ROOT / f).read_bytes() for f in job["files"]], title)
+    else:
+        telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title)
+    telegram.send_text(cid, job["caption"][:3900])
+    for w in job.get("warnings") or []:
+        telegram.send_text(cid, f"ℹ️ {w}"[:3900])
     telegram.send_text(cid, "Публикуем?", [[
-        {"text": "✅ Публиковать", "callback_data": f"pub:{post['id']}"},
-        {"text": "🔁 Переделать", "callback_data": f"redo:{post['id']}"},
-    ], [{"text": "⏭ Пропустить эпизод", "callback_data": f"skip:{post['id']}"}]])
+        {"text": "✅ Публиковать", "callback_data": f"pub:{pid}"},
+        {"text": "🔁 Переделать", "callback_data": f"redo:{pid}"},
+    ], [{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}]])
 
 
-def publish(state, ep_id):
-    post = json.loads((POSTS / ep_id / "post.json").read_text(encoding="utf-8"))
-    git_sync(f"Картинки поста {ep_id}")
-    time.sleep(20)  # даём GitHub время раздать файлы по ссылке
-    link = instagram.publish_carousel([raw_url(f) for f in post["files"]], post["caption"])
-    state["done"].append(ep_id)
+def receive_clip(state, msg):
+    cid = chat(state)
+    job = load_job(state["pending"])
+    media = msg.get("video") or msg.get("animation") or msg.get("document")
+    reply = str((msg.get("reply_to_message") or {}).get("message_id", ""))
+    idx = (job.get("clip_msgs") or {}).get(reply)
+    if idx is None:
+        idx = next((i for i, s in enumerate(job["shots"]) if not s.get("clip")), None)
+    if idx is None:
+        telegram.send_text(cid, "Все клипы уже есть 👍")
+        return
+    rel = f"{job['base']}_clip{idx + 1}.mp4"
+    (ROOT / rel).write_bytes(telegram.download(media["file_id"]))
+    job["shots"][idx]["clip"] = rel
+    missing = [i + 1 for i, s in enumerate(job["shots"]) if not s.get("clip")]
+    save_job(job)
+    if missing:
+        telegram.send_text(cid, f"Кадр {idx + 1} принят ✅ Жду ещё: {', '.join(map(str, missing))}")
+        return
+    telegram.send_text(cid, "Все клипы на месте. Собираю ролик с субтитрами и голосами, пара минут…")
+    assemble(job)
+    send_draft(state, job)
+
+
+def publish(state, post_id):
+    job = load_job(post_id)
+    git_sync(f"Файлы поста {post_id}")
+    time.sleep(20)
+    if job["format"] == "carousel":
+        link = instagram.publish_carousel([media_url(f) for f in job["files"]], job["caption"])
+    else:
+        link = instagram.publish_reel(media_url(job["video"]), job["caption"], media_url(job["cover"]))
+    state["done"].append(post_id)
     state["pending"] = None
     state["awaiting_feedback"] = None
     return link
@@ -122,7 +253,7 @@ def cmd_prepare(state):
     process(state, telegram.updates(state["offset"]))  # сначала то, что накопилось (выбор эталонов и т.п.)
     _prepare(state)
     if chat(state) and state.get("pending"):
-        session(state, 60)  # ждём решения по посту час, каждое нажатие продлевает
+        session(state, 60)  # ждём решения или клипов час, каждое действие продлевает
 
 
 def _prepare(state):
@@ -130,19 +261,18 @@ def _prepare(state):
         print("Чат с ботом ещё не найден: напишите боту в Telegram любое сообщение.")
         return
     if state.get("pending"):
-        telegram.send_text(chat(state), f"Напоминаю: пост «{state['pending']}» ждёт решения 👆")
+        telegram.send_text(chat(state), "Напоминаю: предыдущий пост ждёт решения 👆")
         return
-    ep = next_episode(state)
-    if not ep:
-        telegram.send_text(chat(state), "Контент-план закончился. Допишите эпизоды в plan.yaml.")
+    item = next_post(state)
+    if not item:
+        telegram.send_text(chat(state), "Контент-план закончился. Допишите посты в plan.yaml.")
         return
-    post = build_post(ep)
-    state["pending"] = ep["id"]
-    if os.environ.get("AUTO_PUBLISH", "").lower() == "true":
-        link = publish(state, ep["id"])
-        telegram.send_text(chat(state), f"Опубликовано: {link}")
+    job = build_post(item)
+    state["pending"] = item["id"]
+    if job.get("stage") == "ready" and os.environ.get("AUTO_PUBLISH", "").lower() == "true":
+        telegram.send_text(chat(state), f"Опубликовано: {publish(state, item['id'])}")
     else:
-        send_draft(state, post)
+        send_draft(state, job)
 
 
 # ---------- эталоны ----------
@@ -242,11 +372,18 @@ def handle(state, up):
                                [[{"text": "🎲 Просто другой вариант", "callback_data": f"again:{arg}"}]])
         elif kind == "again" and state.get("pending") == arg:
             regenerate(state, arg, "")
+        elif kind in ("veo", "still") and state.get("pending") == arg:
+            job = load_job(arg)
+            if job.get("stage") != "clips":
+                return
+            telegram.send_text(cid, "Оживляю через Veo, 3–6 минут…" if kind == "veo" else "Собираю ролик из кадров…")
+            animate_with_veo(job) if kind == "veo" else assemble(job)
+            send_draft(state, job)
         elif kind == "skip" and state.get("pending") == arg:
             state["done"].append(arg)
             state["pending"] = None
             state["awaiting_feedback"] = None
-            telegram.send_text(cid, "Пропустили. Следующий эпизод — завтра (или /post прямо сейчас).")
+            telegram.send_text(cid, "Пропустили. Следующий пост — в следующий будний день (или /post прямо сейчас).")
         elif kind == "ref":
             key, _, num = arg.partition(":")
             shutil.copy(CANDIDATES / f"{key}_{num}.png", REFS / f"{key}.png")
@@ -258,6 +395,14 @@ def handle(state, up):
         elif kind == "refs":
             telegram.send_text(cid, "Рисую новые варианты, это займёт пару минут…")
             cmd_refs(state)
+        return
+
+    media = msg.get("video") or msg.get("animation") or msg.get("document")
+    if media and state.get("pending"):
+        if (POSTS / state["pending"] / "post.json").exists() and load_job(state["pending"]).get("stage") == "clips":
+            receive_clip(state, msg)
+        else:
+            telegram.send_text(cid, "Сейчас клипы не нужны — ролик уже собран 🙂")
         return
 
     body = (msg.get("text") or "").strip()
@@ -276,9 +421,9 @@ def handle(state, up):
 
 def regenerate(state, ep_id, feedback):
     telegram.send_text(chat(state), "Переделываю, это займёт 2–4 минуты…")
-    post = build_post(episode_by_id(ep_id), feedback)
+    job = build_post(post_by_id(ep_id), feedback)
     state["awaiting_feedback"] = None
-    send_draft(state, post)
+    send_draft(state, job)
 
 
 # ---------- маркер Instagram ----------

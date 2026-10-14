@@ -15,7 +15,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,4 +42,7 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_PAT: ${{ secrets.GH_PAT }}
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
+          VIDEO_MODE: ${{ vars.VIDEO_MODE }}
+          VOICES: ${{ vars.VOICES }}
+          VEO_MODEL: ${{ vars.VEO_MODEL }}
           SESSION_MINUTES: ${{ github.event_name == 'schedule' && '15' || '30' }}
