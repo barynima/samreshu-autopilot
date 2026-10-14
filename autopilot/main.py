@@ -363,6 +363,10 @@ def handle(state, up):
     if cb:
         telegram.answer(cb["id"])
         kind, _, arg = cb["data"].partition(":")
+        if kind in ("pub", "redo", "again", "skip", "veo", "still") and state.get("pending") != arg:
+            telegram.send_text(cid, "Эта кнопка от старого поста, он уже не актуален. "
+                                    "Отправьте /post — сделаю следующий пост по новому плану.")
+            return
         if kind == "pub" and state.get("pending") == arg:
             telegram.send_text(cid, "Публикую… ⏳")
             telegram.send_text(cid, f"Готово! {publish(state, arg)}")
