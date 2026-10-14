@@ -35,7 +35,7 @@
       "scene": "A huge, looming, translucent figure of an anxious adult (Nado) stands over a teenager (Sam) sitting at a desk in a simple room. Nado is gesticulating wildly. Sam is looking away, indifferent. Vertical 9:16.",
       "motion": "Nado's figure shimmers and its mouth moves as it speaks. Sam, sitting at the desk, slowly turns his head further away, ignoring Nado. Static shot, no camera movement.",
       "frame": "posts/ne-znayu/202610141226_frame1.png",
-      "clip": null
+      "clip": "posts/ne-znayu/202610141226_clip1.mp4"
     },
     {
       "speaker": "Сам",
@@ -56,10 +56,11 @@
   ],
   "cover": "posts/ne-znayu/202610141226_cover.jpg",
   "base": "posts/ne-znayu/202610141226",
-  "stage": "clips",
+  "stage": "ready",
   "clip_msgs": {
     "30": 0,
     "31": 1,
     "32": 2
-  }
+  },
+  "video": "posts/ne-znayu/202610141226_reel.mp4"
 }
