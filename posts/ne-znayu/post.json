@@ -38,7 +38,7 @@
       "scene": "Huge Nado (a big puffy grey-blue cloud creature) looms over Sam (a small vinyl toy figure in a coral hoodie with the hood up). Sam sits on the floor, looking down and away. Simple living room background. Vertical 9:16.",
       "motion": "Nado vibrates with anxious energy, gesturing emphatically. Sam remains small and still, withdrawn, not looking at Nado.",
       "frame": "posts/ne-znayu/202610141927_frame1.png",
-      "clip": null
+      "clip": "posts/ne-znayu/202610141927_clip1.mp4"
     },
     {
       "speaker": "Сам",
@@ -46,7 +46,7 @@
       "scene": "Nado leans in closer, looking frustrated. Sam looks up slightly with tired, blank eyes, but not directly at Nado. Same simple living room background. Vertical 9:16.",
       "motion": "Sam gives a tiny, almost imperceptible shrug. Nado's puffy form jiggles in frustration.",
       "frame": "posts/ne-znayu/202610141927_frame2.png",
-      "clip": null
+      "clip": "posts/ne-znayu/202610141927_clip2.mp4"
     },
     {
       "speaker": "Надо",
@@ -54,14 +54,15 @@
       "scene": "Nado has shrunk to be eye-level with Sam, looking sad and deflated. Sam looks up, surprised, and makes eye contact with Nado for the first time. Same simple living room background. Vertical 9:16.",
       "motion": "Nado slowly deflates, its form getting smaller and softer. Sam's eyes widen slightly in surprise. The scene becomes still and quiet.",
       "frame": "posts/ne-znayu/202610141927_frame3.png",
-      "clip": null
+      "clip": "posts/ne-znayu/202610141927_clip3.mp4"
     }
   ],
   "cover": "posts/ne-znayu/202610141927_cover.jpg",
-  "stage": "clips",
+  "stage": "ready",
   "clip_msgs": {
     "46": 0,
     "47": 1,
     "48": 2
-  }
+  },
+  "video": "posts/ne-znayu/202610141927_reel.mp4"
 }
