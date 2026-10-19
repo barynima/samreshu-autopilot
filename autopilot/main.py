@@ -270,7 +270,7 @@ def publish(state, post_id):
     if job["format"] == "carousel":
         link = instagram.publish_carousel([media_url(f) for f in job["files"]], job["caption"])
     else:
-        link = instagram.publish_reel(media_url(job["video"]), job["caption"], media_url(job["cover"]))
+        link = instagram.publish_reel(ROOT / job["video"], job["caption"])
     if vposter.enabled():
         try:
             if job["format"] == "carousel":
@@ -283,7 +283,20 @@ def publish(state, post_id):
     state["done"].append(post_id)
     state["pending"] = None
     state["awaiting_feedback"] = None
+    cleanup_media(post_id)
     return link
+
+
+def cleanup_media(post_id):
+    """Картинки и видео опубликованного или пропущенного поста больше не нужны: держим репозиторий лёгким
+    (jsDelivr не отдаёт файлы из репозитория больше 50 МБ, а через него идут картинки каруселей)."""
+    folder = POSTS / post_id
+    if not folder.exists():
+        return
+    for f in folder.iterdir():
+        if f.suffix.lower() in (".png", ".jpg", ".jpeg", ".mp4", ".wav"):
+            f.unlink()
+    git_sync(f"Убраны файлы поста {post_id}")
 
 
 def cmd_prepare(state):
@@ -471,6 +484,7 @@ def handle(state, up):
             state["done"].append(arg)
             state["pending"] = None
             state["awaiting_feedback"] = None
+            cleanup_media(arg)
             telegram.send_text(cid, "Пропустили. Следующий пост — в следующий будний день (или /post прямо сейчас).")
         elif kind == "ref":
             key, _, num = arg.partition(":")
