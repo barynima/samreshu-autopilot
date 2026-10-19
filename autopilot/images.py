@@ -79,3 +79,16 @@ def still_life(scene: str) -> bytes:
               "shallow depth of field, calm muted colors, slightly blurred so big text can sit on top. "
               "No people, no hands, no faces, no characters, no text, no letters, no logos.")
     return _call([{"text": prompt}], "9:16")
+
+
+LIFE_STYLE = ("Candid smartphone photo, as if taken by a mom at home: natural warm indoor light, slight grain, realistic, "
+              "an ordinary Russian apartment (not a designer interior), lived-in details. Real emotions. "
+              "Teenagers never show their face: back view, hood up, turned away or out of frame. "
+              "No text, no letters, no logos, no watermarks.")
+
+
+def life(scene: str, aspect: str = "9:16") -> bytes:
+    """Картинка «из жизни» для мам 35–50: их дом, их ребёнок, их эмоция."""
+    prompt = (f"Scene: {scene}\nVertical {aspect} composition, keep the top quarter calm (wall or ceiling) "
+              f"for a caption. {LIFE_STYLE}")
+    return _call([{"text": prompt}], aspect)

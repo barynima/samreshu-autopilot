@@ -405,6 +405,31 @@ def cmd_stories(state, only: str = ""):
                                 f"Не нравится? /stories {h['id']} — нарисую заново.")
 
 
+# ---------- проба визуала ----------
+
+PROBE = [
+    ("Мама ночью в родительском чате",
+     "Late evening in an ordinary Russian apartment kitchen. A woman about 42 sits at the table under a warm lamp, "
+     "looking at her phone with a tired, worried face; a cup of tea gone cold, school notebooks on the table."),
+    ("Закрытая дверь и «не знаю»",
+     "View from a dim hallway into a teenager's room through a half-open door: a teenager in a grey hoodie with the hood "
+     "up sits on an unmade bed wearing big headphones, back to the camera, face not visible, lit by a phone screen; "
+     "a school backpack thrown on the floor."),
+    ("Разговор без ссоры",
+     "An ordinary Russian kitchen at dinner time. A mother about 45 and a teenager in a hoodie sit at the table; the "
+     "teenager is seen from behind over the shoulder, face not visible. The mother leans in, smiling gently, listening."),
+]
+
+
+def cmd_probe(state):
+    cid = chat(state)
+    pics = []
+    for title, scene in PROBE:
+        img = images.life(scene)
+        pics.append(render.reel_cover(img, title))
+    telegram.send_album(cid, pics, "Проба визуала «из жизни»: 3 кадра для мам 35–50. Что цепляет, что нет?")
+
+
 # ---------- Telegram ----------
 
 def process(state, ups):
@@ -529,6 +554,9 @@ def handle(state, up):
             (ROOT / job["cover"]).write_bytes(render.reel_cover(first, job["hook"]))
             assemble(job)
             send_draft(state, job)
+    elif body.startswith("/probe"):
+        telegram.send_text(cid, "Рисую 3 пробных кадра в стиле «из жизни», пара минут…")
+        cmd_probe(state)
     elif body.startswith("/stories"):
         only = body[len("/stories"):].strip()
         telegram.send_text(cid, "Рисую сторис для «Актуального», это займёт 5–10 минут…\n"
