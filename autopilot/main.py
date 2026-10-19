@@ -139,7 +139,8 @@ def build_post(item: dict, feedback: str = "") -> dict:
     if fmt == "reel_chat":
         job["dialog"] = script["dialog"]
         job["slides"] = []
-        for i, sl in enumerate([{"text": "", "scene": script["first_scene"]}] + script["slides"]):
+        first = {"text": "", "scene": script["first_scene"], "motion": script.get("first_motion", "")}
+        for i, sl in enumerate([first] + script["slides"]):
             rel = f"{base}_slide{i + 1}.png"
             (ROOT / rel).write_bytes(images.life(sl["scene"], "9:16"))  # разные семьи: больше мам узнают себя
             job["slides"].append({**sl, "image": rel})
@@ -207,6 +208,29 @@ def _pictures(job) -> list:
     return pics
 
 
+def animate_chat(job) -> None:
+    """Оживляет одобренные кадры Reels-переписки через Veo; не получилось — кадр остаётся картинкой."""
+    if (os.environ.get("CHAT_VIDEO") or "veo").lower() != "veo":
+        return
+    failed = 0
+    for i, sl in enumerate(job["slides"]):
+        if sl.get("clip"):
+            continue
+        motion = sl.get("motion") or "Subtle natural movement, the woman smiles."
+        try:
+            data = video.veo_clip((ROOT / sl["image"]).read_bytes(), motion, 6 if i == 0 else 4, style=video.LIFE_VIDEO)
+            rel = f"{job['base']}_clip{i + 1}.mp4"
+            (ROOT / rel).write_bytes(data)
+            sl["clip"] = rel
+        except Exception as e:
+            failed += 1
+            print(f"Veo, кадр {i + 1}: {e}")
+    assemble(job)
+    if failed:
+        job["warnings"] = (job.get("warnings") or []) + [f"Veo не оживил {failed} кадр(а) — они остались картинками."]
+        save_job(job)
+
+
 def build_checked(item: dict, feedback: str = "") -> dict:
     """Собирает пост и прогоняет через строгого критика; ниже MIN_SCORE — переделывает (до MAX_TRIES раз)."""
     best = None
@@ -226,11 +250,15 @@ def build_checked(item: dict, feedback: str = "") -> dict:
         if not best or review["score"] > best["review"]["score"]:
             best = job
         if review["score"] >= MIN_SCORE:
+            if job["format"] == "reel_chat":
+                animate_chat(job)
             return job
         fixes = "; ".join(review.get("fixes") or [])
         notes = (feedback + "\n" if feedback else "") + f"Строгий редактор поставил {review['score']}/10: {review.get('verdict')} Исправь: {fixes}"
     if best is not job:  # вернуть лучший вариант
         save_job(best)
+    if best["format"] == "reel_chat":
+        animate_chat(best)
     return best
 
 
@@ -249,7 +277,8 @@ def animate_with_veo(job):
 def assemble(job):
     music = (os.environ.get("MUSIC") or "on").lower() != "off"
     if job["format"] == "reel_chat":
-        slides = [{"image": (ROOT / sl["image"]).read_bytes(), "text": sl["text"]} for sl in job["slides"]]
+        slides = [{"image": (ROOT / sl["image"]).read_bytes(), "text": sl["text"],
+                   "clip": (ROOT / sl["clip"]) if sl.get("clip") else None} for sl in job["slides"]]
         slides[0]["dialog"] = job["dialog"]
         rel = f"{job['base']}_reel.mp4"
         job["warnings"] = video.assemble_chat(slides, job.get("end", ""), ROOT / rel, with_music=music)

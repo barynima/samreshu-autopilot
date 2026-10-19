@@ -44,13 +44,19 @@ VEO_MODELS = ["veo-3.1-lite-generate-001", "veo-3.1-lite-generate-preview",
               "veo-3.1-fast-generate-001", "veo-3.1-fast-generate-preview"]
 
 
-def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6) -> bytes:
+LIFE_VIDEO = ("Realistic candid home video shot on a phone, natural subtle movement, keep the people, faces, clothes "
+              "and room exactly as in the image, faces that are hidden stay hidden, static camera, bright warm daylight, "
+              "no text, no subtitles.")
+TOY_VIDEO = ("Soft matte 3D vinyl toy style, keep both characters exactly as in the image, static camera, no text, "
+             "no subtitles.")
+
+
+def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6, style: str = TOY_VIDEO) -> bytes:
     creds = google._credentials()
     project = os.environ.get("GOOGLE_PROJECT_ID") or creds.project_id
     loc = google.LOCATION
     models = [os.environ["VEO_MODEL"]] if os.environ.get("VEO_MODEL") else VEO_MODELS
-    prompt = (f"{motion} Soft matte 3D vinyl toy style, keep both characters exactly as in the image, "
-              "static camera, no text, no subtitles.")
+    prompt = f"{motion} {style}"
     body = {
         "instances": [{"prompt": prompt,
                        "image": {"bytesBase64Encoded": base64.b64encode(image_bytes).decode(),
@@ -273,10 +279,15 @@ def assemble_slides(slides: list, end_text: str, out_path: Path, with_music: boo
         return _finish(parts, tmp, out_path, with_music)
 
 
-def _still_multi(img_png: Path, overlays: list, dur: float, out: Path, zoom: bool = True):
-    """Картинка + несколько прозрачных слоёв, каждый в своём окне времени [(png, start, end)]."""
+def _still_multi(img_png: Path, overlays: list, dur: float, out: Path, zoom: bool = True, clip: Path = None):
+    """Картинка (или видеоклип) + несколько прозрачных слоёв, каждый в своём окне времени [(png, start, end)]."""
     n = int(dur * FPS)
-    if zoom:
+    if clip:
+        fc = (f"[0:v]scale={render.RW}:{render.RH}:force_original_aspect_ratio=increase,crop={render.RW}:{render.RH},"
+              f"fps={FPS},setsar=1,eq=saturation=1.12:brightness=0.03,"
+              f"tpad=stop_mode=clone:stop_duration={dur:.2f},trim=duration={dur:.2f},setpts=PTS-STARTPTS[b0];")
+        img_png = clip
+    elif zoom:
         fc = (f"[0:v]scale={render.RW * 2}:{render.RH * 2},"
               f"zoompan=z='1+0.05*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:"
               f"s={render.RW}x{render.RH}:fps={FPS},setsar=1[b0];")
@@ -319,7 +330,7 @@ def assemble_chat(slides: list, end_text: str, out_path: Path, with_music: bool 
                 b.write_bytes(render.chat_overlay([msg]))
                 layers = [(a, 0.0, 0.7), (b, 0.7, dur + 1)]
             part = tmp / f"part{i}.mp4"
-            _still_multi(img, layers, dur, part)
+            _still_multi(img, layers, dur, part, clip=sl.get("clip"))
             parts.append(part)
         if end_text:
             end = tmp / "end.mp4"

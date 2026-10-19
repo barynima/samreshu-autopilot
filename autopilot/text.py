@@ -36,6 +36,10 @@ LIFE_HINT = ("photo prompt in ENGLISH for a candid smartphone photo from the mom
              "(teen in headphones at a sunny desk, phone at breakfast, mom laughing at a teen's answer, talk in a bright kitchen); "
              "daytime, bright, smiling or curious faces; no text in the picture")
 
+LIFE_MOTION = ("video prompt in ENGLISH, 1 sentence: natural everyday movement for ~4 seconds in this photo (someone laughs, "
+               "types, turns a page, shrugs, steam rises from a mug); NEVER use words teen, teenager, kid, child, boy, girl, "
+               "minor — say 'a person in a green hoodie', 'the woman'; faces that are hidden stay hidden")
+
 SCHEMAS = {
     "reel_scene": f"""Reels «Сценка» 12–20 секунд: 3 коротких плана спора Сама и Надо.
 {{
@@ -78,8 +82,9 @@ SCHEMAS = {
     {{"who": "sam", "text": "ответ ребёнка из словаря мам («не знаю», «мам, потом», «отстань», «я подумаю»), до 6 слов; можно *выделить* слово"}}
   ],
   "first_scene": "{{LIFE_HINT}}",
+  "first_motion": "{{LIFE_MOTION}}",
   "slides": [  // 3–4 сообщения от «Сам решу», каждое — одна мысль, до 12 слов, 1–2 главных слова в *звёздочках*
-    {{"text": "сообщение", "scene": "{{LIFE_HINT}}; a DIFFERENT family and apartment than the other slides"}}
+    {{"text": "сообщение", "scene": "{{LIFE_HINT}}; a DIFFERENT family and apartment than the other slides", "motion": "{{LIFE_MOTION}}"}}
   ],
   "end": "{END_HINT}",
   "caption": "подпись"
@@ -91,7 +96,7 @@ SCHEMAS = {
 Мама в диалоге не использует глаголы с родом («придумал», «решила») — только нейтральные формы
 («Ну что, есть идеи, кем быть?», «Как дела с выбором?»).
 Кадры — РАЗНЫЕ семьи, чтобы себя узнало больше мам: чередуй девочек и мальчиков, разные квартиры и комнаты
-(кухня, детская, прихожая, гостиная, машина у школы), разные мамы; иногда в кадре папа.""".replace("{LIFE_HINT}", LIFE_HINT),
+(кухня, детская, прихожая, гостиная, машина у школы), разные мамы; иногда в кадре папа.""".replace("{LIFE_HINT}", LIFE_HINT).replace("{LIFE_MOTION}", LIFE_MOTION),
     "reel_text": f"""Reels-нарезка 12–18 секунд: Сам и Надо в выразительных позах + крупная фраза на каждом кадре.
 {{
   "hook": "первая фраза на экране, 4–9 слов: мама узнаёт свою ситуацию за секунду",
