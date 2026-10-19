@@ -60,7 +60,7 @@ def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6, style: str = TOY
     body = {
         "instances": [{"prompt": prompt,
                        "image": {"bytesBase64Encoded": base64.b64encode(image_bytes).decode(),
-                                 "mimeType": "image/png"}}],
+                                 "mimeType": "image/png" if image_bytes[:4] == b"\x89PNG" else "image/jpeg"}}],
         "parameters": {"aspectRatio": "9:16", "durationSeconds": seconds, "sampleCount": 1,
                        "resolution": "720p", "generateAudio": False, "personGeneration": "allow_all"},
     }

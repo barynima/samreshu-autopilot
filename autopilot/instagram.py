@@ -61,22 +61,15 @@ def refresh_token() -> str:
     return data["access_token"]
 
 
-def publish_reel(video_path, caption: str, cover_url: str = "", thumb_offset_ms: int = 1000) -> str:
-    """Ролик загружаем в Instagram напрямую (resumable upload), без публичной ссылки на файл."""
-    from pathlib import Path
-    data = Path(video_path).read_bytes()
+def publish_reel(video_url: str, caption: str, cover_url: str = "", thumb_offset_ms: int = 1000) -> str:
+    """Instagram API с входом через Instagram принимает видео только по публичной ссылке."""
     user_id = _get("me", fields="user_id")["user_id"]
-    params = dict(media_type="REELS", upload_type="resumable", caption=caption, share_to_feed="true")
+    params = dict(media_type="REELS", video_url=video_url, caption=caption, share_to_feed="true")
     if cover_url:
         params["cover_url"] = cover_url
     else:
         params["thumb_offset"] = str(thumb_offset_ms)
     container = _post(f"{user_id}/media", **params)["id"]
-    version = API.rsplit("/", 1)[-1]
-    r = requests.post(f"https://rupload.facebook.com/ig-api-upload/{version}/{container}", data=data, timeout=600,
-                      headers={"Authorization": f"OAuth {_token()}", "offset": "0", "file_size": str(len(data))})
-    if r.status_code != 200 or not r.json().get("success", True):
-        raise RuntimeError(f"Instagram: не удалось загрузить видео: HTTP {r.status_code} {r.text[:300]}")
     for _ in range(40):  # видео обрабатывается дольше картинок — ждём до 10 минут
         info = _get(container, fields="status_code,status")
         if info.get("status_code") == "FINISHED":

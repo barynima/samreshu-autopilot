@@ -283,8 +283,10 @@ def critique(script: dict, pictures: list) -> dict:
         mime = "image/png" if pic[:4] == b"\x89PNG" else "image/jpeg"
         parts.append({"inlineData": {"mimeType": mime, "data": base64.b64encode(pic).decode()}})
     model = os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
+    from datetime import date
+    today = f"Сегодня {date.today():%d.%m.%Y}: нынешние 9-классники сдают ОГЭ в 2027 году, 8-классники — в 2028. "
     data = google.generate(model, {
-        "systemInstruction": {"parts": [{"text": CRITIC.format(rules=RULES)}]},
+        "systemInstruction": {"parts": [{"text": today + CRITIC.format(rules=RULES)}]},
         "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
     }, timeout=240)

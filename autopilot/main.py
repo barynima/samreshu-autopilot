@@ -17,7 +17,7 @@ from pathlib import Path
 
 import yaml
 
-from . import images, instagram, render, telegram, text, video, vposter
+from . import images, instagram, render, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -58,6 +58,15 @@ def git_sync(message: str):
             return
         run("pull", "--rebase")
     raise RuntimeError("Не удалось сохранить изменения в репозиторий")
+
+
+def public_url(rel_path: str) -> str:
+    """Ссылка для Instagram: через Google Cloud Storage, при ошибке — через jsDelivr."""
+    try:
+        return storage.public_url(ROOT / rel_path, rel_path)
+    except Exception as e:
+        print(f"Cloud Storage недоступен, беру jsDelivr: {e}")
+        return media_url(rel_path)
 
 
 def media_url(rel_path: str) -> str:
@@ -115,6 +124,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
         script["hook"] = " — ".join(m["text"] for m in script["dialog"]).replace("*", "")
     job = {"id": item["id"], "format": fmt, "hook": script["hook"], "caption": script["caption"],
            "script": script, "warnings": []}
+    job["base"] = base
 
     if fmt == "carousel":
         cover = render.chat_cover(images.life(script["cover_scene"], "4:5"),
@@ -141,8 +151,8 @@ def build_post(item: dict, feedback: str = "") -> dict:
         job["slides"] = []
         first = {"text": "", "scene": script["first_scene"], "motion": script.get("first_motion", "")}
         for i, sl in enumerate([first] + script["slides"]):
-            rel = f"{base}_slide{i + 1}.png"
-            (ROOT / rel).write_bytes(images.life(sl["scene"], "9:16"))  # разные семьи: больше мам узнают себя
+            rel = f"{base}_slide{i + 1}.jpg"
+            (ROOT / rel).write_bytes(_to_jpg(images.life(sl["scene"], "9:16")))  # разные семьи: больше мам узнают себя
             job["slides"].append({**sl, "image": rel})
         cover = f"{base}_cover.jpg"
         (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"]))
@@ -231,6 +241,16 @@ def animate_chat(job) -> None:
         save_job(job)
 
 
+def _drop_files(job):
+    """Удаляет картинки и видео отвергнутого варианта, чтобы не раздувать репозиторий."""
+    folder = POSTS / job["id"]
+    stamp = (job.get("base") or "").rsplit("/", 1)[-1]
+    if not stamp:
+        return
+    for f in folder.glob(f"{stamp}_*"):
+        f.unlink()
+
+
 def build_checked(item: dict, feedback: str = "") -> dict:
     """Собирает пост и прогоняет через строгого критика; ниже MIN_SCORE — переделывает (до MAX_TRIES раз)."""
     best = None
@@ -248,7 +268,11 @@ def build_checked(item: dict, feedback: str = "") -> dict:
         save_job(job)
         print(f"Критик: {review['score']}/10 — {review.get('verdict')}")
         if not best or review["score"] > best["review"]["score"]:
+            if best:
+                _drop_files(best)
             best = job
+        else:
+            _drop_files(job)
         if review["score"] >= MIN_SCORE:
             if job["format"] == "reel_chat":
                 animate_chat(job)
@@ -380,9 +404,10 @@ def publish(state, post_id):
     git_sync(f"Файлы поста {post_id}")
     time.sleep(20)
     if job["format"] == "carousel":
-        link = instagram.publish_carousel([media_url(f) for f in job["files"]], job["caption"])
+        link = instagram.publish_carousel([public_url(f) for f in job["files"]], job["caption"])
     else:
-        link = instagram.publish_reel(ROOT / job["video"], job["caption"])
+        cover = public_url(job["cover"]) if job.get("cover") else ""
+        link = instagram.publish_reel(public_url(job["video"]), job["caption"], cover)
     if vposter.enabled():
         try:
             if job["format"] == "carousel":
