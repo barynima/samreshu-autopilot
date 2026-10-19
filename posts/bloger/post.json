@@ -1,83 +1,96 @@
 {
   "id": "bloger",
   "format": "reel_chat",
-  "hook": "Ну что, придумал, кем хочешь быть? — Хочу стать блогером.",
-  "caption": "«Хочу быть блогером». Если от этих слов у вас ёкнуло сердце — вы не одна.\n\nСразу в голове — кривляния на камеру, потерянные годы и «кем же ты работать будешь?». Это нормальная реакция, так думают многие.\n\nНо прежде чем спорить, попробуйте один ход. Спросите не «зачем?», а «что именно тебе в этом нравится?». Монтировать ролики? Придумывать истории? Делать красивые кадры?\n\nЗа этим «блогером» часто прячется интерес к режиссуре, маркетингу или сторителлингу. Ребёнок, может, уже нашёл своё, просто назвал это непривычным для вас словом.\n\nА какие «страшные» профессии называл ваш ребёнок?\n\nПодпишитесь, чтобы не бояться таких разговоров, а видеть в них возможности.\n\n#самрешу #профессиибудущего #9класс #огэ2026 #выборпрофессии",
+  "hook": "Ну что, есть мысли про будущее? — Буду блогером.",
+  "caption": "«Буду блогером». Услышали и сердце ёкнуло? Знакомо.\n\nЭто нормально. Вы боитесь не слова «блогер», а неизвестности за ним. Кажется, что это несерьёзно, нестабильно и вообще не профессия.\n\nНо попробуйте сегодня не спорить, а с любопытством спросить: «А что тебе в этом нравится больше всего? Придумывать истории? Снимать? Монтировать?» За желанием «быть в кадре» часто стоит интерес к режиссуре, созданию видео, умению рассказывать истории. Это навыки, которые пригодятся в десятках востребованных профессий — от маркетинга до кино.\n\nУслышать «блогер» — не страшно. Страшно — отмахнуться и не заметить настоящий талант.\n\nА ваш ребёнок о какой «странной» профессии говорил?\n\nПодпишитесь, чтобы не пропускать разборы и других профессий, которых зря боятся родители.\n#самрешу #профориентация #9класс #огэ2027 #выборпрофессии #хочустатьблогером",
   "script": {
     "dialog": [
       {
         "who": "mom",
-        "text": "Ну что, придумал, кем хочешь быть?"
+        "text": "Ну что, есть мысли про будущее?"
       },
       {
         "who": "sam",
-        "text": "Хочу стать *блогером*."
+        "text": "Буду *блогером*."
       }
     ],
-    "first_scene": "Candid smartphone photo from the mom's point of view. A modern kitchen in a middle-class Russian apartment. The mom (early 40s, well-kept) looks concerned at her 14-15 year old child who is engrossed in a smartphone at the dinner table. The teen, wearing an oversized hoodie, is seen from the back, face not visible.",
+    "first_scene": "In a bright, modern teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) stands confidently on a wooden desk near a sunny window. Next to Sam floats Nado (a big puffy grey-blue cloud creature), looking anxious.",
+    "first_motion": "Nado puffs up to twice its size and wobbles in horror, while Sam stands still, looking forward with confident eyes.",
     "slides": [
       {
-        "text": "Услышать такое — *страшно*. Сразу в голове — кривляния на камеру.",
-        "scene": "A teen's messy but modern bedroom. A 14-15 year old girl with dyed hair, wearing wide jeans and a hoodie, sits at a desk with two monitors, her back to the camera. The room is lit by the screens and an RGB light strip."
+        "text": "«Блогер» — это не диагноз. Это *интерес*.",
+        "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) now sits at a miniature laptop on the desk. Nado (a big puffy grey-blue cloud creature) peeks cautiously over Sam's shoulder.",
+        "motion": "Sam's tiny vinyl hands move over the miniature keyboard as a video editing timeline scrolls on the tiny screen. Nado deflates slightly."
       },
       {
-        "text": "Но что *на самом деле* нравится ребёнку в этом деле?",
-        "scene": "Close-up shot of a teenager's hands editing a video on a tablet with a stylus. The background is a slightly blurred modern living room. We only see the hands and the tablet screen."
+        "text": "Посмотрите, что за этим стоит: *монтаж*, сценарии, работа со светом.",
+        "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) adjusts a tiny LED light on the desk. Nado (a big puffy grey-blue cloud creature), now smaller, floats closer to inspect the setup.",
+        "motion": "The tiny LED light turns on, casting a bright beam. Nado shrinks again, looking intrigued."
       },
       {
-        "text": "Может, это талант к режиссуре, сторителлингу или *продвижению*.",
-        "scene": "A father (mid-40s) and his teenage son are in a living room. The son is showing something on a laptop screen to his dad. The son is seen from the side, his face partially obscured by the laptop. The room is cozy and modern."
-      },
-      {
-        "text": "Спросите, что нравится *больше всего*: снимать? Монтировать? Придумывать?",
-        "scene": "A mom and her teenage daughter are sitting on a couch, talking. The mom is listening intently. The teen is gesturing, explaining something. We see the teen from behind her shoulder, face not visible. Warm, late afternoon light."
+        "text": "Это навыки для десятка *востребованных* профессий.",
+        "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) holds up a tiny storyboard with little drawings. Nado (a big puffy grey-blue cloud creature), now calm and compact, looks at the storyboard.",
+        "motion": "Sam taps one of the panels on the storyboard. Nado gives a slight, slow nod."
       }
     ],
-    "end": "За «хочу быть блогером» может стоять настоящая профессия.\nПомогите её разглядеть.",
-    "caption": "«Хочу быть блогером». Если от этих слов у вас ёкнуло сердце — вы не одна.\n\nСразу в голове — кривляния на камеру, потерянные годы и «кем же ты работать будешь?». Это нормальная реакция, так думают многие.\n\nНо прежде чем спорить, попробуйте один ход. Спросите не «зачем?», а «что именно тебе в этом нравится?». Монтировать ролики? Придумывать истории? Делать красивые кадры?\n\nЗа этим «блогером» часто прячется интерес к режиссуре, маркетингу или сторителлингу. Ребёнок, может, уже нашёл своё, просто назвал это непривычным для вас словом.\n\nА какие «страшные» профессии называл ваш ребёнок?\n\nПодпишитесь, чтобы не бояться таких разговоров, а видеть в них возможности.\n\n#самрешу #профессиибудущего #9класс #огэ2026 #выборпрофессии",
-    "hook": "Ну что, придумал, кем хочешь быть? — Хочу стать блогером."
+    "end": "За «блогером» может стоять будущий режиссёр. \nПодпишитесь, чтобы не бояться выбора.",
+    "caption": "«Буду блогером». Услышали и сердце ёкнуло? Знакомо.\n\nЭто нормально. Вы боитесь не слова «блогер», а неизвестности за ним. Кажется, что это несерьёзно, нестабильно и вообще не профессия.\n\nНо попробуйте сегодня не спорить, а с любопытством спросить: «А что тебе в этом нравится больше всего? Придумывать истории? Снимать? Монтировать?» За желанием «быть в кадре» часто стоит интерес к режиссуре, созданию видео, умению рассказывать истории. Это навыки, которые пригодятся в десятках востребованных профессий — от маркетинга до кино.\n\nУслышать «блогер» — не страшно. Страшно — отмахнуться и не заметить настоящий талант.\n\nА ваш ребёнок о какой «странной» профессии говорил?\n\nПодпишитесь, чтобы не пропускать разборы и других профессий, которых зря боятся родители.\n#самрешу #профориентация #9класс #огэ2027 #выборпрофессии #хочустатьблогером",
+    "hook": "Ну что, есть мысли про будущее? — Буду блогером."
   },
   "warnings": [],
-  "end": "За «хочу быть блогером» может стоять настоящая профессия.\nПомогите её разглядеть.",
-  "base": "posts/bloger/202610191725",
+  "end": "За «блогером» может стоять будущий режиссёр. \nПодпишитесь, чтобы не бояться выбора.",
+  "base": "posts/bloger/202610191852",
   "dialog": [
     {
       "who": "mom",
-      "text": "Ну что, придумал, кем хочешь быть?"
+      "text": "Ну что, есть мысли про будущее?"
     },
     {
       "who": "sam",
-      "text": "Хочу стать *блогером*."
+      "text": "Буду *блогером*."
     }
   ],
   "slides": [
     {
       "text": "",
-      "scene": "Candid smartphone photo from the mom's point of view. A modern kitchen in a middle-class Russian apartment. The mom (early 40s, well-kept) looks concerned at her 14-15 year old child who is engrossed in a smartphone at the dinner table. The teen, wearing an oversized hoodie, is seen from the back, face not visible.",
-      "image": "posts/bloger/202610191725_slide1.png"
+      "scene": "In a bright, modern teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) stands confidently on a wooden desk near a sunny window. Next to Sam floats Nado (a big puffy grey-blue cloud creature), looking anxious.",
+      "motion": "Nado puffs up to twice its size and wobbles in horror, while Sam stands still, looking forward with confident eyes.",
+      "image": "posts/bloger/202610191852_slide1.png",
+      "clip": "posts/bloger/202610191852_clip1.mp4"
     },
     {
-      "text": "Услышать такое — *страшно*. Сразу в голове — кривляния на камеру.",
-      "scene": "A teen's messy but modern bedroom. A 14-15 year old girl with dyed hair, wearing wide jeans and a hoodie, sits at a desk with two monitors, her back to the camera. The room is lit by the screens and an RGB light strip.",
-      "image": "posts/bloger/202610191725_slide2.png"
+      "text": "«Блогер» — это не диагноз. Это *интерес*.",
+      "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) now sits at a miniature laptop on the desk. Nado (a big puffy grey-blue cloud creature) peeks cautiously over Sam's shoulder.",
+      "motion": "Sam's tiny vinyl hands move over the miniature keyboard as a video editing timeline scrolls on the tiny screen. Nado deflates slightly.",
+      "image": "posts/bloger/202610191852_slide2.png",
+      "clip": "posts/bloger/202610191852_clip2.mp4"
     },
     {
-      "text": "Но что *на самом деле* нравится ребёнку в этом деле?",
-      "scene": "Close-up shot of a teenager's hands editing a video on a tablet with a stylus. The background is a slightly blurred modern living room. We only see the hands and the tablet screen.",
-      "image": "posts/bloger/202610191725_slide3.png"
+      "text": "Посмотрите, что за этим стоит: *монтаж*, сценарии, работа со светом.",
+      "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) adjusts a tiny LED light on the desk. Nado (a big puffy grey-blue cloud creature), now smaller, floats closer to inspect the setup.",
+      "motion": "The tiny LED light turns on, casting a bright beam. Nado shrinks again, looking intrigued.",
+      "image": "posts/bloger/202610191852_slide3.png",
+      "clip": "posts/bloger/202610191852_clip3.mp4"
     },
     {
-      "text": "Может, это талант к режиссуре, сторителлингу или *продвижению*.",
-      "scene": "A father (mid-40s) and his teenage son are in a living room. The son is showing something on a laptop screen to his dad. The son is seen from the side, his face partially obscured by the laptop. The room is cozy and modern.",
-      "image": "posts/bloger/202610191725_slide4.png"
-    },
-    {
-      "text": "Спросите, что нравится *больше всего*: снимать? Монтировать? Придумывать?",
-      "scene": "A mom and her teenage daughter are sitting on a couch, talking. The mom is listening intently. The teen is gesturing, explaining something. We see the teen from behind her shoulder, face not visible. Warm, late afternoon light.",
-      "image": "posts/bloger/202610191725_slide5.png"
+      "text": "Это навыки для десятка *востребованных* профессий.",
+      "scene": "In the same bright teenager's room, Sam (a small vinyl toy figure in a coral hoodie with the hood up) holds up a tiny storyboard with little drawings. Nado (a big puffy grey-blue cloud creature), now calm and compact, looks at the storyboard.",
+      "motion": "Sam taps one of the panels on the storyboard. Nado gives a slight, slow nod.",
+      "image": "posts/bloger/202610191852_slide4.png",
+      "clip": "posts/bloger/202610191852_clip4.mp4"
     }
   ],
-  "cover": "posts/bloger/202610191725_cover.jpg",
-  "video": "posts/bloger/202610191725_reel.mp4",
-  "stage": "ready"
+  "cover": "posts/bloger/202610191852_cover.jpg",
+  "video": "posts/bloger/202610191852_reel.mp4",
+  "stage": "ready",
+  "review": {
+    "score": 9,
+    "verdict": "Отличная работа, почти эталон. Есть одна досадная ошибка в хештеге.",
+    "fixes": [
+      "Заменить хештег #огэ2027 на #огэ2025 и #огэ2026. Наша аудитория — мамы 8-9 классов, они сдают ОГЭ раньше.",
+      "На второй картинке постер на стене «ЗАЖГИ КТО» отвлекает. Заменить на что-то более нейтральное или связанное с темой творчества, чтобы не было лишнего визуального шума.",
+      "В подписи последний призыв «Подпишитесь, чтобы не пропускать разборы...» можно усилить, связав с главной болью мамы. Например: «Подпишитесь, чтобы говорить с подростком на одном языке и не бояться его выбора»."
+    ]
+  },
+  "attempt": 1
 }
