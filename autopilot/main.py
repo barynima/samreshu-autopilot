@@ -139,12 +139,9 @@ def build_post(item: dict, feedback: str = "") -> dict:
     if fmt == "reel_chat":
         job["dialog"] = script["dialog"]
         job["slides"] = []
-        first = None
         for i, sl in enumerate([{"text": "", "scene": script["first_scene"]}] + script["slides"]):
             rel = f"{base}_slide{i + 1}.png"
-            data = images.life(sl["scene"], "9:16", prev=first)
-            first = first or data
-            (ROOT / rel).write_bytes(data)
+            (ROOT / rel).write_bytes(images.life(sl["scene"], "9:16"))  # разные семьи: больше мам узнают себя
             job["slides"].append({**sl, "image": rel})
         cover = f"{base}_cover.jpg"
         (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"]))

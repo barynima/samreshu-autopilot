@@ -87,7 +87,7 @@ LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: natural warm ligh
               "light countertop, neat modern furniture (IKEA/Hoff style), indoor plants, tidy but lived-in. "
               "NOT shabby, NOT old Soviet: no peeling wallpaper, no carpets on walls, no old furniture, no clutter or dirt; "
               "NOT luxury either. People look well-groomed in casual modern clothes; the mom is an attractive "
-              "well-kept woman in her early 40s. Teenagers (14–15) dress like real Russian teens in 2026: oversized "
+              "well-kept woman in her early 40s. Teenagers (14–15, girls or boys as the scene says) dress like real Russian teens in 2026: oversized "
               "hoodie or zip-hoodie in a trendy color (sage, beige, black, washed lilac) or with a small graphic, baggy "
               "wide-leg jeans or cargo pants, chunky sneakers, wireless over-ear headphones or earbuds, modern smartphone; "
               "styled hair (fluffy, curtain bangs), hood usually down. Teenagers never show their face: back view, "
