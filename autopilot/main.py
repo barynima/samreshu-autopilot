@@ -135,9 +135,12 @@ def build_post(item: dict, feedback: str = "") -> dict:
 
     if fmt == "reel_text":
         job["slides"] = []
+        first = None
         for i, sl in enumerate([{"text": script["hook"], "scene": script["first_scene"]}] + script["slides"]):
             rel = f"{base}_slide{i + 1}.png"
-            (ROOT / rel).write_bytes(images.still_life(sl["scene"]))
+            data = images.frame(sl["scene"], "9:16", FRAME_LAYOUT, prev=first)
+            first = first or data
+            (ROOT / rel).write_bytes(data)
             job["slides"].append({**sl, "image": rel})
         cover = f"{base}_cover.jpg"
         (ROOT / cover).write_bytes(render.reel_cover((ROOT / job["slides"][0]["image"]).read_bytes(), script["hook"]))

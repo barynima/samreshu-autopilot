@@ -1,5 +1,6 @@
 """Накладывает реплику на кадр: Instagram-формат 1080×1350, JPEG."""
 import io
+import re
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -307,14 +308,28 @@ def empty_overlay() -> bytes:
 
 
 def slide_overlay(text: str, big: bool = False) -> bytes:
-    """Крупная надпись в плашке чуть выше центра кадра — прозрачный PNG."""
+    """Крупная надпись вверху кадра (над персонажами). Слова в *звёздочках* — коралловым."""
     img = Image.new("RGBA", (RW, RH), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    font, lines, size = _fit_paragraphs(draw, text, RW - 240, 84 if big else 72, 46, 6)
-    h = len(lines) * int(size * 1.28) + 110
-    top = max(300, 760 - h // 2)
-    _box(draw, (70, top, RW - 70, top + h), (255, 255, 255, 242))
-    _draw_centered(draw, lines, font, size, top + 55, INK)
+    hot = set()
+    for m in re.findall(r"\*([^*]+)\*", text):
+        hot.update(w.strip(".,!?:;«»—") .lower() for w in m.split())
+    plain = text.replace("*", "")
+    font, lines, size = _fit_paragraphs(draw, plain, RW - 200, 92 if big else 82, 50, 5)
+    lh = int(size * 1.22)
+    h = len(lines) * lh + 90
+    top = 230  # ниже шапки Reels, на пустой стене над персонажами
+    _box(draw, (50, top, RW - 50, top + h), (255, 255, 255, 245), radius=48)
+    y = top + 45
+    space = draw.textlength(" ", font=font)
+    for line in lines:
+        words = line.split()
+        x = (RW - draw.textlength(line, font=font)) / 2
+        for w in words:
+            color = CORAL if w.strip(".,!?:;«»—").lower() in hot else INK
+            draw.text((x, y), w, font=font, fill=color)
+            x += draw.textlength(w, font=font) + space
+        y += lh
     out = io.BytesIO()
     img.save(out, "PNG")
     return out.getvalue()

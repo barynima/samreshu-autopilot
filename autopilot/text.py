@@ -63,18 +63,20 @@ SCHEMAS = {
   "end": "{END_HINT}",
   "caption": "подпись"
 }}""",
-    "reel_text": f"""Текстовый Reels 12–18 секунд: крупные фразы поверх спокойных домашних кадров БЕЗ людей и персонажей.
+    "reel_text": f"""Reels-нарезка 12–18 секунд: Сам и Надо в выразительных позах + крупная фраза на каждом кадре.
 {{
   "hook": "первая фраза на экране, 4–9 слов: мама узнаёт свою ситуацию за секунду",
-  "slides": [  // 3–4 слайда ПОСЛЕ крючка, каждый — одна мысль, до 14 слов
-    {{"text": "фраза по-русски", "scene": "photo prompt in ENGLISH: one everyday home detail without people, e.g. a closed bedroom door with light under it, headphones on a messy desk, a phone face down on a kitchen table, a school backpack in a hallway"}}
+  "first_scene": "image prompt in ENGLISH for the hook slide: Sam and/or Nado acting out the hook with a strong, readable emotion (surprise, panic, pride, doubt), one bold telling prop if needed; same room for all slides; vertical 9:16",
+  "slides": [  // 3–4 слайда ПОСЛЕ крючка, каждый — одна мысль, до 12 слов
+    {{"text": "фраза по-русски; 1–2 главных слова выдели *звёздочками*", "scene": "image prompt in ENGLISH: Sam and/or Nado acting out THIS line — a visual joke or metaphor, exaggerated pose and emotion, same room as the first slide"}}
   ],
-  "first_scene": "photo prompt in ENGLISH for the hook slide, same rules",
   "end": "{END_HINT}",
   "caption": "подпись"
 }}
 Цепочка слайдов: узнавание → «с вами всё нормально» → один конкретный ход на сегодня → неожиданный вывод.
-О ребёнке не пиши «он» или «она» — пиши «ребёнок». Никаких персонажей Сам и Надо в этом формате.""",
+Каждый кадр должен останавливать палец: яркая эмоция персонажа, понятная без слов, визуальная шутка или метафора
+(Надо раздувается от новости, Сам с кольцевой лампой в роли блогера, Надо прячется за подушкой).
+Не пустые интерьеры и не «уютные натюрморты». О ребёнке не пиши «он» или «она» — пиши «ребёнок».""",
     "carousel": f"""Текстовая карусель 4:5.
 {{
   "hook": "заголовок обложки, 3–6 слов",
