@@ -87,8 +87,12 @@ LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: natural warm ligh
               "light countertop, neat modern furniture (IKEA/Hoff style), indoor plants, tidy but lived-in. "
               "NOT shabby, NOT old Soviet: no peeling wallpaper, no carpets on walls, no old furniture, no clutter or dirt; "
               "NOT luxury either. People look well-groomed in casual modern clothes; the mom is an attractive "
-              "well-kept woman in her early 40s. Teenagers never show their face: back view, hood up, turned away or "
-              "out of frame. No text, no letters, no logos, no watermarks.")
+              "well-kept woman in her early 40s. Teenagers (14–15) dress like real Russian teens in 2026: oversized "
+              "hoodie or zip-hoodie in a trendy color (sage, beige, black, washed lilac) or with a small graphic, baggy "
+              "wide-leg jeans or cargo pants, chunky sneakers, wireless over-ear headphones or earbuds, modern smartphone; "
+              "styled hair (fluffy, curtain bangs), hood usually down. Teenagers never show their face: back view, "
+              "turned away, hair or headphones covering it, or out of frame. A teen room may be a bit messy "
+              "(unmade bed, clothes on a chair) — that is real life — but the room itself is modern. No text, no letters, no logos, no watermarks.")
 
 
 def life(scene: str, aspect: str = "9:16") -> bytes:
