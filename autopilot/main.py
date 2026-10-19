@@ -409,14 +409,14 @@ def cmd_stories(state, only: str = ""):
 
 PROBE = [
     ("Мама ночью в родительском чате",
-     "Late evening in an ordinary Russian apartment kitchen. A woman about 42 sits at the table under a warm lamp, "
+     "Late evening in a modern renovated apartment kitchen. A woman about 42 sits at the table under a warm lamp, "
      "looking at her phone with a tired, worried face; a cup of tea gone cold, school notebooks on the table."),
     ("Закрытая дверь и «не знаю»",
      "View from a dim hallway into a teenager's room through a half-open door: a teenager in a grey hoodie with the hood "
-     "up sits on an unmade bed wearing big headphones, back to the camera, face not visible, lit by a phone screen; "
-     "a school backpack thrown on the floor."),
+     "up sits on a neatly made bed in a modern teen room wearing big headphones, back to the camera, face not visible, lit by a phone screen; "
+     "a school backpack on the floor next to a desk with a gaming PC."),
     ("Разговор без ссоры",
-     "An ordinary Russian kitchen at dinner time. A mother about 45 and a teenager in a hoodie sit at the table; the "
+     "A modern bright kitchen-living room at dinner time. A mother about 45 and a teenager in a hoodie sit at the table; the "
      "teenager is seen from behind over the shoulder, face not visible. The mother leans in, smiling gently, listening."),
 ]
 

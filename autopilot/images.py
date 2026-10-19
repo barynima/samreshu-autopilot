@@ -81,10 +81,14 @@ def still_life(scene: str) -> bytes:
     return _call([{"text": prompt}], "9:16")
 
 
-LIFE_STYLE = ("Candid smartphone photo, as if taken by a mom at home: natural warm indoor light, slight grain, realistic, "
-              "an ordinary Russian apartment (not a designer interior), lived-in details. Real emotions. "
-              "Teenagers never show their face: back view, hood up, turned away or out of frame. "
-              "No text, no letters, no logos, no watermarks.")
+LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: natural warm light, slight grain, realistic, real emotions. "
+              "Setting: a modern, recently renovated apartment of a middle-class family in a Russian city in 2026 — "
+              "new-build flat, light painted walls, laminate floor, contemporary kitchen with built-in appliances and a "
+              "light countertop, neat modern furniture (IKEA/Hoff style), indoor plants, tidy but lived-in. "
+              "NOT shabby, NOT old Soviet: no peeling wallpaper, no carpets on walls, no old furniture, no clutter or dirt; "
+              "NOT luxury either. People look well-groomed in casual modern clothes; the mom is an attractive "
+              "well-kept woman in her early 40s. Teenagers never show their face: back view, hood up, turned away or "
+              "out of frame. No text, no letters, no logos, no watermarks.")
 
 
 def life(scene: str, aspect: str = "9:16") -> bytes:
