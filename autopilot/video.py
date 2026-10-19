@@ -182,7 +182,12 @@ def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
     joined = tmp / "joined.mp4"
     _run(["-f", "concat", "-safe", "0", "-i", str(lst), "-r", str(FPS), *ENC, str(joined)])
     track = None
-    if with_music:
+    library = sorted((Path(__file__).resolve().parent.parent / "music").glob("*.*"))
+    library = [p for p in library if p.suffix.lower() in (".mp3", ".m4a", ".wav", ".ogg", ".aac")]
+    if with_music and library:  # треки, которые выбрала Марина, по кругу
+        import random
+        track = random.choice(library)
+    elif with_music:
         try:
             track = tmp / "music.wav"
             track.write_bytes(music())
@@ -191,7 +196,13 @@ def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
             warnings.append(f"Ролик без музыки: {e}")
     if track:
         d = duration(joined)
-        fc = (f"[1:a]aloop=loop=-1:size=2000000000,atrim=duration={d:.2f},"
+        start = 0
+        try:  # из длинного трека берём кусок не с самого начала (там часто тихое вступление)
+            full = duration(Path(track))
+            start = min(max(0.0, full * 0.25), max(0.0, full - d - 1))
+        except Exception:
+            pass
+        fc = (f"[1:a]atrim=start={start:.2f},asetpts=PTS-STARTPTS,aloop=loop=-1:size=2000000000,atrim=duration={d:.2f},"
               f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume=0.9[m];"
               f"[0:a][m]amix=inputs=2:duration=first:normalize=0[a]")
         _run(["-i", str(joined), "-i", str(track), "-filter_complex", fc, "-map", "0:v", "-map", "[a]",

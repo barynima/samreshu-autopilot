@@ -337,15 +337,21 @@ def slide_overlay(text: str, big: bool = False) -> bytes:
 
 
 def end_card(text: str) -> bytes:
-    """Финальная карточка ролика: вывод и призыв на коралловом фоне."""
+    """Финальная карточка-крючок: обещание пользы в описании и стрелка вниз, к описанию."""
     img = Image.new("RGB", (RW, RH), CORAL)
     draw = ImageDraw.Draw(img)
-    font, lines, size = _fit_paragraphs(draw, text, RW - 220, 80, 48, 7)
+    font, lines, size = _fit_paragraphs(draw, text, RW - 200, 92, 54, 6)
     h = len(lines) * int(size * 1.28)
-    _draw_centered(draw, lines, font, size, max(360, 820 - h // 2), (255, 255, 255))
+    top = max(420, 760 - h // 2)
+    _draw_centered(draw, lines, font, size, top, (255, 255, 255))
+    # стрелка вниз — к описанию под роликом
+    cx, y0 = RW // 2, top + h + 90
+    for i in range(3):
+        y = y0 + i * 70
+        draw.line((cx - 60, y, cx, y + 55, cx + 60, y), fill=(255, 255, 255, 255 - i * 70), width=16, joint="curve")
     f = _font(40)
     t = "Сам решу"
-    draw.text(((RW - draw.textlength(t, font=f)) / 2, 1420), t, font=f, fill=(255, 255, 255))
+    draw.text(((RW - draw.textlength(t, font=f)) / 2, 1560), t, font=f, fill=(255, 233, 190))
     out = io.BytesIO()
     img.save(out, "PNG")
     return out.getvalue()

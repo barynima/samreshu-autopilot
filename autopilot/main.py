@@ -661,6 +661,18 @@ def handle(state, up):
             cmd_refs(state)
         return
 
+    audio = msg.get("audio") or (msg.get("document") if str((msg.get("document") or {}).get("mime_type", "")).startswith("audio/") else None)
+    if audio:
+        lib = ROOT / "music"
+        lib.mkdir(exist_ok=True)
+        name = audio.get("file_name") or f"{audio.get('performer', 'track')}-{audio.get('title', audio['file_unique_id'])}.mp3"
+        name = "".join(c if c.isalnum() or c in "-_." else "_" for c in name)
+        (lib / name).write_bytes(telegram.download(audio["file_id"]))
+        n = len([p for p in lib.iterdir() if p.is_file()])
+        git_sync(f"Музыка: {name}")
+        telegram.send_text(cid, f"🎵 Трек добавлен в музыку роликов. Сейчас в библиотеке: {n}. "
+                                "Ролики берут треки отсюда по очереди. Убрать трек — /music.")
+        return
     media = msg.get("video") or msg.get("animation") or msg.get("document")
     if media and state.get("pending"):
         if (POSTS / state["pending"] / "post.json").exists() and load_job(state["pending"]).get("stage") == "clips":
@@ -689,6 +701,19 @@ def handle(state, up):
                                               else render.reel_cover(first, job["hook"]))
             assemble(job)
             send_draft(state, job)
+    elif body.startswith("/music"):
+        lib = ROOT / "music"
+        files = sorted(p for p in lib.glob("*.*")) if lib.exists() else []
+        arg = body[len("/music"):].strip()
+        if arg.isdigit() and 1 <= int(arg) <= len(files):
+            files[int(arg) - 1].unlink()
+            git_sync("Музыка: трек удалён")
+            telegram.send_text(cid, "Трек удалён.")
+        elif files:
+            telegram.send_text(cid, "Музыка роликов:\n" + "\n".join(f"{i}. {p.name}" for i, p in enumerate(files, 1))
+                               + "\n\nУдалить: /music 2")
+        else:
+            telegram.send_text(cid, "Своих треков пока нет — музыку пишет нейросеть. Пришлите сюда mp3, и ролики будут брать его.")
     elif body.startswith("/probe"):
         telegram.send_text(cid, "Рисую 3 пробных кадра в стиле «из жизни», пара минут…")
         cmd_probe(state)
