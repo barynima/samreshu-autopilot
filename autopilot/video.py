@@ -112,8 +112,8 @@ def tts(speaker: str, line: str) -> bytes:
 
 # ---------- музыка ----------
 
-MUSIC_PROMPT = ("soft warm lo-fi piano with gentle plucked guitar, calm and hopeful, light and airy, "
-                "slow tempo around 80 bpm, instrumental background for a short social video")
+MUSIC_PROMPT = ("bright upbeat acoustic pop instrumental: ukulele and light claps, playful marimba, warm bass, "
+                "happy and optimistic, sunny morning mood, tempo around 110 bpm, background for a short social video")
 
 
 def music(prompt: str = MUSIC_PROMPT) -> bytes:
@@ -298,7 +298,10 @@ def assemble_chat(slides: list, end_text: str, out_path: Path, with_music: bool 
         parts = []
         for i, sl in enumerate(slides):
             img = tmp / f"img{i}.png"
-            render.fit_vertical(sl["image"]).save(img)
+            from PIL import ImageEnhance
+            pic = render.fit_vertical(sl["image"])
+            pic = ImageEnhance.Brightness(ImageEnhance.Color(pic).enhance(1.15)).enhance(1.06)  # теплее и светлее
+            pic.save(img)
             layers = []
             if sl.get("dialog"):
                 mom, sam = sl["dialog"][0], sl["dialog"][1]

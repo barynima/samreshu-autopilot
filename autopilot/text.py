@@ -32,8 +32,9 @@ MOTION_HINT = ("video prompt in ENGLISH, 1–2 sentences: what moves during ~5 s
 
 LIFE_HINT = ("photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a modern renovated "
              "middle-class Russian apartment; the mom (early 40s, well-kept) and/or the teen (14–15, a girl or a boy, trendy 2026 clothes, "
-             "face never visible — back view or turned away); one clear everyday moment and emotion the mom recognizes "
-             "(closed door, phone at dinner, parent chat at night, school diary, talk in the kitchen); no text in the picture")
+             "face never visible — back view or turned away); one clear everyday moment the mom recognizes, shown in a warm, light, slightly funny way "
+             "(teen in headphones at a sunny desk, phone at breakfast, mom laughing at a teen's answer, talk in a bright kitchen); "
+             "daytime, bright, smiling or curious faces; no text in the picture")
 
 SCHEMAS = {
     "reel_scene": f"""Reels «Сценка» 12–20 секунд: 3 коротких плана спора Сама и Надо.
@@ -85,6 +86,10 @@ SCHEMAS = {
 }}
 Цепочка: узнавание в диалоге → «с вами всё нормально» → один конкретный ход на сегодня → неожиданный вывод.
 О ребёнке не пиши «он» или «она» — пиши «ребёнок». Мама в диалоге тоже не называет ребёнка по полу.
+Тон — светлый и тёплый, с лёгким юмором: мама улыбается, узнавая себя. Не пиши «страшно», «тревожно», «паника»,
+«кошмар» и не нагнетай — сразу переводи в «это нормально» и интерес. Сцены в кадрах — светлые, дневные, с улыбками.
+Мама в диалоге не использует глаголы с родом («придумал», «решила») — только нейтральные формы
+(«Ну что, есть идеи, кем быть?», «Как дела с выбором?»).
 Кадры — РАЗНЫЕ семьи, чтобы себя узнало больше мам: чередуй девочек и мальчиков, разные квартиры и комнаты
 (кухня, детская, прихожая, гостиная, машина у школы), разные мамы; иногда в кадре папа.""".replace("{LIFE_HINT}", LIFE_HINT),
     "reel_text": f"""Reels-нарезка 12–18 секунд: Сам и Надо в выразительных позах + крупная фраза на каждом кадре.

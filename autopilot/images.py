@@ -81,7 +81,11 @@ def still_life(scene: str) -> bytes:
     return _call([{"text": prompt}], "9:16")
 
 
-LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: natural warm light, slight grain, realistic, real emotions. "
+LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: realistic, real emotions. MOOD IS BRIGHT AND WARM: "
+              "sunny daytime, lots of daylight, warm saturated colors with cheerful accents (coral, mustard, green plants, "
+              "colorful books and posters), light airy rooms. People mostly smile, laugh, are curious or gently surprised; "
+              "even a tense moment looks light, with a touch of humor. NO night scenes, no darkness, no grey overcast light, "
+              "no sad or worried faces, no gloomy blue-grey palette. "
               "Setting: a modern, recently renovated apartment of a middle-class family in a Russian city in 2026 — "
               "new-build flat, light painted walls, laminate floor, contemporary kitchen with built-in appliances and a "
               "light countertop, neat modern furniture (IKEA/Hoff style), indoor plants, tidy but lived-in. "
