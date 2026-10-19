@@ -488,7 +488,7 @@ def handle(state, up):
             state["pending"] = None
             state["awaiting_feedback"] = None
             cleanup_media(arg)
-            telegram.send_text(cid, "Пропустили. Следующий пост — в следующий будний день (или /post прямо сейчас).")
+            telegram.send_text(cid, "Пропустили. Следующий пост — завтра утром (или /post прямо сейчас).")
         elif kind == "ref":
             key, _, num = arg.partition(":")
             shutil.copy(CANDIDATES / f"{key}_{num}.png", REFS / f"{key}.png")

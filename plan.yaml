@@ -1,12 +1,12 @@
 # Контент-план автопилота по стратегии «Сам и Надо» (документ «Сам и Надо: контент-стратегия автопилота»).
-# Автопилот по будням берёт первый пост, которого ещё нет в state.json → done. Порядок важнее дат.
+# Автопилот каждый день берёт первый пост, которого ещё нет в state.json → done. Порядок важнее дат.
 # format: reel_text — нарезка: Сам и Надо в ярких позах + крупная фраза (основной формат); reel_scene — «Сценка» 12–20 с; reel_pov — POV 7–10 с без слов; reel_confess — «Надо признаётся»;
 #         carousel — текстовая карусель.
 # audience: mom — для мамы (по умолчанию), teen — для подростка.
 
 posts:
   - id: ne-znayu
-    date: 2026-10-16
+    date: 2026-10-18
     format: reel_scene
     rubric: Знакомо?
     level: 1-2
@@ -76,7 +76,7 @@ posts:
     cta: Ссылка в профиле
 
   - id: ne-lenivyy
-    date: 2026-10-26
+    date: 2026-10-24
     format: reel_scene
     rubric: Знакомо?
     level: 1-2
@@ -87,7 +87,7 @@ posts:
     cta: Отправьте мужу
 
   - id: pov-chat
-    date: 2026-10-27
+    date: 2026-10-25
     format: reel_text
     rubric: Знакомо?
     level: 1
@@ -98,7 +98,7 @@ posts:
     cta: Сохраните
 
   - id: vosmoy-klass
-    date: 2026-10-28
+    date: 2026-10-26
     format: carousel
     rubric: ОГЭ без паники
     level: 2-3
@@ -109,7 +109,7 @@ posts:
     cta: Сохраните
 
   - id: pov-sobiraet-pk
-    date: 2026-10-29
+    date: 2026-10-27
     format: reel_text
     rubric: Хобби → направление
     level: 2
@@ -120,7 +120,7 @@ posts:
     cta: Подпишитесь
 
   - id: hobbi-pk
-    date: 2026-10-30
+    date: 2026-10-28
     format: reel_text
     rubric: Хобби → направление
     level: 2-3
@@ -132,7 +132,7 @@ posts:
     cta: Ссылка в профиле
 
   - id: chat-14
-    date: 2026-11-02
+    date: 2026-10-29
     format: reel_confess
     rubric: Знакомо?
     level: 1-2
@@ -143,7 +143,7 @@ posts:
     cta: Сохраните
 
   - id: pov-ege
-    date: 2026-11-03
+    date: 2026-10-30
     format: reel_text
     rubric: Знакомо?
     level: 1
@@ -154,7 +154,7 @@ posts:
     cta: Отправьте мужу
 
   - id: predmety-oge
-    date: 2026-11-04
+    date: 2026-10-31
     format: carousel
     rubric: ОГЭ без паники
     level: 2-3
@@ -165,7 +165,7 @@ posts:
     cta: Сохраните
 
   - id: pov-mama-vybrala
-    date: 2026-11-05
+    date: 2026-11-01
     format: reel_text
     rubric: Знакомо?
     level: 1
@@ -176,7 +176,7 @@ posts:
     cta: Сохраните
 
   - id: kolledzh
-    date: 2026-11-06
+    date: 2026-11-02
     format: reel_scene
     rubric: Мягкая продажа
     level: "3"

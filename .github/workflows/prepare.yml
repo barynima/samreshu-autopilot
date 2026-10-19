@@ -2,7 +2,7 @@ name: Пост дня
 
 on:
   schedule:
-    - cron: "47 5 * * 1-5"   # по будням около 09:00 по Москве
+    - cron: "47 5 * * *"   # каждый день около 09:00 по Москве
   workflow_dispatch:
 
 permissions:
