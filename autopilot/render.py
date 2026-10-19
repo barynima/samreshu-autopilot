@@ -11,6 +11,7 @@ SLATE = (110, 120, 140)
 INK = (40, 40, 48)
 
 FONT_CANDIDATES = [
+    Path(__file__).resolve().parent.parent / "fonts" / "Nunito-ExtraBold.ttf",
     Path(__file__).resolve().parent.parent / "fonts" / "Font-Bold.ttf",
     Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
 ]
@@ -95,7 +96,7 @@ def compose(image_bytes: bytes, speaker: str, line: str, page: str = "") -> byte
 
 RW, RH = 1080, 1920
 CREAM = (255, 244, 236)
-FONT_REGULAR = Path(__file__).resolve().parent.parent / "fonts" / "Font-Regular.ttf"
+FONT_REGULAR = Path(__file__).resolve().parent.parent / "fonts" / "Nunito-SemiBold.ttf"
 
 
 def _font_regular(size: int):
@@ -347,4 +348,164 @@ def end_card(text: str) -> bytes:
     draw.text(((RW - draw.textlength(t, font=f)) / 2, 1420), t, font=f, fill=(255, 255, 255))
     out = io.BytesIO()
     img.save(out, "PNG")
+    return out.getvalue()
+
+
+# ---------- стиль «переписка»: пузыри мессенджера ----------
+# mom — вопрос мамы (белый, справа), sam — ответ ребёнка от имени Сама (коралловый, слева, с аватаркой),
+# brand — сообщение «Сам решу» (белый, слева, с аватаркой). Слова в *звёздочках* выделяются.
+
+FONTS_DIR = Path(__file__).resolve().parent.parent / "fonts"
+AVATAR = Path(__file__).resolve().parent.parent / "profile" / "avatar.jpg"
+LIGHT = (255, 233, 190)
+
+
+def _nunito(weight: str, size: int):
+    p = FONTS_DIR / f"Nunito-{weight}.ttf"
+    return ImageFont.truetype(str(p), size) if p.exists() else _font(size)
+
+
+def _tokens(text: str):
+    out, hot = [], False
+    for part in re.split(r"(\*)", text):
+        if part == "*":
+            hot = not hot
+            continue
+        for w in part.split():
+            if out and all(c in ".,!?:;…»" for c in w):
+                out[-1] = (out[-1][0] + w, out[-1][1])
+            else:
+                out.append((w, hot))
+    glued = []
+    for w, h in out:  # короткие предлоги и союзы не оставляем в конце строки
+        if glued and len(glued[-1][0]) <= 2 and glued[-1][0].isalpha():
+            pw, ph = glued.pop()
+            glued.append((pw + "\u00a0" + w, h or ph))
+        else:
+            glued.append((w, h))
+    return glued
+
+
+def _wrap_tokens(draw, toks, fonts, max_w):
+    lines = [[]]
+    sp = draw.textlength(" ", font=fonts[False])
+    for w, h in toks:
+        cur = lines[-1]
+        width = sum(draw.textlength(t, font=fonts[hh]) for t, hh in cur) + sp * len(cur) + draw.textlength(w, font=fonts[h])
+        if cur and width > max_w:
+            lines.append([])
+        lines[-1].append((w, h))
+    return lines
+
+
+def _avatar(size: int):
+    a = Image.open(AVATAR).convert("RGBA").resize((size, size), Image.LANCZOS)
+    m = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(m).ellipse((0, 0, size - 1, size - 1), fill=255)
+    a.putalpha(m)
+    return a
+
+
+def _soft_shadow(base, box, r, off=(0, 8), blur=14, alpha=55):
+    from PIL import ImageFilter
+    sh = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rounded_rectangle((box[0] + off[0], box[1] + off[1], box[2] + off[0], box[3] + off[1]), r,
+                                         fill=(0, 0, 0, alpha))
+    base.alpha_composite(sh.filter(ImageFilter.GaussianBlur(blur)))
+
+
+def _ticks(draw, x, y, col):
+    for dx in (0, 14):
+        draw.line((x + dx, y, x + 8 + dx, y + 8, x + 22 + dx, y - 10), fill=col, width=4)
+
+
+STYLE = {
+    "mom": dict(side="right", fill=(255, 255, 255), ink=INK, hot=CORAL, name=None, avatar=False),
+    "sam": dict(side="left", fill=CORAL, ink=(255, 255, 255), hot=LIGHT, name="Сам", avatar=True),
+    "brand": dict(side="left", fill=(255, 255, 255), ink=INK, hot=CORAL, name="Сам решу", avatar=True),
+}
+
+
+def _bubble(base, draw, who, text, y, time="21:47", size=70):
+    st = STYLE[who]
+    fonts = {False: _nunito("ExtraBold", size), True: _nunito("Black", size)}
+    fn, ft = _nunito("ExtraBold", 32), _nunito("SemiBold", 28)
+    lines = _wrap_tokens(draw, _tokens(text), fonts, RW - 400)
+    lh = int(size * 1.23)
+    sp = draw.textlength(" ", font=fonts[False])
+    w = max(sum(draw.textlength(t, font=fonts[h]) for t, h in ln) + sp * (len(ln) - 1) for ln in lines)
+    if st["name"]:
+        w = max(w, draw.textlength(st["name"], font=fn))
+    bw, bh = max(int(w + 90), 330), len(lines) * lh + (110 if st["name"] else 70) + 30
+    x0 = 160 if st["side"] == "left" else RW - 60 - bw
+    x1, y0, y1 = x0 + bw, y, y + bh
+    _soft_shadow(base, (x0, y0, x1, y1), 40)
+    draw.rounded_rectangle((x0, y0, x1, y1), 40, fill=st["fill"] + (252,))
+    if st["side"] == "left":
+        draw.polygon([(x0 + 4, y1 - 56), (x0 + 4, y1 - 8), (x0 - 24, y1 - 4)], fill=st["fill"] + (252,))
+    else:
+        draw.polygon([(x1 - 4, y1 - 56), (x1 - 4, y1 - 8), (x1 + 24, y1 - 4)], fill=st["fill"] + (252,))
+    yy = y0 + 30
+    if st["name"]:
+        draw.text((x0 + 44, yy), st["name"], font=fn, fill=st["hot"] if who == "brand" else LIGHT)
+        yy += 46
+    for ln in lines:
+        x = x0 + 44
+        for t, h in ln:
+            draw.text((x, yy), t, font=fonts[h], fill=st["hot"] if h else st["ink"])
+            x += draw.textlength(t, font=fonts[h]) + sp
+        yy += lh
+    coral = st["fill"] == CORAL
+    draw.text((x1 - 70, y1 - 20), time, font=ft, fill=(255, 255, 255, 210) if coral else (150, 150, 160), anchor="rb")
+    _ticks(draw, x1 - 58, y1 - 34, (255, 255, 255) if coral else (90, 160, 230))
+    if st["avatar"]:
+        base.alpha_composite(_avatar(100), (40, y1 - 100))
+    return y1
+
+
+def _typing(base, draw, who, y):
+    st = STYLE[who]
+    x0, x1, y1 = 160, 160 + 170, y + 96
+    _soft_shadow(base, (x0, y, x1, y1), 40)
+    draw.rounded_rectangle((x0, y, x1, y1), 40, fill=st["fill"] + (252,))
+    draw.polygon([(x0 + 4, y1 - 56), (x0 + 4, y1 - 8), (x0 - 24, y1 - 4)], fill=st["fill"] + (252,))
+    dot = (255, 255, 255) if st["fill"] == CORAL else (170, 170, 178)
+    for i in range(3):
+        cx = x0 + 50 + i * 36
+        draw.ellipse((cx - 11, y + 37, cx + 11, y + 59), fill=dot)
+    base.alpha_composite(_avatar(100), (40, y1 - 100))
+    f = _nunito("Bold", 30)
+    draw.text((x1 + 24, y1 - 40), f"{st['name']} печатает…", font=f, fill=(255, 255, 255),
+              stroke_width=3, stroke_fill=(0, 0, 0, 120))
+    return y1
+
+
+def chat_overlay(messages: list, typing: str = None, top: int = 230) -> bytes:
+    """Прозрачный PNG 1080×1920: пузыри переписки сверху вниз. messages: [{"who", "text"}]."""
+    img = Image.new("RGBA", (RW, RH), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    y = top
+    for i, m in enumerate(messages):
+        y = _bubble(img, draw, m["who"], m["text"], y, time="21:46" if m["who"] == "mom" else "21:47") + 28
+    if typing:
+        _typing(img, draw, typing, y)
+    out = io.BytesIO()
+    img.save(out, "PNG")
+    return out.getvalue()
+
+
+def chat_cover(image_bytes: bytes, messages: list, size=(RW, RH)) -> bytes:
+    """Обложка (Reels 9:16 или карусель 4:5): кадр + переписка."""
+    w, h = size
+    img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    sc = max(w / img.width, h / img.height)
+    img = img.resize((round(img.width * sc), round(img.height * sc)), Image.LANCZOS)
+    l, t = (img.width - w) // 2, (img.height - h) // 2
+    base = img.crop((l, t, l + w, t + h)).convert("RGBA")
+    over = Image.open(io.BytesIO(chat_overlay(messages, top=230 if h == RH else 70)))
+    if (w, h) != (RW, RH):
+        over = over.crop((0, 0, w, h))
+    base.alpha_composite(over)
+    out = io.BytesIO()
+    base.convert("RGB").save(out, "JPEG", quality=92)
     return out.getvalue()

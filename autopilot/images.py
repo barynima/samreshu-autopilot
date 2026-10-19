@@ -95,8 +95,17 @@ LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: natural warm ligh
               "(unmade bed, clothes on a chair) — that is real life — but the room itself is modern. No text, no letters, no logos, no watermarks.")
 
 
-def life(scene: str, aspect: str = "9:16") -> bytes:
-    """Картинка «из жизни» для мам 35–50: их дом, их ребёнок, их эмоция."""
-    prompt = (f"Scene: {scene}\nVertical {aspect} composition, keep the top quarter calm (wall or ceiling) "
-              f"for a caption. {LIFE_STYLE}")
-    return _call([{"text": prompt}], aspect)
+def life(scene: str, aspect: str = "9:16", prev: bytes = None) -> bytes:
+    """Картинка «из жизни» для мам 35–50: их дом, их ребёнок, их эмоция.
+    prev — первый кадр того же ролика: та же семья, та же квартира, тот же свет."""
+    parts = []
+    note = ""
+    if prev:
+        parts.append({"inlineData": {"mimeType": "image/png", "data": base64.b64encode(prev).decode()}})
+        note = ("The attached image is an earlier shot of the same video: keep the same family members (same mom, same "
+                "teen's clothes and hair), the same apartment style and the same light. ")
+    prompt = (f"{note}Scene: {scene}\nVertical {aspect} composition; the top third of the frame is calm (wall, "
+              f"ceiling or window) because chat bubbles will cover it; people and action in the lower two thirds. "
+              f"{LIFE_STYLE}")
+    parts.append({"text": prompt})
+    return _call(parts, aspect)

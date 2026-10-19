@@ -1,6 +1,6 @@
 # Контент-план автопилота по стратегии «Сам и Надо» (документ «Сам и Надо: контент-стратегия автопилота»).
 # Автопилот каждый день берёт первый пост, которого ещё нет в state.json → done. Порядок важнее дат.
-# format: reel_text — нарезка: Сам и Надо в ярких позах + крупная фраза (основной формат); reel_scene — «Сценка» 12–20 с; reel_pov — POV 7–10 с без слов; reel_confess — «Надо признаётся»;
+# format: reel_chat — нарезка: Сам и Надо в ярких позах + крупная фраза (основной формат); reel_scene — «Сценка» 12–20 с; reel_pov — POV 7–10 с без слов; reel_confess — «Надо признаётся»;
 #         carousel — текстовая карусель.
 # audience: mom — для мамы (по умолчанию), teen — для подростка.
 
@@ -19,7 +19,7 @@ posts:
 
   - id: bloger
     date: 2026-10-19
-    format: reel_text
+    format: reel_chat
     rubric: Профессия, которой вы боитесь
     level: 1-2
     hook: "«Хочу стать блогером»"
@@ -31,7 +31,7 @@ posts:
 
   - id: pov-ne-znayu
     date: 2026-10-20
-    format: reel_text
+    format: reel_chat
     rubric: Знакомо?
     level: 1
     hook: "POV: вы спросили девятиклассника, кем он хочет стать"
@@ -65,7 +65,7 @@ posts:
 
   - id: ne-test
     date: 2026-10-23
-    format: reel_text
+    format: reel_chat
     rubric: Мягкая продажа
     level: "3"
     hook: "Мы тоже не верим в тест за 20 минут"
@@ -88,7 +88,7 @@ posts:
 
   - id: pov-chat
     date: 2026-10-25
-    format: reel_text
+    format: reel_chat
     rubric: Знакомо?
     level: 1
     hook: "POV: в родительском чате все уже знают, куда поступают"
@@ -110,7 +110,7 @@ posts:
 
   - id: pov-sobiraet-pk
     date: 2026-10-27
-    format: reel_text
+    format: reel_chat
     rubric: Хобби → направление
     level: 2
     hook: "POV: сын третий вечер собирает компьютер"
@@ -121,7 +121,7 @@ posts:
 
   - id: hobbi-pk
     date: 2026-10-28
-    format: reel_text
+    format: reel_chat
     rubric: Хобби → направление
     level: 2-3
     hook: "Собирает компьютер третий вечер подряд"
@@ -144,7 +144,7 @@ posts:
 
   - id: pov-ege
     date: 2026-10-30
-    format: reel_text
+    format: reel_chat
     rubric: Знакомо?
     level: 1
     hook: "POV: «Пойду в колледж, лишь бы не ЕГЭ»"
@@ -166,7 +166,7 @@ posts:
 
   - id: pov-mama-vybrala
     date: 2026-11-01
-    format: reel_text
+    format: reel_chat
     rubric: Знакомо?
     level: 1
     hook: "POV: специальность выбрала мама"

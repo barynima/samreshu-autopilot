@@ -271,3 +271,59 @@ def assemble_slides(slides: list, end_text: str, out_path: Path, with_music: boo
             _end_part(tmp, end_text, end)
             parts.append(end)
         return _finish(parts, tmp, out_path, with_music)
+
+
+def _still_multi(img_png: Path, overlays: list, dur: float, out: Path, zoom: bool = True):
+    """Картинка + несколько прозрачных слоёв, каждый в своём окне времени [(png, start, end)]."""
+    n = int(dur * FPS)
+    if zoom:
+        fc = (f"[0:v]scale={render.RW * 2}:{render.RH * 2},"
+              f"zoompan=z='1+0.05*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:"
+              f"s={render.RW}x{render.RH}:fps={FPS},setsar=1[b0];")
+    else:
+        fc = f"[0:v]scale={render.RW}:{render.RH},fps={FPS},setsar=1,loop={n}:1:0[b0];"
+    inputs = ["-i", str(img_png), *SILENCE]
+    for i, (png, start, end) in enumerate(overlays):
+        inputs += ["-i", str(png)]
+        fc += f"[b{i}][{i + 2}:v]overlay=0:0:enable='between(t,{start:.2f},{end:.2f})'[b{i + 1}];"
+    fc += f"[b{len(overlays)}]trim=duration={dur:.2f},setpts=PTS-STARTPTS[v]"
+    _run([*inputs, "-filter_complex", fc, "-map", "[v]", "-map", "1:a", "-t", f"{dur:.2f}", *ENC, str(out)])
+
+
+def assemble_chat(slides: list, end_text: str, out_path: Path, with_music: bool = True) -> list:
+    """Reels-переписка. slides[0]: {"image", "dialog": [{"who":"mom",...},{"who":"sam",...}]};
+    остальные: {"image", "text"} — сообщения от «Сам решу». Каждое сообщение появляется после «печатает…»."""
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        parts = []
+        for i, sl in enumerate(slides):
+            img = tmp / f"img{i}.png"
+            render.fit_vertical(sl["image"]).save(img)
+            layers = []
+            if sl.get("dialog"):
+                mom, sam = sl["dialog"][0], sl["dialog"][1]
+                dur = max(4.0, 1.7 + render_read(sam["text"]) + 0.8)
+                a, b, c = tmp / f"a{i}.png", tmp / f"b{i}.png", tmp / f"c{i}.png"
+                a.write_bytes(render.chat_overlay([mom]))
+                b.write_bytes(render.chat_overlay([mom], typing="sam"))
+                c.write_bytes(render.chat_overlay([mom, sam]))
+                layers = [(a, 0.15, 0.8), (b, 0.8, 1.7), (c, 1.7, dur + 1)]
+            else:
+                msg = {"who": "brand", "text": sl["text"]}
+                dur = 0.7 + min(read_time(sl["text"]), 4.5)
+                a, b = tmp / f"a{i}.png", tmp / f"b{i}.png"
+                a.write_bytes(render.chat_overlay([], typing="brand"))
+                b.write_bytes(render.chat_overlay([msg]))
+                layers = [(a, 0.0, 0.7), (b, 0.7, dur + 1)]
+            part = tmp / f"part{i}.mp4"
+            _still_multi(img, layers, dur, part)
+            parts.append(part)
+        if end_text:
+            end = tmp / "end.mp4"
+            _end_part(tmp, end_text, end)
+            parts.append(end)
+        return _finish(parts, tmp, out_path, with_music)
+
+
+def render_read(text: str) -> float:
+    return max(1.4, min(3.5, len(text) / 14 + 0.8))

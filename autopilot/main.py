@@ -97,7 +97,8 @@ def save_job(job: dict):
 
 
 FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
-                "carousel": "Карусель", "reel_text": "Текстовый Reels"}
+                "carousel": "Карусель", "reel_text": "Текстовый Reels",
+                "reel_chat": "Reels-переписка"}
 FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodies visible, both clearly visible "
                 "and not overlapping; the top quarter of the frame is a plain empty wall (space for captions)")
 
@@ -110,12 +111,14 @@ def build_post(item: dict, feedback: str = "") -> dict:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
     base = f"posts/{item['id']}/{stamp}"
     (POSTS / item["id"]).mkdir(parents=True, exist_ok=True)
+    if not script.get("hook") and script.get("dialog"):
+        script["hook"] = " — ".join(m["text"] for m in script["dialog"]).replace("*", "")
     job = {"id": item["id"], "format": fmt, "hook": script["hook"], "caption": script["caption"],
            "script": script, "warnings": []}
 
     if fmt == "carousel":
-        cover = render.carousel_cover(images.frame(script["cover_scene"], "4:5",
-                                                   "leave the top third calm and empty for a title"), script["hook"])
+        cover = render.chat_cover(images.life(script["cover_scene"], "4:5"),
+                                  [{"who": "brand", "text": script["hook"]}], size=(render.W, render.H))
         cards = script["cards"]
         n = len(cards) + 2
         blobs = [cover] + [render.text_card(c.get("title", ""), c["text"], f"{i}/{n}")
@@ -132,6 +135,22 @@ def build_post(item: dict, feedback: str = "") -> dict:
 
     job["end"] = script.get("end", "")
     job["base"] = base
+
+    if fmt == "reel_chat":
+        job["dialog"] = script["dialog"]
+        job["slides"] = []
+        first = None
+        for i, sl in enumerate([{"text": "", "scene": script["first_scene"]}] + script["slides"]):
+            rel = f"{base}_slide{i + 1}.png"
+            data = images.life(sl["scene"], "9:16", prev=first)
+            first = first or data
+            (ROOT / rel).write_bytes(data)
+            job["slides"].append({**sl, "image": rel})
+        cover = f"{base}_cover.jpg"
+        (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"]))
+        job["cover"] = cover
+        assemble(job)
+        return job
 
     if fmt == "reel_text":
         job["slides"] = []
@@ -184,6 +203,15 @@ def animate_with_veo(job):
 
 def assemble(job):
     music = (os.environ.get("MUSIC") or "on").lower() != "off"
+    if job["format"] == "reel_chat":
+        slides = [{"image": (ROOT / sl["image"]).read_bytes(), "text": sl["text"]} for sl in job["slides"]]
+        slides[0]["dialog"] = job["dialog"]
+        rel = f"{job['base']}_reel.mp4"
+        job["warnings"] = video.assemble_chat(slides, job.get("end", ""), ROOT / rel, with_music=music)
+        job["video"] = rel
+        job["stage"] = "ready"
+        save_job(job)
+        return
     if job["format"] == "reel_text":
         slides = [{"image": (ROOT / sl["image"]).read_bytes(), "text": sl["text"]} for sl in job["slides"]]
         rel = f"{job['base']}_reel.mp4"
@@ -551,7 +579,8 @@ def handle(state, up):
             telegram.send_text(cid, "Пересобираю ролик из готовых кадров и клипов, пара минут…")
             job["cover"] = f"{job['base']}_cover.jpg"
             first = (ROOT / (job["shots"][0]["frame"] if job.get("shots") else job["slides"][0]["image"])).read_bytes()
-            (ROOT / job["cover"]).write_bytes(render.reel_cover(first, job["hook"]))
+            (ROOT / job["cover"]).write_bytes(render.chat_cover(first, job["dialog"]) if job.get("dialog")
+                                              else render.reel_cover(first, job["hook"]))
             assemble(job)
             send_draft(state, job)
     elif body.startswith("/probe"):

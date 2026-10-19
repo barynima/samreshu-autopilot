@@ -30,6 +30,11 @@ SCENE_HINT = ("image prompt in ENGLISH for the first frame: who is where, poses,
 MOTION_HINT = ("video prompt in ENGLISH, 1–2 sentences: what moves during ~5 seconds; "
                "characters keep exactly the same look; no camera moves, static shot")
 
+LIFE_HINT = ("photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a modern renovated "
+             "middle-class Russian apartment; the mom (early 40s, well-kept) and/or the teen (14–15, trendy 2026 clothes, "
+             "face never visible — back view or turned away); one clear everyday moment and emotion the mom recognizes "
+             "(closed door, phone at dinner, parent chat at night, school diary, talk in the kitchen); no text in the picture")
+
 SCHEMAS = {
     "reel_scene": f"""Reels «Сценка» 12–20 секунд: 3 коротких плана спора Сама и Надо.
 {{
@@ -63,6 +68,23 @@ SCHEMAS = {
   "end": "{END_HINT}",
   "caption": "подпись"
 }}""",
+    "reel_chat": f"""Reels-переписка 12–18 секунд: кадры из жизни мамы + сообщения мессенджера поверх.
+Первый кадр — короткий диалог: вопрос мамы и ответ ребёнка (ответ подписан «Сам» — это голос ребёнка).
+Дальше сообщения пишет «Сам решу»: спокойная знающая подруга.
+{{
+  "dialog": [
+    {{"who": "mom", "text": "вопрос или фраза мамы, как она пишет или говорит ребёнку, до 8 слов"}},
+    {{"who": "sam", "text": "ответ ребёнка из словаря мам («не знаю», «мам, потом», «отстань», «я подумаю»), до 6 слов; можно *выделить* слово"}}
+  ],
+  "first_scene": "{{LIFE_HINT}}",
+  "slides": [  // 3–4 сообщения от «Сам решу», каждое — одна мысль, до 12 слов, 1–2 главных слова в *звёздочках*
+    {{"text": "сообщение", "scene": "{{LIFE_HINT}}; the same family and apartment as the first shot"}}
+  ],
+  "end": "{END_HINT}",
+  "caption": "подпись"
+}}
+Цепочка: узнавание в диалоге → «с вами всё нормально» → один конкретный ход на сегодня → неожиданный вывод.
+О ребёнке не пиши «он» или «она» — пиши «ребёнок». Мама в диалоге тоже не называет ребёнка по полу.""".replace("{LIFE_HINT}", LIFE_HINT),
     "reel_text": f"""Reels-нарезка 12–18 секунд: Сам и Надо в выразительных позах + крупная фраза на каждом кадре.
 {{
   "hook": "первая фраза на экране, 4–9 слов: мама узнаёт свою ситуацию за секунду",
@@ -80,7 +102,7 @@ SCHEMAS = {
     "carousel": f"""Текстовая карусель 4:5.
 {{
   "hook": "заголовок обложки, 3–6 слов",
-  "cover_scene": "{SCENE_HINT.replace('9:16', '4:5')}; leave the top third empty for the title",
+  "cover_scene": "{LIFE_HINT}; vertical 4:5, the top third calm for a chat bubble with the title",
   "cards": [  // 5–7 карточек: одна мысль или один вопрос на карточку
     {{"title": "до 6 слов", "text": "до 160 символов"}}
   ],
@@ -111,6 +133,8 @@ def _system(fmt: str) -> str:
 
 
 def _validate(fmt: str, data: dict) -> dict:
+    if fmt == "reel_chat" and not data.get("hook") and data.get("dialog"):
+        data["hook"] = " — ".join(m.get("text", "") for m in data["dialog"]).replace("*", "")
     if not data.get("caption") or not data.get("hook"):
         raise ValueError("нет hook или caption")
     if fmt == "carousel":
@@ -119,6 +143,14 @@ def _validate(fmt: str, data: dict) -> dict:
         return data
     if not data.get("end"):
         raise ValueError("нет финальной карточки end")
+    if fmt == "reel_chat":
+        dl = data.get("dialog") or []
+        sl = data.get("slides") or []
+        if len(dl) != 2 or [m.get("who") for m in dl] != ["mom", "sam"] or not all(m.get("text") for m in dl):
+            raise ValueError("диалог должен быть: mom, затем sam")
+        if not (2 <= len(sl) <= 5) or not data.get("first_scene") or any(not x.get("text") or not x.get("scene") for x in sl):
+            raise ValueError("неполная переписка")
+        return data
     if fmt == "reel_text":
         sl = data.get("slides") or []
         if not (2 <= len(sl) <= 5) or not data.get("first_scene") or any(not x.get("text") or not x.get("scene") for x in sl):
