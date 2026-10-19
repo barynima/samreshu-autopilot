@@ -31,9 +31,14 @@ def generate(model: str, payload: dict, timeout: int = 300) -> dict:
     url = (f"https://aiplatform.googleapis.com/v1/projects/{project}/locations/{LOCATION}"
            f"/publishers/google/models/{model}:generateContent")
     last = None
-    for attempt in range(3):
-        r = requests.post(url, json=payload, timeout=timeout,
-                          headers={"Authorization": f"Bearer {_credentials().token}"})
+    for attempt in range(4):
+        try:
+            r = requests.post(url, json=payload, timeout=timeout,
+                              headers={"Authorization": f"Bearer {_credentials().token}"})
+        except (requests.ConnectionError, requests.Timeout) as e:  # Google иногда рвёт соединение
+            last = f"сеть: {e}"
+            time.sleep(15 * (attempt + 1))
+            continue
         if r.status_code == 200:
             return r.json()
         last = f"HTTP {r.status_code}: {r.text[:400]}"

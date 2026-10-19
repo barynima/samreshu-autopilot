@@ -1,7 +1,9 @@
 {
   "offset": 320005849,
   "chat_id": 276648205,
-  "done": [],
-  "pending": "ne-znayu",
-  "awaiting_feedback": "ne-znayu"
+  "done": [
+    "ne-znayu"
+  ],
+  "pending": null,
+  "awaiting_feedback": null
 }
