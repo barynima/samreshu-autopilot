@@ -186,6 +186,54 @@ def build_post(item: dict, feedback: str = "") -> dict:
     return job
 
 
+MIN_SCORE = int(os.environ.get("MIN_SCORE") or 8)
+MAX_TRIES = int(os.environ.get("CRITIC_TRIES") or 3)
+
+
+def _pictures(job) -> list:
+    """Что увидит мама: обложка и кадры с надписями."""
+    pics = []
+    if job.get("cover"):
+        pics.append((ROOT / job["cover"]).read_bytes())
+    if job["format"] == "carousel":
+        pics += [(ROOT / f).read_bytes() for f in job["files"][:4]]
+    elif job.get("slides"):
+        for sl in job["slides"][1:5]:
+            msg = {"who": "brand", "text": sl["text"]} if job["format"] == "reel_chat" else None
+            img = (ROOT / sl["image"]).read_bytes()
+            pics.append(render.chat_cover(img, [msg]) if msg else img)
+    elif job.get("shots"):
+        pics += [(ROOT / s["frame"]).read_bytes() for s in job["shots"]]
+    return pics
+
+
+def build_checked(item: dict, feedback: str = "") -> dict:
+    """Собирает пост и прогоняет через строгого критика; ниже MIN_SCORE — переделывает (до MAX_TRIES раз)."""
+    best = None
+    notes = feedback
+    for attempt in range(MAX_TRIES):
+        job = build_post(item, notes)
+        try:
+            review = text.critique(job["script"], _pictures(job))
+        except Exception as e:
+            job["review"] = {"score": 0, "verdict": f"критик не ответил: {e}"[:300], "fixes": []}
+            save_job(job)
+            return job
+        job["review"] = review
+        job["attempt"] = attempt + 1
+        save_job(job)
+        print(f"Критик: {review['score']}/10 — {review.get('verdict')}")
+        if not best or review["score"] > best["review"]["score"]:
+            best = job
+        if review["score"] >= MIN_SCORE:
+            return job
+        fixes = "; ".join(review.get("fixes") or [])
+        notes = (feedback + "\n" if feedback else "") + f"Строгий редактор поставил {review['score']}/10: {review.get('verdict')} Исправь: {fixes}"
+    if best is not job:  # вернуть лучший вариант
+        save_job(best)
+    return best
+
+
 def animate_with_veo(job):
     for i, shot in enumerate(job["shots"]):
         if shot.get("clip"):
@@ -259,6 +307,13 @@ def send_draft(state, job):
     else:
         telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title)
     telegram.send_text(cid, job["caption"][:3900])
+    rv = job.get("review")
+    if rv:
+        tries = f" (вариант {job.get('attempt', 1)} из {MAX_TRIES})" if job.get("attempt", 1) > 1 else ""
+        msg = f"🧐 Строгий критик: {rv.get('score')}/10{tries}. {rv.get('verdict', '')}"
+        if rv.get("score", 0) < MIN_SCORE and rv.get("fixes"):
+            msg += "\nЧто ещё можно улучшить: " + "; ".join(rv["fixes"][:3])
+        telegram.send_text(cid, msg[:3900])
     for w in job.get("warnings") or []:
         telegram.send_text(cid, f"ℹ️ {w}"[:3900])
     telegram.send_text(cid, "Публикуем?", [[
@@ -345,7 +400,7 @@ def _prepare(state):
     if not item:
         telegram.send_text(chat(state), "Контент-план закончился. Допишите посты в plan.yaml.")
         return
-    job = build_post(item)
+    job = build_checked(item)
     state["pending"] = item["id"]
     if job.get("stage") == "ready" and os.environ.get("AUTO_PUBLISH", "").lower() == "true":
         telegram.send_text(chat(state), f"Опубликовано: {publish(state, item['id'])}")
@@ -596,8 +651,8 @@ def handle(state, up):
 
 
 def regenerate(state, ep_id, feedback):
-    telegram.send_text(chat(state), "Переделываю, это займёт 2–4 минуты…")
-    job = build_post(post_by_id(ep_id), feedback)
+    telegram.send_text(chat(state), "Переделываю и показываю строгому критику, это займёт 5–15 минут…")
+    job = build_checked(post_by_id(ep_id), feedback)
     state["awaiting_feedback"] = None
     send_draft(state, job)
 

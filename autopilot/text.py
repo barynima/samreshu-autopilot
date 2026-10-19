@@ -245,3 +245,45 @@ def write_post(post: dict, feedback: str = "") -> dict:
         return _validate(fmt, _extract_json(_ask(system, review, temperature=0.5)))
     except (ValueError, json.JSONDecodeError, RuntimeError):
         return draft
+
+
+# ---------- строгий критик ----------
+
+CRITIC = """Ты — строгий главный редактор и арт-директор аккаунта «Сам решу». Ты видел тысячи постов для мам
+и пропускаешь только лучшее. Аудитория: мама 35–50 лет, ребёнок в 8–9 классе. Оцени готовый пост — текст И картинки —
+по правилам ниже и по этим вопросам:
+1. Узнаёт ли мама свою ситуацию за 1 секунду по первому кадру и первой фразе?
+2. Захочется ли досмотреть до конца и переслать мужу или подруге?
+3. Настроение светлое и тёплое: день, улыбки, живые эмоции? Нет ли уныния, полумрака, серости, тревоги?
+4. Картинки: современная квартира, ухоженные люди, подросток в актуальной одежде без видимого лица, нет стока, нет
+   странных рук, лишних пальцев, букв и артефактов, нет советской разрухи?
+5. Текст: живой, короткий, без канцелярита и ИИ-оборотов; нет «он/она» и глаголов с родом про ребёнка; нет страха,
+   обещаний, цены, выдуманных историй и цифр не из списка?
+6. Есть один понятный ход на сегодня и мягкий призыв?
+7. Есть ли в посте что-то неожиданное — то, ради чего его сохранят?
+Будь жёстким: 8+ ставь только тому, что не стыдно показать лучшим SMM-командам. Средний пост — 5–6.
+
+ПРАВИЛА АККАУНТА:
+{rules}
+
+Ответь только JSON: {{"score": целое 1–10, "verdict": "одна фраза для автора, по-русски",
+"fixes": ["конкретная правка 1", "правка 2", "..."]}}"""
+
+
+def critique(script: dict, pictures: list) -> dict:
+    """Оценка готового поста: текст + картинки (jpeg/png bytes). Возвращает score, verdict, fixes."""
+    import base64
+    parts = [{"text": "Сценарий и подпись поста:\n" + json.dumps(script, ensure_ascii=False)}]
+    for pic in pictures[:6]:
+        mime = "image/png" if pic[:4] == b"\x89PNG" else "image/jpeg"
+        parts.append({"inlineData": {"mimeType": mime, "data": base64.b64encode(pic).decode()}})
+    model = os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
+    data = google.generate(model, {
+        "systemInstruction": {"parts": [{"text": CRITIC.format(rules=RULES)}]},
+        "contents": [{"role": "user", "parts": parts}],
+        "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
+    }, timeout=240)
+    out = "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"] if not p.get("thought"))
+    res = _extract_json(out)
+    res["score"] = int(res.get("score") or 0)
+    return res
