@@ -1,63 +1,83 @@
 {
   "id": "bloger",
-  "format": "reel_text",
-  "hook": "«Мам, я буду блогером». Сердце ёкнуло?",
-  "caption": "«Мам, я буду блогером». Если от этих слов у вас внутри всё сжалось — вы не одна. Это нормально — бояться за будущее, когда профессия кажется непонятной и нестабильной.\n\nНо не спешите говорить «нет». Попробуйте сделать один шаг: спросите не «почему», а «что именно тебе в этом нравится?». Снимать, монтировать, придумывать истории, общаться с людьми?\n\nЗа желанием «стать блогером» часто скрыт интерес к режиссуре, сценарному делу, маркетингу или дизайну. Это огромные индустрии, где ребёнок уже сейчас, сам того не зная, нарабатывает навыки.\n\nА ваш о чём говорит: уже придумал идею для канала или пока просто смотрит других?\n\nПодпишитесь, чтобы лучше понимать интересы своего подростка и не бояться их.\n\n#самрешу #профессиябудущего #9класс #огэ2026 #выборпрофессии",
+  "format": "reel_chat",
+  "hook": "Ну что, придумал, кем хочешь быть? — Хочу стать блогером.",
+  "caption": "«Хочу быть блогером». Если от этих слов у вас ёкнуло сердце — вы не одна.\n\nСразу в голове — кривляния на камеру, потерянные годы и «кем же ты работать будешь?». Это нормальная реакция, так думают многие.\n\nНо прежде чем спорить, попробуйте один ход. Спросите не «зачем?», а «что именно тебе в этом нравится?». Монтировать ролики? Придумывать истории? Делать красивые кадры?\n\nЗа этим «блогером» часто прячется интерес к режиссуре, маркетингу или сторителлингу. Ребёнок, может, уже нашёл своё, просто назвал это непривычным для вас словом.\n\nА какие «страшные» профессии называл ваш ребёнок?\n\nПодпишитесь, чтобы не бояться таких разговоров, а видеть в них возможности.\n\n#самрешу #профессиибудущего #9класс #огэ2026 #выборпрофессии",
   "script": {
-    "hook": "«Мам, я буду блогером». Сердце ёкнуло?",
-    "slides": [
+    "dialog": [
       {
-        "text": "И первая мысль: «Это несерьёзно, какая же это работа?»",
-        "scene": "A pair of headphones lying on a closed laptop on a wooden desk."
+        "who": "mom",
+        "text": "Ну что, придумал, кем хочешь быть?"
       },
       {
-        "text": "Но подождите. А что, если это не просто увлечение?",
-        "scene": "Close-up of a computer screen showing a video editing software timeline, slightly out of focus."
-      },
-      {
-        "text": "Ребёнок часами монтирует? Это навыки режиссёра монтажа.",
-        "scene": "A notebook open to a page with hand-drawn storyboards and script notes."
-      },
-      {
-        "text": "Придумывает, как удержать зрителя? Это уже маркетинг.",
-        "scene": "A digital drawing tablet with a stylus resting on it, the screen is dark."
+        "who": "sam",
+        "text": "Хочу стать *блогером*."
       }
     ],
-    "first_scene": "A smartphone mounted on a small tripod on a desk, a ring light is on.",
-    "end": "Это не пустые мечты. Это проба себя в реальной индустрии.\nПодпишитесь, чтобы говорить с ребёнком на одном языке.",
-    "caption": "«Мам, я буду блогером». Если от этих слов у вас внутри всё сжалось — вы не одна. Это нормально — бояться за будущее, когда профессия кажется непонятной и нестабильной.\n\nНо не спешите говорить «нет». Попробуйте сделать один шаг: спросите не «почему», а «что именно тебе в этом нравится?». Снимать, монтировать, придумывать истории, общаться с людьми?\n\nЗа желанием «стать блогером» часто скрыт интерес к режиссуре, сценарному делу, маркетингу или дизайну. Это огромные индустрии, где ребёнок уже сейчас, сам того не зная, нарабатывает навыки.\n\nА ваш о чём говорит: уже придумал идею для канала или пока просто смотрит других?\n\nПодпишитесь, чтобы лучше понимать интересы своего подростка и не бояться их.\n\n#самрешу #профессиябудущего #9класс #огэ2026 #выборпрофессии"
+    "first_scene": "Candid smartphone photo from the mom's point of view. A modern kitchen in a middle-class Russian apartment. The mom (early 40s, well-kept) looks concerned at her 14-15 year old child who is engrossed in a smartphone at the dinner table. The teen, wearing an oversized hoodie, is seen from the back, face not visible.",
+    "slides": [
+      {
+        "text": "Услышать такое — *страшно*. Сразу в голове — кривляния на камеру.",
+        "scene": "A teen's messy but modern bedroom. A 14-15 year old girl with dyed hair, wearing wide jeans and a hoodie, sits at a desk with two monitors, her back to the camera. The room is lit by the screens and an RGB light strip."
+      },
+      {
+        "text": "Но что *на самом деле* нравится ребёнку в этом деле?",
+        "scene": "Close-up shot of a teenager's hands editing a video on a tablet with a stylus. The background is a slightly blurred modern living room. We only see the hands and the tablet screen."
+      },
+      {
+        "text": "Может, это талант к режиссуре, сторителлингу или *продвижению*.",
+        "scene": "A father (mid-40s) and his teenage son are in a living room. The son is showing something on a laptop screen to his dad. The son is seen from the side, his face partially obscured by the laptop. The room is cozy and modern."
+      },
+      {
+        "text": "Спросите, что нравится *больше всего*: снимать? Монтировать? Придумывать?",
+        "scene": "A mom and her teenage daughter are sitting on a couch, talking. The mom is listening intently. The teen is gesturing, explaining something. We see the teen from behind her shoulder, face not visible. Warm, late afternoon light."
+      }
+    ],
+    "end": "За «хочу быть блогером» может стоять настоящая профессия.\nПомогите её разглядеть.",
+    "caption": "«Хочу быть блогером». Если от этих слов у вас ёкнуло сердце — вы не одна.\n\nСразу в голове — кривляния на камеру, потерянные годы и «кем же ты работать будешь?». Это нормальная реакция, так думают многие.\n\nНо прежде чем спорить, попробуйте один ход. Спросите не «зачем?», а «что именно тебе в этом нравится?». Монтировать ролики? Придумывать истории? Делать красивые кадры?\n\nЗа этим «блогером» часто прячется интерес к режиссуре, маркетингу или сторителлингу. Ребёнок, может, уже нашёл своё, просто назвал это непривычным для вас словом.\n\nА какие «страшные» профессии называл ваш ребёнок?\n\nПодпишитесь, чтобы не бояться таких разговоров, а видеть в них возможности.\n\n#самрешу #профессиибудущего #9класс #огэ2026 #выборпрофессии",
+    "hook": "Ну что, придумал, кем хочешь быть? — Хочу стать блогером."
   },
   "warnings": [],
-  "end": "Это не пустые мечты. Это проба себя в реальной индустрии.\nПодпишитесь, чтобы говорить с ребёнком на одном языке.",
-  "base": "posts/bloger/202610191544",
-  "slides": [
+  "end": "За «хочу быть блогером» может стоять настоящая профессия.\nПомогите её разглядеть.",
+  "base": "posts/bloger/202610191725",
+  "dialog": [
     {
-      "text": "«Мам, я буду блогером». Сердце ёкнуло?",
-      "scene": "A smartphone mounted on a small tripod on a desk, a ring light is on.",
-      "image": "posts/bloger/202610191544_slide1.png"
+      "who": "mom",
+      "text": "Ну что, придумал, кем хочешь быть?"
     },
     {
-      "text": "И первая мысль: «Это несерьёзно, какая же это работа?»",
-      "scene": "A pair of headphones lying on a closed laptop on a wooden desk.",
-      "image": "posts/bloger/202610191544_slide2.png"
-    },
-    {
-      "text": "Но подождите. А что, если это не просто увлечение?",
-      "scene": "Close-up of a computer screen showing a video editing software timeline, slightly out of focus.",
-      "image": "posts/bloger/202610191544_slide3.png"
-    },
-    {
-      "text": "Ребёнок часами монтирует? Это навыки режиссёра монтажа.",
-      "scene": "A notebook open to a page with hand-drawn storyboards and script notes.",
-      "image": "posts/bloger/202610191544_slide4.png"
-    },
-    {
-      "text": "Придумывает, как удержать зрителя? Это уже маркетинг.",
-      "scene": "A digital drawing tablet with a stylus resting on it, the screen is dark.",
-      "image": "posts/bloger/202610191544_slide5.png"
+      "who": "sam",
+      "text": "Хочу стать *блогером*."
     }
   ],
-  "cover": "posts/bloger/202610191544_cover.jpg",
-  "video": "posts/bloger/202610191544_reel.mp4",
+  "slides": [
+    {
+      "text": "",
+      "scene": "Candid smartphone photo from the mom's point of view. A modern kitchen in a middle-class Russian apartment. The mom (early 40s, well-kept) looks concerned at her 14-15 year old child who is engrossed in a smartphone at the dinner table. The teen, wearing an oversized hoodie, is seen from the back, face not visible.",
+      "image": "posts/bloger/202610191725_slide1.png"
+    },
+    {
+      "text": "Услышать такое — *страшно*. Сразу в голове — кривляния на камеру.",
+      "scene": "A teen's messy but modern bedroom. A 14-15 year old girl with dyed hair, wearing wide jeans and a hoodie, sits at a desk with two monitors, her back to the camera. The room is lit by the screens and an RGB light strip.",
+      "image": "posts/bloger/202610191725_slide2.png"
+    },
+    {
+      "text": "Но что *на самом деле* нравится ребёнку в этом деле?",
+      "scene": "Close-up shot of a teenager's hands editing a video on a tablet with a stylus. The background is a slightly blurred modern living room. We only see the hands and the tablet screen.",
+      "image": "posts/bloger/202610191725_slide3.png"
+    },
+    {
+      "text": "Может, это талант к режиссуре, сторителлингу или *продвижению*.",
+      "scene": "A father (mid-40s) and his teenage son are in a living room. The son is showing something on a laptop screen to his dad. The son is seen from the side, his face partially obscured by the laptop. The room is cozy and modern.",
+      "image": "posts/bloger/202610191725_slide4.png"
+    },
+    {
+      "text": "Спросите, что нравится *больше всего*: снимать? Монтировать? Придумывать?",
+      "scene": "A mom and her teenage daughter are sitting on a couch, talking. The mom is listening intently. The teen is gesturing, explaining something. We see the teen from behind her shoulder, face not visible. Warm, late afternoon light.",
+      "image": "posts/bloger/202610191725_slide5.png"
+    }
+  ],
+  "cover": "posts/bloger/202610191725_cover.jpg",
+  "video": "posts/bloger/202610191725_reel.mp4",
   "stage": "ready"
 }
