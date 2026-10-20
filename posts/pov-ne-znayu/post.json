@@ -1,0 +1,96 @@
+{
+  "id": "pov-ne-znayu",
+  "format": "reel_chat",
+  "hook": "Ну что, есть идеи, кем быть? — ...",
+  "caption": "Вместо «Кем хочешь стать?» спросите сегодня вечером: «А что тебе интересно *обсуждать* с друзьями?»\n\nУслышать в ответ тишину и увидеть наушники — нормально. Это защитная реакция на вопрос, на который у ребёнка пока нет ответа. И это не значит, что ему совсем ничего не интересно.\n\nВопрос про то, что зажигает прямо сейчас, а не про выбор на всю жизнь, снимает огромное давление. Ответ может вас удивить: мемы, новый альбом, кто победит в турнире. Не обесценивайте. Любой интерес — это точка входа в большой разговор о будущем. Просто он начинается не с вопроса «кем быть».\n\nА у вас чаще тишина или «мам, я подумаю»?\n\nОтправьте мужу, чтобы действовать заодно.\n\n#самрешу #профориентация #9класс #огэ2026 #подросткииродители",
+  "script": {
+    "dialog": [
+      {
+        "who": "mom",
+        "text": "Ну что, есть идеи, кем быть?"
+      },
+      {
+        "who": "sam",
+        "text": "*...*"
+      }
+    ],
+    "first_scene": "A well-lit teen's room in a modern middle-class apartment. A person in an oversized dark green hoodie is sitting at a desk with their back to the camera. A laptop is open on the desk, a pair of large black headphones sits beside it. Sunlight streams in from a window.",
+    "first_motion": "The person slowly reaches for the large black headphones on the desk, without turning around.",
+    "slides": [
+      {
+        "text": "Это не равнодушие. И *не лень*.",
+        "scene": "Close-up from the side. The person in the oversized dark green hoodie is now wearing the headphones, face turned towards the glowing laptop screen, features obscured. The focus is on the headphones and the slight hunch of the shoulders.",
+        "motion": "The person's fingers tap once or twice on the trackpad of the laptop."
+      },
+      {
+        "text": "Просто вопрос «кем стать» — *огромный*.",
+        "scene": "Same scene, different angle. Shot from slightly behind the person in the dark green hoodie. They are looking at the screen, posture is neutral and thoughtful. The room is tidy but lived-in, with posters on the wall out of focus.",
+        "motion": "The person's head tilts slightly, as if considering something on the screen."
+      },
+      {
+        "text": "Он ломает даже взрослых. Не то что в 15 лет.",
+        "scene": "View from behind the open laptop, showing the back of the screen and the silhouette of the person in the dark green hoodie. Through the window, a bright cityscape is visible, but there are no sharp or distracting reflections in the glass.",
+        "motion": "The person's shoulders give a very subtle shrug, a barely noticeable movement."
+      }
+    ],
+    "end": "Вопрос поменьше, с которого можно начать, — в описании.",
+    "caption": "Вместо «Кем хочешь стать?» спросите сегодня вечером: «А что тебе интересно *обсуждать* с друзьями?»\n\nУслышать в ответ тишину и увидеть наушники — нормально. Это защитная реакция на вопрос, на который у ребёнка пока нет ответа. И это не значит, что ему совсем ничего не интересно.\n\nВопрос про то, что зажигает прямо сейчас, а не про выбор на всю жизнь, снимает огромное давление. Ответ может вас удивить: мемы, новый альбом, кто победит в турнире. Не обесценивайте. Любой интерес — это точка входа в большой разговор о будущем. Просто он начинается не с вопроса «кем быть».\n\nА у вас чаще тишина или «мам, я подумаю»?\n\nОтправьте мужу, чтобы действовать заодно.\n\n#самрешу #профориентация #9класс #огэ2026 #подросткииродители",
+    "hook": "Ну что, есть идеи, кем быть? — ..."
+  },
+  "warnings": [],
+  "base": "posts/pov-ne-znayu/202610201041",
+  "end": "Вопрос поменьше, с которого можно начать, — в описании.",
+  "dialog": [
+    {
+      "who": "mom",
+      "text": "Ну что, есть идеи, кем быть?"
+    },
+    {
+      "who": "sam",
+      "text": "*...*"
+    }
+  ],
+  "slides": [
+    {
+      "text": "",
+      "scene": "A well-lit teen's room in a modern middle-class apartment. A person in an oversized dark green hoodie is sitting at a desk with their back to the camera. A laptop is open on the desk, a pair of large black headphones sits beside it. Sunlight streams in from a window.",
+      "motion": "The person slowly reaches for the large black headphones on the desk, without turning around.",
+      "image": "posts/pov-ne-znayu/202610201041_slide1.jpg",
+      "clip": "posts/pov-ne-znayu/202610201041_clip1.mp4"
+    },
+    {
+      "text": "Это не равнодушие. И *не лень*.",
+      "scene": "Close-up from the side. The person in the oversized dark green hoodie is now wearing the headphones, face turned towards the glowing laptop screen, features obscured. The focus is on the headphones and the slight hunch of the shoulders.",
+      "motion": "The person's fingers tap once or twice on the trackpad of the laptop.",
+      "image": "posts/pov-ne-znayu/202610201041_slide2.jpg",
+      "clip": "posts/pov-ne-znayu/202610201041_clip2.mp4"
+    },
+    {
+      "text": "Просто вопрос «кем стать» — *огромный*.",
+      "scene": "Same scene, different angle. Shot from slightly behind the person in the dark green hoodie. They are looking at the screen, posture is neutral and thoughtful. The room is tidy but lived-in, with posters on the wall out of focus.",
+      "motion": "The person's head tilts slightly, as if considering something on the screen.",
+      "image": "posts/pov-ne-znayu/202610201041_slide3.jpg",
+      "clip": "posts/pov-ne-znayu/202610201041_clip3.mp4"
+    },
+    {
+      "text": "Он ломает даже взрослых. Не то что в 15 лет.",
+      "scene": "View from behind the open laptop, showing the back of the screen and the silhouette of the person in the dark green hoodie. Through the window, a bright cityscape is visible, but there are no sharp or distracting reflections in the glass.",
+      "motion": "The person's shoulders give a very subtle shrug, a barely noticeable movement.",
+      "image": "posts/pov-ne-znayu/202610201041_slide4.jpg",
+      "clip": "posts/pov-ne-znayu/202610201041_clip4.mp4"
+    }
+  ],
+  "cover": "posts/pov-ne-znayu/202610201041_cover.jpg",
+  "video": "posts/pov-ne-znayu/202610201041_reel.mp4",
+  "stage": "ready",
+  "review": {
+    "score": 6,
+    "verdict": "Концепция и текст отличные, но четвёртый кадр всё рушит.",
+    "fixes": [
+      "Заменить четвёртый кадр. Он ломает всю историю: там другие люди и весёлая семейная сцена, которая не соответствует тексту «ломает даже взрослых». Нужен кадр с тем же подростком или с задумчивым взрослым в той же квартире.",
+      "На третьем кадре на экране ноутбука виден программный код. Это сужает образ подростка до будущего айтишника. Лучше показать что-то более универсальное: поисковик, игру, соцсеть.",
+      "В подписи к посту ОГЭ указан 2026 года, а по заданию нынешние 9-классники сдают его в 2027. Заменить хэштег #огэ2026 на #огэ2027."
+    ]
+  },
+  "attempt": 3
+}
