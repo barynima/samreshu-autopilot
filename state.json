@@ -1,10 +1,11 @@
 {
-  "offset": 320005861,
+  "offset": 320005864,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
-    "bloger"
+    "bloger",
+    "pov-ne-znayu"
   ],
-  "pending": "pov-ne-znayu",
+  "pending": null,
   "awaiting_feedback": null
 }
