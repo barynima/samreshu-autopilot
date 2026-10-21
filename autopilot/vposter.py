@@ -38,11 +38,25 @@ def targets() -> list:
     """[(type_social, id_group, name)] — куда публикуем."""
     want = [t.strip() for t in (os.environ.get("VPOSTER_TARGETS") or "vk").split(",") if t.strip()]
     data = _check(requests.get(f"{API}/groups.getMy", headers=_h(), timeout=60), "groups.getMy")
-    items = (data.get("response") or {}).get("items") or []
     pages = {}
-    for block in items:
-        for social, lst in block.items():
-            pages.setdefault(social, []).extend(lst or [])
+
+    def walk(node, social=None):
+        if isinstance(node, dict):
+            if "id" in node and ("name" in node or "type_social" in node):
+                key = str(node.get("type_social") or social or "")
+                key = {"vkontakte": "vk", "telegram": "tg", "odnoklassniki": "ok"}.get(key, key)
+                pages.setdefault(key, []).append(node)
+                return
+            for k, v in node.items():
+                walk(v, k if k in NAMES or k in ("fb", "ig_business", "rutube") else social)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, social)
+
+    walk(data.get("response", data))
+    if not pages:
+        raise RuntimeError("Впостер вернул неожиданный список страниц: "
+                           + json.dumps(data, ensure_ascii=False)[:500])
     out = []
     for social in want:
         lst = pages.get(social) or []
