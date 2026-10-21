@@ -718,6 +718,22 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/vk_test"):
+        try:
+            m = next(m for m in reversed(instagram.my_media()) if m["type"] == "VIDEO")
+            f = ROOT / "posts" / "_vk_test.mp4"
+            f.write_bytes(requests.get(m["files"][0][1], timeout=300).content)
+            gid = vposter.targets()[0][1]
+            try:
+                att = vposter._upload(f, gid, "video")
+                msg = json.dumps(att, ensure_ascii=False)
+            except Exception as e:  # noqa: BLE001
+                msg = f"ошибка: {e}"
+            telegram.send_text(cid, f"Тест загрузки видео (без публикации). Файл {f.stat().st_size // 1024} КБ.\n"
+                                    f"Ответ Впостера: {msg}"[:3900])
+            f.unlink()
+        except Exception as e:  # noqa: BLE001
+            telegram.send_text(cid, f"⚠️ Тест не удался: {e}"[:3900])
     elif body.startswith("/vk_all"):
         vk_import(state, confirm=False)
     elif body.startswith("/vk"):
@@ -802,7 +818,9 @@ def vk_import(state, confirm):
         telegram.send_text(cid, "Впостер не подключён.")
         return
     sent = set(state.setdefault("vk_sent", []))
-    todo = [m for m in instagram.my_media() if m["id"] not in sent and m["link"] not in sent and m["files"]]
+    until = state.get("vk_synced_until", "")  # всё, что вышло до этой даты включительно, уже во ВКонтакте
+    todo = [m for m in instagram.my_media() if m["id"] not in sent and m["link"] not in sent and m["files"]
+            and m["date"] > until]
     if not todo:
         telegram.send_text(cid, "Все посты из Instagram уже есть во ВКонтакте.")
         return

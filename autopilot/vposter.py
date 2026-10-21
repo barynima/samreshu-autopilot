@@ -82,11 +82,21 @@ def targets() -> list:
     return out
 
 
+LAST_UPLOAD = {}
+
+
 def _upload(path: Path, id_group: str, kind: str) -> list:
+    mime = {"video": "video/mp4", "image": "image/jpeg"}.get(kind, "application/octet-stream")
     with open(path, "rb") as f:
         r = requests.post(f"{API}/uploads.uploadFile", headers=_h(), timeout=600,
-                          files={"file": (path.name, f)}, data={"id_group": id_group, "type": kind})
-    return (_check(r, "uploadFile").get("response") or {}).get("attachments") or []
+                          files={"file": (path.name, f, mime)}, data={"id_group": id_group, "type": kind})
+    data = _check(r, "uploadFile")
+    LAST_UPLOAD.clear()
+    LAST_UPLOAD.update(data)
+    att = (data.get("response") or {}).get("attachments") or []
+    if not att:
+        raise RuntimeError(f"Впостер не вернул вложение для {path.name}: {json.dumps(data, ensure_ascii=False)[:400]}")
+    return att
 
 
 def adapt_caption(caption: str) -> str:
@@ -106,6 +116,9 @@ def publish(caption: str, images: list = None, video: Path = None) -> list:
                 if social == "vk" and a.get("type") == "video":
                     a["type_video"] = "short_video"  # VK Клип
                 attachments.append(a)
+        if video and not any(a.get("type") == "video" for a in attachments):
+            raise RuntimeError("Впостер принял видео, но не как видео: "
+                               + json.dumps(attachments, ensure_ascii=False)[:400])
         for img in images or []:
             attachments += _upload(Path(img), gid, "image")
         body = {"id_group": gid, "type_social": social, "post_day": "oneraz",
