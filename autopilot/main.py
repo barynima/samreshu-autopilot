@@ -364,15 +364,19 @@ def send_draft(state, job):
     if rv:
         tries = f" (вариант {job.get('attempt', 1)} из {MAX_TRIES})" if job.get("attempt", 1) > 1 else ""
         msg = f"🧐 Строгий критик: {rv.get('score')}/10{tries}. {rv.get('verdict', '')}"
-        if rv.get("score", 0) < MIN_SCORE and rv.get("fixes"):
-            msg += "\nЧто ещё можно улучшить: " + "; ".join(rv["fixes"][:3])
+        if rv.get("fixes"):
+            msg += "\n\nЧто можно улучшить:\n" + "\n".join(f"• {f}" for f in rv["fixes"][:4])
         telegram.send_text(cid, msg[:3900])
     for w in job.get("warnings") or []:
         telegram.send_text(cid, f"ℹ️ {w}"[:3900])
-    telegram.send_text(cid, "Публикуем?", [[
+    buttons = [[
         {"text": "✅ Публиковать", "callback_data": f"pub:{pid}"},
         {"text": "🔁 Переделать", "callback_data": f"redo:{pid}"},
-    ], [{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}]])
+    ]]
+    if rv and rv.get("fixes"):
+        buttons.append([{"text": "🛠 Внести правки критика", "callback_data": f"fix:{pid}"}])
+    buttons.append([{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}])
+    telegram.send_text(cid, "Публикуем?", buttons)
 
 
 def receive_clip(state, msg):
@@ -622,7 +626,7 @@ def handle(state, up):
     if cb:
         telegram.answer(cb["id"])
         kind, _, arg = cb["data"].partition(":")
-        if kind in ("pub", "redo", "again", "skip", "veo", "still") and state.get("pending") != arg:
+        if kind in ("pub", "redo", "again", "skip", "veo", "still", "fix") and state.get("pending") != arg:
             telegram.send_text(cid, "Эта кнопка от старого поста, он уже не актуален. "
                                     "Отправьте /post — сделаю следующий пост по новому плану.")
             return
@@ -635,6 +639,8 @@ def handle(state, up):
                                [[{"text": "🎲 Просто другой вариант", "callback_data": f"again:{arg}"}]])
         elif kind == "again" and state.get("pending") == arg:
             regenerate(state, arg, "")
+        elif kind == "fix" and state.get("pending") == arg:
+            fix_by_critic(state, arg)
         elif kind in ("veo", "still") and state.get("pending") == arg:
             job = load_job(arg)
             if job.get("stage") != "clips":
@@ -688,6 +694,11 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/fix"):
+        if state.get("pending") and (POSTS / state["pending"] / "post.json").exists():
+            fix_by_critic(state, state["pending"])
+        else:
+            telegram.send_text(cid, "Сейчас нечего править.")
     elif body.startswith("/rebuild"):
         pid = state.get("pending")
         if not pid or not (POSTS / pid / "post.json").exists() or load_job(pid)["format"] == "carousel":
@@ -727,6 +738,17 @@ def handle(state, up):
         cmd_refs(state)
     elif state.get("awaiting_feedback") and body:
         regenerate(state, state["awaiting_feedback"], body)
+
+
+def fix_by_critic(state, ep_id):
+    rv = load_job(ep_id).get("review") or {}
+    fixes = rv.get("fixes") or []
+    if not fixes:
+        telegram.send_text(chat(state), "У критика нет замечаний к этому посту.")
+        return
+    feedback = ("Сохрани всё, что получилось хорошо: тему, сюжет, структуру и удачные формулировки. "
+                "Внеси только эти правки строгого критика:\n" + "\n".join(f"- {f}" for f in fixes))
+    regenerate(state, ep_id, feedback)
 
 
 def regenerate(state, ep_id, feedback):
