@@ -1,5 +1,5 @@
 {
-  "offset": 320005874,
+  "offset": 320005875,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -8,5 +8,6 @@
     "voprosy-za-uzhinom"
   ],
   "pending": null,
-  "awaiting_feedback": null
+  "awaiting_feedback": null,
+  "vk_sent": []
 }
