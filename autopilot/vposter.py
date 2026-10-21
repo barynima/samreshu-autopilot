@@ -29,7 +29,7 @@ def _check(r, what):
         data = r.json()
     except ValueError:
         raise RuntimeError(f"Впостер {what}: HTTP {r.status_code} {r.text[:300]}")
-    if r.status_code != 200 or "error" in data:
+    if not 200 <= r.status_code < 300 or "error" in data:
         raise RuntimeError(f"Впостер {what}: HTTP {r.status_code} {json.dumps(data, ensure_ascii=False)[:400]}")
     return data
 
