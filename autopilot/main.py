@@ -17,7 +17,7 @@ from pathlib import Path
 
 import yaml
 
-from . import images, instagram, render, storage, telegram, text, video, vposter
+from . import images, instagram, planner, render, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -447,6 +447,22 @@ def cmd_prepare(state):
         session(state, 60)  # ждём решения или клипов час, каждое действие продлевает
 
 
+def top_up_plan(state, force=False):
+    """Когда впереди меньше 4 постов — дописывает неделю по гиду и присылает список тем."""
+    if not force and planner.remaining(state["done"], state.get("pending")) >= 4:
+        return
+    try:
+        new = planner.extend()
+    except Exception as e:  # noqa: BLE001
+        telegram.send_text(chat(state), f"⚠️ Не получилось дописать контент-план: {e}"[:3900])
+        return
+    git_sync("План: дописана неделя по гиду")
+    lines = [f"{p['date'][8:10]}.{p['date'][5:7]} · {p.get('type', '')} · {'ролик' if p['format'] == 'reel_chat' else 'карусель'} — {p['hook']}"
+             for p in new]
+    telegram.send_text(chat(state), "🗓 Дописала план на неделю по гиду:\n" + "\n".join(lines)
+                       + "\n\nЧто-то не нравится — напишите мне в Claude, поправлю.")
+
+
 def _prepare(state):
     if not chat(state):
         print("Чат с ботом ещё не найден: напишите боту в Telegram любое сообщение.")
@@ -454,9 +470,10 @@ def _prepare(state):
     if state.get("pending"):
         telegram.send_text(chat(state), "Напоминаю: предыдущий пост ждёт решения 👆")
         return
+    top_up_plan(state)
     item = next_post(state)
     if not item:
-        telegram.send_text(chat(state), "Контент-план закончился. Допишите посты в plan.yaml.")
+        telegram.send_text(chat(state), "Контент-план закончился, а дописать его не получилось. Напишите /plan — попробую ещё раз.")
         return
     job = build_checked(item)
     state["pending"] = item["id"]
@@ -694,6 +711,14 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/plan"):
+        ahead = [p for p in load_plan() if p["id"] not in state["done"]]
+        if len(ahead) < 4:
+            top_up_plan(state, force=True)
+            ahead = [p for p in load_plan() if p["id"] not in state["done"]]
+        telegram.send_text(cid, "Ближайшие посты:\n" + "\n".join(
+            f"{str(p['date'])[8:10]}.{str(p['date'])[5:7]} · {'ролик' if p['format'] == 'reel_chat' else 'карусель'} — {p['hook']}"
+            for p in ahead[:10]))
     elif body.startswith("/fix"):
         if state.get("pending") and (POSTS / state["pending"] / "post.json").exists():
             fix_by_critic(state, state["pending"])
