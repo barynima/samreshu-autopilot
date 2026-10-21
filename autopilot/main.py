@@ -57,7 +57,10 @@ def git_sync(message: str):
     for _ in range(3):
         if subprocess.run(["git", "push"], cwd=ROOT).returncode == 0:
             return
-        run("pull", "--rebase")
+        # При конфликте (обычно state.json) побеждают изменения этого запуска: бот — главный источник состояния.
+        if subprocess.run(["git", "pull", "--rebase", "-X", "theirs"], cwd=ROOT).returncode != 0:
+            subprocess.run(["git", "rebase", "--abort"], cwd=ROOT)
+            subprocess.run(["git", "pull", "--no-rebase", "-X", "ours", "--no-edit"], cwd=ROOT)
     raise RuntimeError("Не удалось сохранить изменения в репозиторий")
 
 
