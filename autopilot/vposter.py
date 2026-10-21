@@ -62,10 +62,22 @@ def targets() -> list:
         lst = pages.get(social) or []
         if not lst:
             raise RuntimeError(f"Впостер: нет подключённых страниц типа «{social}». Подключите сообщество в кабинете.")
+        # Личные страницы никогда не трогаем: только сообщества.
+        lst = [p for p in lst if "личная" not in str(p.get("name", "")).lower()
+               and str(p.get("type", "")).lower() not in ("user", "profile")]
+        if not lst:
+            raise RuntimeError(f"Впостер: в «{NAMES.get(social, social)}» подключена только личная страница. "
+                               "Подключите в кабинете Впостера сообщество «Сам решу».")
         pick = os.environ.get(f"VPOSTER_{social.upper()}_GROUP")
-        page = next((p for p in lst if str(p["id"]) == str(pick)), None) if pick else lst[0]
+        if pick:
+            page = next((p for p in lst if str(p["id"]).lstrip("-") == str(pick).lstrip("-")), None)
+        else:
+            named = [p for p in lst if "сам решу" in str(p.get("name", "")).lower()]
+            page = named[0] if len(named) == 1 else (lst[0] if len(lst) == 1 else None)
         if not page:
-            raise RuntimeError(f"Впостер: страница {pick} ({social}) не найдена среди подключённых.")
+            names = ", ".join(f"{p.get('name')} (id {p['id']})" for p in lst)
+            raise RuntimeError(f"Впостер: не понятно, какое сообщество выбрать: {names}. "
+                               f"Укажите нужный id в переменной VPOSTER_{social.upper()}_GROUP.")
         out.append((social, str(page["id"]), page.get("name", "")))
     return out
 
