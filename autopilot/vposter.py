@@ -93,7 +93,8 @@ def _upload(path: Path, id_group: str, kind: str) -> list:
     data = _check(r, "uploadFile")
     LAST_UPLOAD.clear()
     LAST_UPLOAD.update(data)
-    att = (data.get("response") or {}).get("attachments") or []
+    resp = data.get("response") or {}
+    att = resp.get("attachments") or resp.get("attachements") or []  # у Впостера в ответе встречается опечатка
     if not att:
         raise RuntimeError(f"Впостер не вернул вложение для {path.name}: {json.dumps(data, ensure_ascii=False)[:400]}")
     return att
