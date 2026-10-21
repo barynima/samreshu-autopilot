@@ -711,6 +711,16 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/vk"):
+        if not vposter.enabled():
+            telegram.send_text(cid, "Ключа Впостера пока нет: в GitHub не найден секрет VPOSTER_TOKEN.")
+        else:
+            try:
+                pages = vposter.targets()
+                telegram.send_text(cid, "✅ Впостер подключён. Посты будут уходить сюда:\n"
+                                   + "\n".join(f"• {vposter.NAMES.get(s_, s_)}: {n} (id {g})" for s_, g, n in pages))
+            except Exception as e:  # noqa: BLE001
+                telegram.send_text(cid, f"⚠️ Впостер не отвечает как надо: {e}"[:3900])
     elif body.startswith("/plan"):
         ahead = [p for p in load_plan() if p["id"] not in state["done"]]
         if len(ahead) < 4:
