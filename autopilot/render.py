@@ -515,3 +515,29 @@ def chat_cover(image_bytes: bytes, messages: list, size=(RW, RH)) -> bytes:
     out = io.BytesIO()
     base.convert("RGB").save(out, "JPEG", quality=92)
     return out.getvalue()
+
+
+def swipe_badge(jpeg: bytes, label: str = "Листайте") -> bytes:
+    """Плашка «Листайте →» в правом нижнем углу первого слайда карусели."""
+    img = Image.open(io.BytesIO(jpeg)).convert("RGBA")
+    w, h = img.size
+    font = _font(round(w * 0.045))
+    tw = font.getbbox(label)[2]
+    th = font.getbbox("Ли")[3]
+    pad, arrow = round(w * 0.035), round(w * 0.05)
+    bw, bh = pad * 2 + tw + pad // 2 + arrow, round(th * 1.9)
+    x0, y0 = w - bw - round(w * 0.05), h - bh - round(w * 0.06)
+    layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    d.rounded_rectangle((x0 + 4, y0 + 6, x0 + bw + 4, y0 + bh + 6), radius=bh // 2, fill=(0, 0, 0, 60))
+    d.rounded_rectangle((x0, y0, x0 + bw, y0 + bh), radius=bh // 2, fill=CORAL + (255,))
+    d.text((x0 + pad, y0 + bh // 2), label, font=font, fill=(255, 255, 255, 255), anchor="lm")
+    ax, ay, s = x0 + pad + tw + pad // 2, y0 + bh // 2, arrow
+    t = max(4, s // 6)
+    d.line((ax, ay, ax + s, ay), fill="white", width=t)
+    d.line((ax + s * 0.55, ay - s * 0.4, ax + s, ay), fill="white", width=t)
+    d.line((ax + s * 0.55, ay + s * 0.4, ax + s, ay), fill="white", width=t)
+    img.alpha_composite(layer)
+    out = io.BytesIO()
+    img.convert("RGB").save(out, "JPEG", quality=92)
+    return out.getvalue()

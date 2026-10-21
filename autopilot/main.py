@@ -133,6 +133,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
     if fmt == "carousel":
         cover = render.chat_cover(images.life(script["cover_scene"], "4:5"),
                                   [{"who": "brand", "text": script["hook"]}], size=(render.W, render.H))
+        cover = render.swipe_badge(cover)  # без призыва листать мамы не понимают, что это карусель
         cards = script["cards"]
         n = len(cards) + 2
         blobs = [cover] + [render.text_card(c.get("title", ""), c["text"], f"{i}/{n}")
