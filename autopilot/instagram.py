@@ -81,3 +81,17 @@ def publish_reel(video_url: str, caption: str, cover_url: str = "", thumb_offset
         raise RuntimeError("Instagram обрабатывал ролик дольше 10 минут")
     media_id = _post(f"{user_id}/media_publish", creation_id=container)["id"]
     return _get(media_id, fields="permalink").get("permalink", media_id)
+
+
+def my_media() -> list:
+    """Опубликованные посты аккаунта, от старых к новым: id, тип, подпись, ссылки на файлы."""
+    data = _get("me/media", fields="id,caption,media_type,media_url,permalink,timestamp,"
+                                   "children{media_type,media_url}", limit="50")
+    out = []
+    for m in data.get("data", []):
+        files = [(c["media_type"], c["media_url"]) for c in (m.get("children") or {}).get("data", [])] \
+            or [(m["media_type"], m.get("media_url"))]
+        out.append({"id": m["id"], "type": m["media_type"], "caption": m.get("caption", ""),
+                    "link": m.get("permalink", ""), "date": m.get("timestamp", "")[:10],
+                    "files": [f for f in files if f[1]]})
+    return sorted(out, key=lambda m: m["date"])

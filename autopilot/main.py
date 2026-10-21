@@ -15,6 +15,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import requests
 import yaml
 
 from . import images, instagram, planner, render, storage, telegram, text, video, vposter
@@ -418,6 +419,7 @@ def publish(state, post_id):
                 where = vposter.publish(job["caption"], images=[ROOT / f for f in job["files"]])
             else:
                 where = vposter.publish(job["caption"], video=ROOT / job["video"])
+            state.setdefault("vk_sent", []).append(link.strip())
             link += "\nТакже отправлено: " + ", ".join(where) + " (выйдет примерно через минуту)."
         except Exception as e:
             link += f"\n⚠️ ВКонтакте не получилось: {e}"[:1500]
@@ -679,6 +681,8 @@ def handle(state, up):
             if state.get("pending") and (REFS / "sam.png").exists() and (REFS / "nado.png").exists():
                 telegram.send_text(cid, "Оба эталона выбраны. Перерисовать текущий пост уже с ними?",
                                    [[{"text": "🎨 Перерисовать", "callback_data": f"again:{state['pending']}"}]])
+        elif kind == "vkall":
+            vk_import(state, confirm=True)
         elif kind == "refs":
             telegram.send_text(cid, "Рисую новые варианты, это займёт пару минут…")
             cmd_refs(state)
@@ -711,6 +715,8 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/vk_all"):
+        vk_import(state, confirm=False)
     elif body.startswith("/vk"):
         if not vposter.enabled():
             telegram.send_text(cid, "Ключа Впостера пока нет: в GitHub не найден секрет VPOSTER_TOKEN.")
@@ -784,6 +790,50 @@ def fix_by_critic(state, ep_id):
     feedback = ("Сохрани всё, что получилось хорошо: тему, сюжет, структуру и удачные формулировки. "
                 "Внеси только эти правки строгого критика:\n" + "\n".join(f"- {f}" for f in fixes))
     regenerate(state, ep_id, feedback)
+
+
+def vk_import(state, confirm):
+    """Переносит во ВКонтакте посты, которые уже вышли в Instagram."""
+    cid = chat(state)
+    if not vposter.enabled():
+        telegram.send_text(cid, "Впостер не подключён.")
+        return
+    sent = set(state.setdefault("vk_sent", []))
+    todo = [m for m in instagram.my_media() if m["id"] not in sent and m["link"] not in sent and m["files"]]
+    if not todo:
+        telegram.send_text(cid, "Все посты из Instagram уже есть во ВКонтакте.")
+        return
+    if not confirm:
+        lines = [f"{m['date'][8:10]}.{m['date'][5:7]} · {'ролик' if m['type'] == 'VIDEO' else 'карусель' if m['type'] == 'CAROUSEL_ALBUM' else 'фото'} — "
+                 f"{(m['caption'] or '').splitlines()[0][:60] if m['caption'] else 'без подписи'}" for m in todo]
+        telegram.send_text(cid, f"Во ВКонтакте можно перенести {len(todo)}:\n" + "\n".join(lines),
+                           [[{"text": "📤 Отправить во ВКонтакте", "callback_data": "vkall:go"}]])
+        return
+    telegram.send_text(cid, f"Переношу {len(todo)} во ВКонтакте, по минуте на пост…")
+    tmp = ROOT / "posts" / "_vk_import"
+    tmp.mkdir(parents=True, exist_ok=True)
+    for m in todo:
+        try:
+            paths = []
+            for i, (kind, url) in enumerate(m["files"]):
+                f = tmp / f"{m['id']}_{i}.{'mp4' if kind == 'VIDEO' else 'jpg'}"
+                f.write_bytes(requests.get(url, timeout=300).content)
+                paths.append(f)
+            videos = [p for p in paths if p.suffix == ".mp4"]
+            if videos and len(paths) == 1:
+                vposter.publish(m["caption"], video=videos[0])
+            else:
+                vposter.publish(m["caption"], images=[p for p in paths if p.suffix == ".jpg"])
+            state["vk_sent"].append(m["link"] or m["id"])
+            save_state(state)
+            telegram.send_text(cid, f"✅ {m['date'][8:10]}.{m['date'][5:7]} отправлен во ВКонтакте")
+        except Exception as e:  # noqa: BLE001
+            telegram.send_text(cid, f"⚠️ Пост {m['link']} не получилось: {e}"[:1500])
+        finally:
+            for f in tmp.glob(f"{m['id']}_*"):
+                f.unlink()
+        time.sleep(60)
+    git_sync("ВКонтакте: перенесены посты из Instagram")
 
 
 def regenerate(state, ep_id, feedback):
