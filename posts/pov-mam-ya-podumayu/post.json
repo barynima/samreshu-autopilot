@@ -2,7 +2,7 @@
   "id": "pov-mam-ya-podumayu",
   "format": "reel_chat",
   "hook": "Ну что, есть идеи, куда после 9-го? — Мам, я подумаю.",
-  "caption": "Вместо большого вопроса «Куда дальше?» задайте один маленький: «А что тебе было интереснее всего делать на этой неделе? Не из уроков, а вообще». \n\n«Я подумаю» — это не «отстань» и не лень. Это защитная реакция на вопрос, который кажется огромным. Когда не знаешь, с чего начать, проще вообще не начинать. Это и взрослым знакомо, правда?\n\nВаша задача — не вытащить готовый ответ, а помочь нащупать интерес. Поговорите не о будущем, а о настоящем. О том, что нравится прямо сейчас: сериал, который смотрит, или почему было круто собрать тот стеллаж в комнате. Когда ребёнок видит, что вам правда интересен его мир, а не только «кем быть», — он начинает понемногу открываться.\n\nА ваш что чаще отвечает: «я подумаю» или «не знаю»?\n\nОтправьте мужу, чтобы быть на одной волне.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+  "caption": "Вместо «Ну что ты решил?» попробуйте задать маленький конкретный вопрос: «Какой урок в школе кажется тебе самым бесполезным? А какой — самым нормальным? Почему?»\n\nКогда ребёнок говорит «я подумаю», он не отмахивается. Просто вопрос «кем быть» — огромный и пугающий. Для мозга проще всего отложить его на потом, чем разбираться.\n\nА разговор о бесполезных уроках снимает это давление. Он помогает нащупать, что нравится, а что — точно нет. И это уже огромный шаг, чтобы лучше понять себя.\n\nА у вас чаще «подумаю» или «отстань»?\n\nОтправьте мужу, чтобы вы были на одной волне.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии",
   "script": {
     "dialog": [
       {
@@ -14,37 +14,37 @@
         "text": "Мам, я *подумаю*."
       }
     ],
-    "first_scene": "candid smartphone photo from mom's real life: a modern renovated middle-class Russian apartment kitchen. A well-kept woman in her early 40s looks at her phone with a mix of love and slight exasperation. In the soft-focus background, a person aged 14-15 in an oversized hoodie and wide jeans is getting a snack from the fridge, their back to the camera. The scene is filled with warm morning sunlight.",
-    "first_motion": "The woman subtly shakes her head with a faint smile and continues scrolling on her phone; the person in the background closes the fridge door and walks out of the frame.",
+    "first_scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a mom in her early 40s sits on a sofa in a modern sunlit living room, looking at her phone with a wry smile. In the background, out of focus, a person in an oversized hoodie and headphones is seen from the back, sitting at a desk by the window.",
+    "first_motion": "video prompt in ENGLISH, 1 sentence: The woman on the sofa slightly shakes her head with a knowing smile, as if reading a funny message, while the person in the background bobs their head to music only they can hear.",
     "slides": [
       {
         "text": "«Подумаю» звучит уже полгода? Это *нормально*.",
-        "scene": "candid smartphone photo: a bright, sunlit living room in a different modern apartment. A dad in his 40s is talking to a person (14-15) who is sitting at a desk with a laptop, wearing large headphones. The person's face is obscured by the angle and the laptop screen. A DIFFERENT family and apartment than the other slides.",
-        "motion": "The person at the laptop gives a slight shrug without turning their head, while the dad gently places a hand on their shoulder."
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a different family in a bright, modern kitchen. A person wearing wide jeans and a t-shirt is seen from behind, getting a glass of water. A man, presumably the dad, leans against the counter nearby, smiling warmly.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The person seen from behind closes the fridge door, and the dad gestures with his hand as if telling a light-hearted story."
       },
       {
-        "text": "Вопрос «кем быть» — слишком большой. *Неподъёмный*.",
-        "scene": "candid smartphone photo: a person (14-15) in trendy clothes sits on a wide windowsill, looking out the window of a modern apartment. Their back is to the camera, creating a thoughtful silhouette against the bright daylight. A DIFFERENT family and apartment than the other slides.",
-        "motion": "The person on the windowsill slightly shifts their posture and idly taps a finger on the windowpane."
+        "text": "Вопрос «кем быть» — слишком *большой* и страшный.",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a cozy, slightly messy room of a 14-15 year old. A person is lying on the bed, back to the camera, scrolling on a tablet. The room is filled with posters and personal items, bathed in warm afternoon light.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The person's thumb moves as they scroll on the tablet, the screen's light reflecting softly on the wall."
       },
       {
-        "text": "Ребёнок не знает, с какой стороны к нему *подступиться*.",
-        "scene": "candid smartphone photo: a mom and a person (14-15) wearing a backpack are walking away from the camera down a sunny city sidewalk, seemingly on their way from school. A DIFFERENT family and apartment than the other slides.",
-        "motion": "They walk in comfortable silence for a moment, then the mom gestures with her hand as if making a lighthearted point."
+        "text": "Он пугает даже взрослых, не то что в 15 лет.",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: inside a car, a mom in the driver's seat glances in the rearview mirror with a gentle smile. In the passenger seat, a person in a hoodie has their head turned to look out the side window, so only the back of their head and shoulder are visible.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The scenery outside the side window moves by, and the mom adjusts the rearview mirror slightly."
       },
       {
-        "text": "Поэтому мозг выбирает самое простое: *отложить*.",
-        "scene": "candid smartphone photo, close-up shot of a person's hands doodling abstract shapes in a spiral notebook on a cluttered desk with textbooks and pens. The person's face and body are out of frame. A DIFFERENT family and apartment than the other slides.",
-        "motion": "The pen in the person's hand continues to fill the page with a repetitive, calming pattern."
+        "text": "Поэтому мозг выбирает просто *отложить* его.",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a high-angle shot looking down at a person's hands and forearms as they assemble a complex model kit on a wooden table. The person's face and body are out of frame. The scene is a different family and room, well-lit and cozy.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The person's hands carefully click a small piece of the model into place."
       }
     ],
-    "end": "1 маленький вопрос вместо большого — в описании",
-    "caption": "Вместо большого вопроса «Куда дальше?» задайте один маленький: «А что тебе было интереснее всего делать на этой неделе? Не из уроков, а вообще». \n\n«Я подумаю» — это не «отстань» и не лень. Это защитная реакция на вопрос, который кажется огромным. Когда не знаешь, с чего начать, проще вообще не начинать. Это и взрослым знакомо, правда?\n\nВаша задача — не вытащить готовый ответ, а помочь нащупать интерес. Поговорите не о будущем, а о настоящем. О том, что нравится прямо сейчас: сериал, который смотрит, или почему было круто собрать тот стеллаж в комнате. Когда ребёнок видит, что вам правда интересен его мир, а не только «кем быть», — он начинает понемногу открываться.\n\nА ваш что чаще отвечает: «я подумаю» или «не знаю»?\n\nОтправьте мужу, чтобы быть на одной волне.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+    "end": "Как помочь «подумать» — в описании",
+    "caption": "Вместо «Ну что ты решил?» попробуйте задать маленький конкретный вопрос: «Какой урок в школе кажется тебе самым бесполезным? А какой — самым нормальным? Почему?»\n\nКогда ребёнок говорит «я подумаю», он не отмахивается. Просто вопрос «кем быть» — огромный и пугающий. Для мозга проще всего отложить его на потом, чем разбираться.\n\nА разговор о бесполезных уроках снимает это давление. Он помогает нащупать, что нравится, а что — точно нет. И это уже огромный шаг, чтобы лучше понять себя.\n\nА у вас чаще «подумаю» или «отстань»?\n\nОтправьте мужу, чтобы вы были на одной волне.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии",
     "hook": "Ну что, есть идеи, куда после 9-го? — Мам, я подумаю."
   },
   "warnings": [],
-  "base": "posts/pov-mam-ya-podumayu/202610221041",
-  "end": "1 маленький вопрос вместо большого — в описании",
+  "base": "posts/pov-mam-ya-podumayu/202610221611",
+  "end": "Как помочь «подумать» — в описании",
   "dialog": [
     {
       "who": "mom",
@@ -58,50 +58,49 @@
   "slides": [
     {
       "text": "",
-      "scene": "candid smartphone photo from mom's real life: a modern renovated middle-class Russian apartment kitchen. A well-kept woman in her early 40s looks at her phone with a mix of love and slight exasperation. In the soft-focus background, a person aged 14-15 in an oversized hoodie and wide jeans is getting a snack from the fridge, their back to the camera. The scene is filled with warm morning sunlight.",
-      "motion": "The woman subtly shakes her head with a faint smile and continues scrolling on her phone; the person in the background closes the fridge door and walks out of the frame.",
-      "image": "posts/pov-mam-ya-podumayu/202610221041_slide1.jpg",
-      "clip": "posts/pov-mam-ya-podumayu/202610221041_clip1.mp4"
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a mom in her early 40s sits on a sofa in a modern sunlit living room, looking at her phone with a wry smile. In the background, out of focus, a person in an oversized hoodie and headphones is seen from the back, sitting at a desk by the window.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The woman on the sofa slightly shakes her head with a knowing smile, as if reading a funny message, while the person in the background bobs their head to music only they can hear.",
+      "image": "posts/pov-mam-ya-podumayu/202610221611_slide1.jpg",
+      "clip": "posts/pov-mam-ya-podumayu/202610221611_clip1.mp4"
     },
     {
       "text": "«Подумаю» звучит уже полгода? Это *нормально*.",
-      "scene": "candid smartphone photo: a bright, sunlit living room in a different modern apartment. A dad in his 40s is talking to a person (14-15) who is sitting at a desk with a laptop, wearing large headphones. The person's face is obscured by the angle and the laptop screen. A DIFFERENT family and apartment than the other slides.",
-      "motion": "The person at the laptop gives a slight shrug without turning their head, while the dad gently places a hand on their shoulder.",
-      "image": "posts/pov-mam-ya-podumayu/202610221041_slide2.jpg",
-      "clip": "posts/pov-mam-ya-podumayu/202610221041_clip2.mp4"
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a different family in a bright, modern kitchen. A person wearing wide jeans and a t-shirt is seen from behind, getting a glass of water. A man, presumably the dad, leans against the counter nearby, smiling warmly.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The person seen from behind closes the fridge door, and the dad gestures with his hand as if telling a light-hearted story.",
+      "image": "posts/pov-mam-ya-podumayu/202610221611_slide2.jpg",
+      "clip": "posts/pov-mam-ya-podumayu/202610221611_clip2.mp4"
     },
     {
-      "text": "Вопрос «кем быть» — слишком большой. *Неподъёмный*.",
-      "scene": "candid smartphone photo: a person (14-15) in trendy clothes sits on a wide windowsill, looking out the window of a modern apartment. Their back is to the camera, creating a thoughtful silhouette against the bright daylight. A DIFFERENT family and apartment than the other slides.",
-      "motion": "The person on the windowsill slightly shifts their posture and idly taps a finger on the windowpane.",
-      "image": "posts/pov-mam-ya-podumayu/202610221041_slide3.jpg",
-      "clip": "posts/pov-mam-ya-podumayu/202610221041_clip3.mp4"
+      "text": "Вопрос «кем быть» — слишком *большой* и страшный.",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a cozy, slightly messy room of a 14-15 year old. A person is lying on the bed, back to the camera, scrolling on a tablet. The room is filled with posters and personal items, bathed in warm afternoon light.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The person's thumb moves as they scroll on the tablet, the screen's light reflecting softly on the wall.",
+      "image": "posts/pov-mam-ya-podumayu/202610221611_slide3.jpg",
+      "clip": "posts/pov-mam-ya-podumayu/202610221611_clip3.mp4"
     },
     {
-      "text": "Ребёнок не знает, с какой стороны к нему *подступиться*.",
-      "scene": "candid smartphone photo: a mom and a person (14-15) wearing a backpack are walking away from the camera down a sunny city sidewalk, seemingly on their way from school. A DIFFERENT family and apartment than the other slides.",
-      "motion": "They walk in comfortable silence for a moment, then the mom gestures with her hand as if making a lighthearted point.",
-      "image": "posts/pov-mam-ya-podumayu/202610221041_slide4.jpg",
-      "clip": "posts/pov-mam-ya-podumayu/202610221041_clip4.mp4"
+      "text": "Он пугает даже взрослых, не то что в 15 лет.",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: inside a car, a mom in the driver's seat glances in the rearview mirror with a gentle smile. In the passenger seat, a person in a hoodie has their head turned to look out the side window, so only the back of their head and shoulder are visible.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The scenery outside the side window moves by, and the mom adjusts the rearview mirror slightly.",
+      "image": "posts/pov-mam-ya-podumayu/202610221611_slide4.jpg",
+      "clip": "posts/pov-mam-ya-podumayu/202610221611_clip4.mp4"
     },
     {
-      "text": "Поэтому мозг выбирает самое простое: *отложить*.",
-      "scene": "candid smartphone photo, close-up shot of a person's hands doodling abstract shapes in a spiral notebook on a cluttered desk with textbooks and pens. The person's face and body are out of frame. A DIFFERENT family and apartment than the other slides.",
-      "motion": "The pen in the person's hand continues to fill the page with a repetitive, calming pattern.",
-      "image": "posts/pov-mam-ya-podumayu/202610221041_slide5.jpg",
-      "clip": "posts/pov-mam-ya-podumayu/202610221041_clip5.mp4"
+      "text": "Поэтому мозг выбирает просто *отложить* его.",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a high-angle shot looking down at a person's hands and forearms as they assemble a complex model kit on a wooden table. The person's face and body are out of frame. The scene is a different family and room, well-lit and cozy.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The person's hands carefully click a small piece of the model into place.",
+      "image": "posts/pov-mam-ya-podumayu/202610221611_slide5.jpg",
+      "clip": "posts/pov-mam-ya-podumayu/202610221611_clip5.mp4"
     }
   ],
-  "cover": "posts/pov-mam-ya-podumayu/202610221041_cover.jpg",
-  "video": "posts/pov-mam-ya-podumayu/202610221041_reel.mp4",
+  "cover": "posts/pov-mam-ya-podumayu/202610221611_cover.jpg",
+  "video": "posts/pov-mam-ya-podumayu/202610221611_reel.mp4",
   "stage": "ready",
   "review": {
     "score": 8,
-    "verdict": "Отличная работа, но дьявол в деталях. Исправь две мелочи, и будет идеально.",
+    "verdict": "Почти эталон, но одна ошибка в тексте рушит гендерную нейтральность.",
     "fixes": [
-      "В четвёртом слайде у подростка видно лицо и улыбку. Это нарушает ключевое правило «лицо подростка никогда не видно». Замени кадр на другой, где лицо скрыто ракурсом, капюшоном или предметом.",
-      "В предпоследнем абзаце подписи используется местоимение «он»: «...он начинает понемногу открываться». Это нарушает правило о гендерной нейтральности. Замени на «...ребёнок начинает понемногу открываться»."
+      "В подписи заменить «Когда ребёнок говорит „я подумаю“, он не отмахивается» на гендерно-нейтральную фразу. Например: «Когда ребёнок говорит „я подумаю“, это не отмашка» или «Такой ответ — не попытка отмахнуться»."
     ]
   },
-  "attempt": 1
+  "attempt": 3
 }
