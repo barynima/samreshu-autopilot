@@ -1,17 +1,19 @@
 {
-  "offset": 320005889,
+  "offset": 320005891,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
     "bloger",
     "pov-ne-znayu",
-    "voprosy-za-uzhinom"
+    "voprosy-za-uzhinom",
+    "pov-mam-ya-podumayu"
   ],
-  "pending": "pov-mam-ya-podumayu",
+  "pending": null,
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
     "https://www.instagram.com/reel/DeuKPudjIa1/",
-    "https://www.instagram.com/p/DewdMgRlowM/"
+    "https://www.instagram.com/p/DewdMgRlowM/",
+    "https://www.instagram.com/reel/DezoY3-jaqL/"
   ]
 }
