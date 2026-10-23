@@ -232,14 +232,24 @@ def animate_chat(job) -> None:
         if sl.get("clip"):
             continue
         motion = sl.get("motion") or "Subtle natural movement, the woman smiles."
-        try:
-            data = video.veo_clip((ROOT / sl["image"]).read_bytes(), motion, 6 if i == 0 else 4, style=video.LIFE_VIDEO)
-            rel = f"{job['base']}_clip{i + 1}.mp4"
-            (ROOT / rel).write_bytes(data)
-            sl["clip"] = rel
-        except Exception as e:
+        src = (ROOT / sl["image"]).read_bytes()
+        secs = 6 if i == 0 else 4
+        for attempt in range(2):  # склеенный или «уехавший» клип переделываем один раз, потом оставляем картинку
+            try:
+                data = video.veo_clip(src, motion, secs, style=video.LIFE_VIDEO)
+                problem = video.clip_problem(data, src, secs)
+                if problem:
+                    print(f"Veo, кадр {i + 1}, попытка {attempt + 1}: брак — {problem}")
+                    continue
+                rel = f"{job['base']}_clip{i + 1}.mp4"
+                (ROOT / rel).write_bytes(data)
+                sl["clip"] = rel
+                break
+            except Exception as e:
+                print(f"Veo, кадр {i + 1}: {e}")
+                break
+        if not sl.get("clip"):
             failed += 1
-            print(f"Veo, кадр {i + 1}: {e}")
     assemble(job)
     if failed:
         job["warnings"] = (job.get("warnings") or []) + [f"Veo не оживил {failed} кадр(а) — они остались картинками."]

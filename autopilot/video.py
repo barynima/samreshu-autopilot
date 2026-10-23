@@ -51,7 +51,57 @@ TOY_VIDEO = ("Soft matte 3D vinyl toy style, keep both characters exactly as in 
              "no subtitles.")
 
 
+def _veo_input(image_bytes: bytes) -> bytes:
+    """Ровно 9:16 (720×1280). Если пропорции кадра хоть немного другие, Veo дорисовывает полосу сверху или снизу —
+    отсюда «разрезанные» ролики, где сверху кусок другого видео."""
+    import io
+    pic = render.fit_vertical(image_bytes).resize((720, 1280))
+    out = io.BytesIO()
+    pic.save(out, "JPEG", quality=95)
+    return out.getvalue()
+
+
+def _gray_frames(video_path: Path, times: list, size=(90, 160)) -> list:
+    import numpy as np
+    frames = []
+    for t in times:
+        r = subprocess.run([ffmpeg(), "-v", "error", "-ss", f"{t:.2f}", "-i", str(video_path), "-frames:v", "1",
+                            "-vf", f"scale={size[0]}:{size[1]},format=gray", "-f", "rawvideo", "-"],
+                           capture_output=True)
+        if len(r.stdout) == size[0] * size[1]:
+            frames.append(np.frombuffer(r.stdout, dtype=np.uint8).reshape(size[1], size[0]).astype(float))
+    return frames
+
+
+def clip_problem(clip: bytes, source: bytes, seconds: float):
+    """Проверка клипа Veo: нет ли склейки двух разных видео и не уехал ли кадр от исходной картинки.
+    Возвращает текст проблемы или None."""
+    import numpy as np
+    from PIL import Image
+    import io
+    with tempfile.TemporaryDirectory() as tmp:
+        f = Path(tmp) / "c.mp4"
+        f.write_bytes(clip)
+        times = [0.1 + k * 0.25 for k in range(int((seconds - 0.2) / 0.25) + 1)]
+        frames = _gray_frames(f, times)
+    if len(frames) < 3:
+        return "не удалось прочитать клип"
+    src = np.asarray(render.fit_vertical(source).convert("L").resize((90, 160)), dtype=float)
+    bands = [(0, 53), (53, 107), (107, 160)]
+    first = frames[0]
+    diffs = [np.abs(first[a:b] - src[a:b]).mean() for a, b in bands]
+    if max(diffs) > 48 or max(diffs) - min(diffs) > 28:
+        return f"первый кадр не совпадает с картинкой (полосы: {', '.join(f'{d:.0f}' for d in diffs)})"
+    for i in range(1, len(frames)):
+        for a, b in bands:
+            jump = np.abs(frames[i][a:b] - frames[i - 1][a:b]).mean()
+            if jump > 38:
+                return f"резкая склейка на {times[i]:.1f} с"
+    return None
+
+
 def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6, style: str = TOY_VIDEO) -> bytes:
+    image_bytes = _veo_input(image_bytes)
     creds = google._credentials()
     project = os.environ.get("GOOGLE_PROJECT_ID") or creds.project_id
     loc = google.LOCATION
