@@ -531,24 +531,23 @@ def cmd_stories(state, only: str = ""):
     import zipfile
     import io
     cid = chat(state)
-    data = yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"]
-    if only:
-        data = [h for h in data if h["id"] == only]
-        if not data and cid:
-            ids = ", ".join(h["id"] for h in yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"])
-            telegram.send_text(cid, f"Нет такого хайлайта. Есть: {ids}")
-            return
+    all_h = yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"]
+    data = [h for h in all_h if h["id"] == only] if only else all_h
+    if only and not data:
+        if cid:
+            telegram.send_text(cid, "Нет такого хайлайта. Есть: " + ", ".join(h["id"] for h in all_h))
+        return
     for h in data:
-        folder = POSTS / "stories" / h["id"]
-        folder.mkdir(parents=True, exist_ok=True)
         files, notes = [], []
+        cover = render.highlight_cover(h.get("icon", ""))
         for i, s in enumerate(h["stories"], 1):
+            img = None
             if s.get("scene"):
-                pic = render.story(images.frame(s["scene"], "9:16", STORY_LAYOUT), s["text"])
-            else:
-                pic = render.story_card(s["text"], s.get("bg", "coral"))
-            (folder / f"{i:02d}.jpg").write_bytes(pic)
-            files.append(pic)
+                try:
+                    img = images.life(s["scene"], "9:16")
+                except Exception as e:  # noqa: BLE001
+                    notes.append(f"Сторис {i}: кадр не нарисовался ({str(e)[:80]}), сделала на фоне мессенджера")
+            files.append(render.story_chat(s["messages"], img))
             if s.get("sticker"):
                 notes.append(f"Сторис {i}: добавьте стикер — {s['sticker']}")
         if not cid:
@@ -557,13 +556,16 @@ def cmd_stories(state, only: str = ""):
             telegram.send_album(cid, files[start:start + 10], f"«{h['title']}»: {len(files)} сторис по порядку")
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as z:
+            z.writestr(f"{h['id']}-00-oblozhka.jpg", cover)
             for i, pic in enumerate(files, 1):
                 z.writestr(f"{h['id']}-{i:02d}.jpg", pic)
-        telegram.send_document(cid, buf.getvalue(), f"{h['id']}.zip", "Файлы в полном качестве — для загрузки в сторис")
+        telegram.send_document(cid, buf.getvalue(), f"{h['id']}.zip",
+                               "Файлы в полном качестве: 00 — обложка, дальше сторис по порядку")
         tips = "\n".join(notes) if notes else "Стикеры не нужны."
-        telegram.send_text(cid, f"Как выложить «{h['title']}»: опубликуйте сторис по порядку, затем "
-                                f"«Добавить в актуальное» → «{h['title']}».\n{tips}\n"
-                                f"Не нравится? /stories {h['id']} — нарисую заново.")
+        telegram.send_text(cid, f"Как выложить «{h['title']}»:\n1. Опубликуйте сторис по порядку, добавьте стикеры.\n"
+                                f"2. На последней нажмите «Выделить» → «Новое» → название «{h['title']}».\n"
+                                f"3. Обложка: «Редактировать актуальное» → «Изменить обложку» → файл 00.\n"
+                                f"{tips}\nНе нравится? /stories {h['id']} — нарисую заново.")
 
 
 # ---------- проба визуала ----------

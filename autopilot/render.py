@@ -541,3 +541,65 @@ def swipe_badge(jpeg: bytes, label: str = "Листайте") -> bytes:
     out = io.BytesIO()
     img.convert("RGB").save(out, "JPEG", quality=92)
     return out.getvalue()
+
+
+def _chat_wallpaper() -> bytes:
+    """Фон «как в мессенджере»: кремовый с еле заметным узором из точек."""
+    img = Image.new("RGB", (RW, RH), CREAM)
+    d = ImageDraw.Draw(img)
+    for y in range(40, RH, 90):
+        for x in range(40 + (45 if (y // 90) % 2 else 0), RW, 90):
+            d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=(250, 226, 212))
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=95)
+    return out.getvalue()
+
+
+def story_chat(messages: list, image_bytes: bytes = None) -> bytes:
+    """Сторис 1080×1920 в стиле ленты: переписка поверх кадра из жизни или «обоев» мессенджера.
+    Нижняя треть остаётся свободной под стикер."""
+    return chat_cover(image_bytes or _chat_wallpaper(), messages, size=(RW, RH))
+
+
+def highlight_cover(icon: str) -> bytes:
+    """Обложка «Актуального»: коралловый фон и простая белая иконка по центру (Instagram вырезает круг)."""
+    img = Image.new("RGB", (RW, RH), CORAL)
+    d = ImageDraw.Draw(img)
+    cx, cy, s = RW // 2, RH // 2, 170
+    white, t = (255, 255, 255), 26
+    if icon == "chat":
+        d.rounded_rectangle((cx - s, cy - s * 0.75, cx + s, cy + s * 0.55), radius=70, outline=white, width=t)
+        d.polygon([(cx - s * 0.55, cy + s * 0.5), (cx - s * 0.75, cy + s * 0.95), (cx - s * 0.15, cy + s * 0.5)], fill=white)
+        for dx in (-s * 0.45, 0, s * 0.45):
+            d.ellipse((cx + dx - 22, cy - s * 0.1 - 22, cx + dx + 22, cy - s * 0.1 + 22), fill=white)
+    elif icon == "calendar":
+        d.rounded_rectangle((cx - s, cy - s * 0.75, cx + s, cy + s), radius=40, outline=white, width=t)
+        d.rectangle((cx - s, cy - s * 0.75, cx + s, cy - s * 0.3), fill=white)
+        for dx in (-s * 0.5, s * 0.5):
+            d.rounded_rectangle((cx + dx - 14, cy - s * 1.0, cx + dx + 14, cy - s * 0.55), radius=10, fill=white)
+        for row in range(2):
+            for col in range(3):
+                x, y = cx - s * 0.55 + col * s * 0.55, cy + s * 0.05 + row * s * 0.45
+                d.rounded_rectangle((x - 28, y - 22, x + 28, y + 22), radius=8, fill=white)
+    elif icon == "cap":
+        d.polygon([(cx, cy - s * 0.8), (cx + s * 1.1, cy - s * 0.3), (cx, cy + s * 0.2), (cx - s * 1.1, cy - s * 0.3)], fill=white)
+        d.rounded_rectangle((cx - s * 0.6, cy - s * 0.1, cx + s * 0.6, cy + s * 0.6), radius=50, fill=white)
+        d.line((cx + s * 0.95, cy - s * 0.3, cx + s * 0.95, cy + s * 0.5), fill=white, width=14)
+        d.ellipse((cx + s * 0.95 - 26, cy + s * 0.5 - 10, cx + s * 0.95 + 26, cy + s * 0.5 + 42), fill=white)
+    elif icon == "lock":
+        d.rounded_rectangle((cx - s * 0.85, cy - s * 0.15, cx + s * 0.85, cy + s), radius=40, fill=white)
+        d.arc((cx - s * 0.55, cy - s * 0.95, cx + s * 0.55, cy + s * 0.15), 180, 360, fill=white, width=t + 6)
+        d.line((cx - s * 0.55 + 16, cy - s * 0.4, cx - s * 0.55 + 16, cy - s * 0.1), fill=white, width=t + 6)
+        d.line((cx + s * 0.55 - 16, cy - s * 0.4, cx + s * 0.55 - 16, cy - s * 0.1), fill=white, width=t + 6)
+        d.ellipse((cx - 30, cy + s * 0.25, cx + 30, cy + s * 0.25 + 60), fill=CORAL)
+        d.rectangle((cx - 12, cy + s * 0.25 + 40, cx + 12, cy + s * 0.75), fill=CORAL)
+    elif icon == "question":
+        d.text((cx, cy), "?", font=_font(420), fill=white, anchor="mm")
+    elif icon == "person":
+        d.ellipse((cx - s * 0.45, cy - s * 0.95, cx + s * 0.45, cy - s * 0.05), fill=white)
+        d.chord((cx - s, cy + s * 0.05, cx + s, cy + s * 1.9), 180, 360, fill=white)
+    else:
+        d.text((cx, cy), icon[:1], font=_font(380), fill=white, anchor="mm")
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=95)
+    return out.getvalue()

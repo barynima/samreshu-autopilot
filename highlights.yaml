@@ -1,65 +1,134 @@
-# Сторис для «Актуального». Команда боту: /stories (все) или /stories chto-eto (один хайлайт).
-# scene — что нарисовать (на английском, персонажи по эталонам); без scene — сторис только с текстом.
-# bg — фон текстовой сторис: coral или cream. text — текст на сторис (до ~15 слов, \n — новая строка).
-# sticker — подсказка, какой стикер добавить вручную в Instagram (на картинку не попадает).
-# Сам — без рода: не пишем «он», пишем «ребёнок».
-# «Как это работает» и «Отзывы» здесь нет: нужны настоящие скриншоты и настоящие отзывы.
+# Сторис для «Актуального» по гиду. Команда боту: /stories (все) или /stories kak-eto (один хайлайт).
+# Стиль как в ленте: переписка в мессенджере. who: mom — мама (справа), sam — ребёнок, brand — «Сам решу».
+# scene — кадр из жизни (на английском); без scene — «обои» мессенджера. В одной сторис 1–3 сообщения (короткие — до 4).
+# icon — иконка обложки: chat, calendar, cap, lock, question, person.
+# sticker — подсказка, какой стикер добавить вручную в Instagram (на картинку не попадает; низ сторис оставлен под него).
+# Только проверенные факты из strategy/rules.md. Без выдуманных отзывов, скриншотов и примеров результата.
+# «Результат» и «Отзывы» появятся, когда будут настоящие скриншоты и отзывы с согласия.
 
 highlights:
-  - id: chto-eto
-    title: Что это
+  - id: kak-eto
+    title: Как это
+    icon: chat
     stories:
-      - scene: "Sam sits behind a half-open bedroom door wearing big headphones, looking away; cozy dim room"
-        text: "«Кем хочешь быть?» — «Не знаю».\nЗнакомо?"
+      - scene: "A mom in her early 40s on a sofa in a bright living room, smiling at her phone; in the background a teen with headphones passes by"
+        messages:
+          - {who: mom, text: "Кем хочешь быть?"}
+          - {who: sam, text: "Не знаю"}
+          - {who: brand, text: "Знакомо? Это нормально: вопрос просто *слишком большой*"}
         sticker: "Опрос: «Да, это мы» / «У нас иначе»"
-      - bg: coral
-        text: "Это не тест на 40 вопросов.\nЭто разговор с ИИ на языке школьника. Чату не страшно сказать «не знаю»"
-      - scene: "Sam sitting at a laptop with a glowing screen, curious glowing eyes, a small calm light-blue Nado peeking from behind"
-        text: "15–20 минут.\nНа выходе — 2–3 направления и какие предметы ОГЭ под них брать"
-      - scene: "Sam waving hello cheerfully, a small calm light-blue Nado next to Sam waving too"
-        text: "500 ₽. Анонимно: без имени и телефона"
-        sticker: "Ссылка на samreshu.pro"
-
-  - id: kto-ya
-    title: Кто я
-    # ЧЕРНОВИК: перепишите своими словами. Перед этими сторис выложите своё фото или видео-селфи.
-    stories:
-      - bg: cream
-        text: "Я Марина. Инженер по диплому — и профессию в школе выбрала неудачно"
-      - bg: cream
-        text: "Хотела быть врачом или учителем. Выбрала «компромисс».\nТеперь знаю: выбирать надо по тому, что нравится"
-      - bg: coral
-        text: "Первым «Сам решу» прошёл мой сын. И заинтересовался IT-аналитикой — о ней он раньше даже не думал"
-        sticker: "Ссылка на samreshu.pro"
-
-  - id: roditelyam
-    title: Родителям
-    stories:
-      - scene: "Small light-blue Nado sitting alone on a sofa, hugging a pillow, slightly worried"
-        text: "Переживаете за выбор больше, чем ребёнок?\nВы не одна"
-        sticker: "Опрос: что сложнее — начать разговор / не поругаться"
-      - bg: coral
-        text: "Вместо «Кем хочешь стать?» спросите за ужином:"
-      - bg: cream
-        text: "1. Что тебе сейчас интересно, даже если кажется ерундой?\n2. На каком уроке время летит быстрее?\n3. Что у тебя получается легче, чем у других?"
-        sticker: "Надпись «Сделайте скриншот»"
-      - scene: "Sam and a small calm light-blue Nado sitting together on a sofa, peaceful, warm light"
-        text: "Не давить и не бросать.\nРебёнок разбирается сам, вы — рядом"
+      - messages:
+          - {who: mom, text: "Это что, ещё один тест?"}
+          - {who: brand, text: "Нет. Это *разговор* с ИИ на языке школьника"}
+          - {who: brand, text: "Чату не страшно сказать «не знаю»: он не оценивает"}
+      - scene: "A teen sitting relaxed at a desk in a cozy modern bedroom, typing on a laptop, seen from behind over the shoulder, daylight"
+        messages:
+          - {who: brand, text: "*15–20 минут*. Ребёнок проходит сам, когда удобно"}
+      - messages:
+          - {who: brand, text: "На выходе — *2–3 направления*, которые подходят ребёнку"}
+          - {who: brand, text: "И какие *предметы ОГЭ* под них брать"}
+      - messages:
+          - {who: brand, text: "*500 ₽*. Анонимно: без имени и телефона"}
+          - {who: brand, text: "Решает ребёнок. У вас — опора для разговора"}
         sticker: "Ссылка на samreshu.pro"
 
   - id: oge
-    title: ОГЭ-2027
+    title: ОГЭ
+    icon: calendar
     stories:
-      - scene: "Sam thinking with a hand on the chin, a big wall calendar behind, no text on the calendar"
-        text: "Предметы ОГЭ выбрали, потому что «все так выбрали»?"
+      - scene: "A mom and a teen at a bright kitchen table in the evening, a laptop and school notebooks between them, both smiling"
+        messages:
+          - {who: mom, text: "Какие предметы ОГЭ будешь сдавать?"}
+          - {who: sam, text: "Ну… что полегче"}
+          - {who: brand, text: "Самый частый ответ. Давайте *разберёмся*"}
         sticker: "Опрос: «Уже выбрали» / «Ещё думаем»"
-      - bg: coral
-        text: "Заявление с предметами — до 1 марта.\nИтоговое собеседование — в феврале.\nВремени меньше, чем кажется"
-      - scene: "Sam holding a school certificate folder, looking at it seriously"
-        text: "Оценки за ОГЭ влияют на аттестат.\nА в колледж берут по среднему баллу аттестата"
-      - scene: "Sam at a fork in a path choosing a direction, hopeful, soft colors"
-        text: "Поэтому сначала 2–3 направления — потом предметы. Не наоборот"
+      - messages:
+          - {who: brand, text: "Заявление с предметами ОГЭ — *до 1 марта*"}
+          - {who: brand, text: "Итоговое собеседование — *в феврале*"}
+      - messages:
+          - {who: brand, text: "Оценки за ОГЭ идут *в аттестат*"}
+          - {who: brand, text: "А в колледж берут по *среднему баллу аттестата*"}
+      - messages:
+          - {who: brand, text: "Поэтому сначала *2–3 направления*"}
+          - {who: brand, text: "Потом предметы под них. Не наоборот"}
         sticker: "Ссылка на samreshu.pro"
-      - scene: "Nado surprised with wide eyes, holding a small history book"
-        text: "Нынешним 8-классникам: с 2027/28 учебного года для допуска к ОГЭ — ещё и устная история"
+      - messages:
+          - {who: brand, text: "Родителям 8-классников: с 1 сентября 2027 года для допуска к ОГЭ понадобится ещё и *устный экзамен по истории*"}
         sticker: "Вопрос: «Что непонятно про ОГЭ?»"
+
+  - id: kolledzh
+    title: Колледж
+    icon: cap
+    stories:
+      - scene: "A teen with a backpack in the hallway of a bright modern apartment, putting on sneakers, a mom smiling nearby holding a cup"
+        messages:
+          - {who: mom, text: "Ну что, 10 класс или колледж?"}
+          - {who: sam, text: "Колледж. Лишь бы не ЕГЭ"}
+          - {who: brand, text: "Это не каприз. Но нужен *следующий вопрос*"}
+      - messages:
+          - {who: brand, text: "1. Какая *специальность* интересна?"}
+          - {who: brand, text: "2. Какой путь к ней *короче*: колледж или 10 класс?"}
+          - {who: brand, text: "3. Хватит ли *баллов*?"}
+        sticker: "Надпись «Сохраните»"
+      - messages:
+          - {who: brand, text: "В колледж берут по среднему баллу аттестата"}
+          - {who: brand, text: "На популярные специальности в сильных колледжах нужно *4,5–4,8*"}
+      - messages:
+          - {who: brand, text: "В 2026 году около *65%* девятиклассников поступили в колледжи и техникумы"}
+          - {who: brand, text: "Колледж — нормальный путь, если выбран *осознанно*"}
+      - messages:
+          - {who: brand, text: "Не знаете, какая специальность? Начните с *направлений*"}
+          - {who: brand, text: "«Сам решу» помогает найти 2–3 за один вечер"}
+        sticker: "Ссылка на samreshu.pro"
+
+  - id: dannye
+    title: Данные
+    icon: lock
+    stories:
+      - messages:
+          - {who: mom, text: "А какие данные вы спрашиваете?"}
+          - {who: brand, text: "Никаких *имени и телефона* ребёнка"}
+      - messages:
+          - {who: brand, text: "Ребёнок разговаривает *анонимно*"}
+          - {who: brand, text: "Так проще говорить честно: чат не оценивает"}
+      - messages:
+          - {who: brand, text: "Остались вопросы о данных? *Спросите нас*"}
+        sticker: "Вопрос: «Что важно знать о данных?»"
+
+  - id: voprosy
+    title: Вопросы
+    icon: question
+    stories:
+      - messages:
+          - {who: mom, text: "Сколько это стоит?"}
+          - {who: brand, text: "*500 ₽*"}
+          - {who: mom, text: "Сколько времени займёт?"}
+          - {who: brand, text: "*15–20 минут*. Ребёнок проходит сам"}
+      - messages:
+          - {who: mom, text: "А если ребёнок на всё скажет «не знаю»?"}
+          - {who: brand, text: "Это нормально. Чат задаёт вопросы *поменьше* — и ответы находятся"}
+      - messages:
+          - {who: mom, text: "Вы выберете ребёнку профессию?"}
+          - {who: brand, text: "Нет. Будут *2–3 направления* и предметы ОГЭ. Решает ребёнок"}
+      - messages:
+          - {who: mom, text: "Кому не подойдёт?"}
+          - {who: brand, text: "Если ребёнок уже точно знает, куда идёт, — нам почти нечего добавить"}
+          - {who: brand, text: "Это не диагноз и не приговор, а *опора для разговора*"}
+      - messages:
+          - {who: brand, text: "Есть другой вопрос? *Задайте*"}
+        sticker: "Вопрос + ссылка на samreshu.pro"
+
+  - id: kto-ya
+    title: Кто я
+    icon: person
+    # ЧЕРНОВИК: перепишите своими словами. Перед этими сторис выложите своё фото или видео-селфи.
+    stories:
+      - messages:
+          - {who: brand, text: "Я Марина. Инженер по диплому — и профессию в школе выбрала *неудачно*"}
+      - messages:
+          - {who: brand, text: "Хотела быть врачом или учителем. Выбрала «компромисс»"}
+          - {who: brand, text: "Теперь знаю: выбирать надо по тому, что *нравится*"}
+      - messages:
+          - {who: brand, text: "Первым «Сам решу» прошёл мой сын"}
+          - {who: brand, text: "И заинтересовался *IT-аналитикой* — о ней он раньше даже не думал"}
+        sticker: "Ссылка на samreshu.pro"
