@@ -58,11 +58,25 @@ def send_photo(chat_id, data: bytes, caption: str = "", buttons=None):
     return _api("sendPhoto", data=payload, files={"photo": ("frame.jpg", data, "image/jpeg")})
 
 
-def send_video(chat_id, data: bytes, caption: str = "", buttons=None):
-    payload = {"chat_id": chat_id, "caption": caption[:1000], "supports_streaming": "true"}
+def send_video(chat_id, data: bytes, caption: str = "", buttons=None, width=1080, height=1920, thumb: bytes = None,
+               duration: int = None):
+    """Размеры и обложку передаём явно: без них Telegram иногда показывает вертикальное видео приплюснутым."""
+    payload = {"chat_id": chat_id, "caption": caption[:1000], "supports_streaming": "true",
+               "width": str(width), "height": str(height)}
+    if duration:
+        payload["duration"] = str(duration)
     if buttons:
         payload["reply_markup"] = json.dumps({"inline_keyboard": buttons})
-    return _api("sendVideo", data=payload, files={"video": ("reel.mp4", data, "video/mp4")})
+    files = {"video": ("reel.mp4", data, "video/mp4")}
+    if thumb:
+        from PIL import Image
+        import io
+        im = Image.open(io.BytesIO(thumb)).convert("RGB")
+        im.thumbnail((180, 320))
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=85)
+        files["thumbnail"] = ("thumb.jpg", buf.getvalue(), "image/jpeg")
+    return _api("sendVideo", data=payload, files=files)
 
 
 def send_document(chat_id, data: bytes, filename: str, caption: str = ""):

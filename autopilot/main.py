@@ -401,7 +401,12 @@ def send_draft(state, job):
     if job["format"] == "carousel":
         telegram.send_album(cid, [(ROOT / f).read_bytes() for f in job["files"]], title)
     else:
-        telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title)
+        thumb = (ROOT / job["cover"]).read_bytes() if job.get("cover") and (ROOT / job["cover"]).exists() else None
+        try:
+            secs = int(video.duration(ROOT / job["video"]))
+        except Exception:  # noqa: BLE001
+            secs = None
+        telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title, thumb=thumb, duration=secs)
     telegram.send_text(cid, job["caption"][:3900])
     rv = job.get("review")
     if rv:
@@ -952,7 +957,13 @@ def vk_import(state, confirm):
 
 def regenerate(state, ep_id, feedback):
     telegram.send_text(chat(state), "Переделываю и показываю строгому критику, это займёт 5–15 минут…")
+    try:
+        old = load_job(ep_id)
+    except Exception:  # noqa: BLE001
+        old = None
     job = build_checked(post_by_id(ep_id), feedback)
+    if old and old.get("base") and old.get("base") != job.get("base"):
+        _drop_files(old)  # файлы прошлого варианта больше не нужны — не раздуваем репозиторий
     state["awaiting_feedback"] = None
     send_draft(state, job)
 
