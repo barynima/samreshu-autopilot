@@ -539,11 +539,17 @@ def cmd_stories(state, only: str = ""):
         return
     for h in data:
         files, auto, notes = [], [], []
-        cover = render.highlight_cover(h.get("icon", ""))
+        me = storage.get_private("private/me.jpg") if h["id"] == "kto-ya" else None
+        if h["id"] == "kto-ya" and not me and cid:
+            telegram.send_text(cid, "Для «Кто я» нужно ваше фото: пришлите его сюда с подписью «кто я». "
+                                    "Пока делаю без фото.")
+        cover = render.highlight_cover_photo(me) if me else render.highlight_cover(h.get("icon", ""))
         n = len(h["stories"])
         for i, s in enumerate(h["stories"], 1):
-            img = None
-            if s.get("scene"):
+            img = me if s.get("photo") == "me" else None
+            if s.get("photo") == "me" and not me:
+                s = {**s, "type": "qa", "q": s["title"], "a": s.get("sub", "")}
+            if s.get("scene") and img is None:
                 try:
                     img = images.life(s["scene"], "9:16")
                 except Exception as e:  # noqa: BLE001
@@ -730,6 +736,16 @@ def handle(state, up):
             cmd_refs(state)
         return
 
+    doc = msg.get("document") or {}
+    pic = (msg.get("photo") or [None])[-1] or (doc if str(doc.get("mime_type", "")).startswith("image/") else None)
+    if pic and "кто я" in (msg.get("caption") or "").lower():
+        try:
+            storage.put_private(telegram.download(pic["file_id"]), "private/me.jpg")
+            telegram.send_text(cid, "📸 Фото сохранено для «Кто я». Теперь отправьте /stories kto-ya — "
+                                    "фото будет на первой сторис и на обложке.")
+        except Exception as e:  # noqa: BLE001
+            telegram.send_text(cid, f"⚠️ Не получилось сохранить фото: {e}"[:1500])
+        return
     audio = msg.get("audio") or (msg.get("document") if str((msg.get("document") or {}).get("mime_type", "")).startswith("audio/") else None)
     if audio:
         lib = ROOT / "music"

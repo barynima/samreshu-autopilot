@@ -29,6 +29,10 @@ def _auth():
     return {"Authorization": f"Bearer {google._credentials().token}"}
 
 
+# Через неделю удаляем только медиа постов и сторис; личные файлы (private/) храним.
+LIFECYCLE = {"rule": [{"action": {"type": "Delete"}, "condition": {"age": 7, "matchesPrefix": ["posts/", "stories/"]}}]}
+
+
 def _ensure_bucket(name: str):
     r = requests.get(f"https://storage.googleapis.com/storage/v1/b/{name}", headers=_auth(), timeout=30)
     if r.status_code == 200:
@@ -36,7 +40,7 @@ def _ensure_bucket(name: str):
     if r.status_code != 404:
         raise RuntimeError(f"Cloud Storage: нет доступа к бакету {name}: HTTP {r.status_code} {r.text[:200]}")
     body = {"name": name, "location": "US",
-            "lifecycle": {"rule": [{"action": {"type": "Delete"}, "condition": {"age": 7}}]}}
+            "lifecycle": LIFECYCLE}
     r = requests.post(f"https://storage.googleapis.com/storage/v1/b?project={_project()}", json=body,
                       headers=_auth(), timeout=30)
     if r.status_code not in (200, 409):
@@ -75,3 +79,23 @@ def public_url(path: Path, name: str) -> str:
     if r.status_code != 200:
         raise RuntimeError(f"Cloud Storage: не удалось загрузить {name}: HTTP {r.status_code} {r.text[:200]}")
     return _signed_url(bucket, name)
+
+
+def put_private(data: bytes, name: str, ctype: str = "image/jpeg"):
+    """Кладёт файл в бакет без публичной ссылки (например, личное фото для сторис)."""
+    bucket = bucket_name()
+    _ensure_bucket(bucket)
+    requests.patch(f"https://storage.googleapis.com/storage/v1/b/{bucket}", json={"lifecycle": LIFECYCLE},
+                   headers=_auth(), timeout=30)
+    r = requests.post(f"https://storage.googleapis.com/upload/storage/v1/b/{bucket}/o",
+                      params={"uploadType": "media", "name": name}, data=data, timeout=120,
+                      headers={**_auth(), "Content-Type": ctype})
+    if r.status_code != 200:
+        raise RuntimeError(f"Cloud Storage: не удалось сохранить {name}: HTTP {r.status_code} {r.text[:200]}")
+
+
+def get_private(name: str):
+    """Возвращает файл из бакета или None, если его нет."""
+    r = requests.get(f"https://storage.googleapis.com/storage/v1/b/{bucket_name()}/o/{quote(name, safe='')}",
+                     params={"alt": "media"}, headers=_auth(), timeout=120)
+    return r.content if r.status_code == 200 else None

@@ -606,3 +606,21 @@ def highlight_cover(icon: str, bg=(255, 255, 255), fg=CORAL, ring=True) -> bytes
     out = io.BytesIO()
     img.save(out, "JPEG", quality=95)
     return out.getvalue()
+
+
+def highlight_cover_photo(photo: bytes, fg=CORAL) -> bytes:
+    """Обложка «Актуального» с фото: белый фон, фото в круге внутри кораллового кольца."""
+    img = Image.new("RGB", (RW, RH), (255, 255, 255))
+    d = ImageDraw.Draw(img)
+    cx, cy = RW // 2, RH // 2
+    d.ellipse((cx - 450, cy - 450, cx + 450, cy + 450), outline=fg, width=14)
+    ph = Image.open(io.BytesIO(photo)).convert("RGB")
+    side = min(ph.size)
+    l, t = (ph.width - side) // 2, max(0, (ph.height - side) // 3)
+    ph = ph.crop((l, t, l + side, t + side)).resize((820, 820), Image.LANCZOS)
+    m = Image.new("L", (820, 820), 0)
+    ImageDraw.Draw(m).ellipse((0, 0, 819, 819), fill=255)
+    img.paste(ph, (cx - 410, cy - 410), m)
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=95)
+    return out.getvalue()
