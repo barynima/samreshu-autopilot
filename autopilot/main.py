@@ -18,7 +18,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import images, instagram, planner, render, storage, telegram, text, video, vposter
+from . import images, instagram, planner, render, stories, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -540,14 +540,15 @@ def cmd_stories(state, only: str = ""):
     for h in data:
         files, notes = [], []
         cover = render.highlight_cover(h.get("icon", ""))
+        n = len(h["stories"])
         for i, s in enumerate(h["stories"], 1):
             img = None
             if s.get("scene"):
                 try:
                     img = images.life(s["scene"], "9:16")
                 except Exception as e:  # noqa: BLE001
-                    notes.append(f"Сторис {i}: кадр не нарисовался ({str(e)[:80]}), сделала на фоне мессенджера")
-            files.append(render.story_chat(s["messages"], img))
+                    notes.append(f"Сторис {i}: кадр не нарисовался ({str(e)[:80]}), сделала без него")
+            files.append(stories.slide(s, h["title"], f"{i}/{n}", img))
             if s.get("sticker"):
                 notes.append(f"Сторис {i}: добавьте стикер — {s['sticker']}")
         if not cid:

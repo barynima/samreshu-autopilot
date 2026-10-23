@@ -1,127 +1,156 @@
-# Сторис для «Актуального» по гиду. Команда боту: /stories (все) или /stories kak-eto (один хайлайт).
-# Стиль как в ленте: переписка в мессенджере. who: mom — мама (справа), sam — ребёнок, brand — «Сам решу».
-# scene — кадр из жизни (на английском); без scene — «обои» мессенджера. В одной сторис 1–3 сообщения (короткие — до 4).
-# icon — иконка обложки: chat, calendar, cap, lock, question, person.
-# sticker — подсказка, какой стикер добавить вручную в Instagram (на картинку не попадает; низ сторис оставлен под него).
-# Только проверенные факты из strategy/rules.md. Без выдуманных отзывов, скриншотов и примеров результата.
-# «Результат» и «Отзывы» появятся, когда будут настоящие скриншоты и отзывы с согласия.
+# Сторис для «Актуального». Команда боту: /stories (все) или /stories kak-eto (один хайлайт).
+# Каждый хайлайт — мини-журнал: крючок (hero) → узнавание → польза/факты → снятие сомнения → призыв (cta).
+# Типы слайдов (autopilot/stories.py): hero, number, myth, list, qa, chat, cta. *Слово* — маркер-выделение.
+# hero и chat могут иметь scene — кадр из жизни (на английском). icon — иконка обложки.
+# sticker — какой стикер добавить вручную в Instagram (на картинку не попадает).
+# Только проверенные факты из strategy/rules.md и от Марины. Без выдуманных отзывов, скриншотов, примеров результата.
 
 highlights:
   - id: kak-eto
     title: Как это
     icon: chat
     stories:
-      - scene: "A mom in her early 40s on a sofa in a bright living room, smiling at her phone; in the background a teen with headphones passes by"
+      - type: hero
+        scene: "A mom in her early 40s and a teen laughing together on a sofa in a bright modern living room, the teen showing something on a phone, warm daylight, candid moment"
+        title: "От «не знаю» до *2–3 направлений* за один вечер"
+        sub: "Как «Сам решу» помогает ребёнку понять, что ему интересно"
+      - type: chat
+        scene: "A teen lying on a bed in a cozy modern bedroom with headphones on, looking at the ceiling, relaxed, daylight"
         messages:
           - {who: mom, text: "Кем хочешь быть?"}
           - {who: sam, text: "Не знаю"}
-          - {who: brand, text: "Знакомо? Это нормально: вопрос просто *слишком большой*"}
-        sticker: "Опрос: «Да, это мы» / «У нас иначе»"
-      - messages:
-          - {who: mom, text: "Это что, ещё один тест?"}
-          - {who: brand, text: "Нет. Это *разговор* с ИИ на языке школьника"}
-          - {who: brand, text: "Чату не страшно сказать «не знаю»: он не оценивает"}
-      - scene: "A teen sitting relaxed at a desk in a cozy modern bedroom, typing on a laptop, seen from behind over the shoulder, daylight"
-        messages:
-          - {who: brand, text: "*15–20 минут*. Ребёнок проходит сам, когда удобно"}
-      - messages:
-          - {who: brand, text: "На выходе — *2–3 направления*, которые подходят ребёнку"}
-          - {who: brand, text: "И какие *предметы ОГЭ* под них брать"}
-      - messages:
-          - {who: brand, text: "*500 ₽*. Анонимно: без имени и телефона"}
-          - {who: brand, text: "Решает ребёнок. У вас — опора для разговора"}
-        sticker: "Ссылка на samreshu.pro"
+          - {who: sam, text: "Мам, отстань"}
+        sticker: "Опрос: «Это мы» / «У нас иначе»"
+      - type: myth
+        myth: "Нужен ещё один тест на 40 вопросов"
+        truth: "Нужен *разговор*, где не страшно ответить «не знаю»"
+      - type: list
+        title: "Как это *работает*"
+        style: numbers
+        items:
+          - "Ребёнок открывает samreshu.pro"
+          - "Переписывается с ИИ *15–20 минут*, как с другом"
+          - "Получает *2–3 направления* и предметы ОГЭ под них"
+          - "Вы обсуждаете результат вместе — спокойно, на фактах"
+      - type: number
+        number: "500 ₽"
+        text: "Один раз. *Анонимно* — без имени и телефона"
+        note: "Решает ребёнок. У вас — опора для разговора"
+      - type: cta
+        title: "Попробуйте *сегодня* вечером"
+        sub: "15–20 минут — и у разговора о будущем появится начало"
+        sticker: "Ссылка на samreshu.pro (поставьте под стрелками)"
 
   - id: oge
     title: ОГЭ
     icon: calendar
     stories:
-      - scene: "A mom and a teen at a bright kitchen table in the evening, a laptop and school notebooks between them, both smiling"
-        messages:
-          - {who: mom, text: "Какие предметы ОГЭ будешь сдавать?"}
-          - {who: sam, text: "Ну… что полегче"}
-          - {who: brand, text: "Самый частый ответ. Давайте *разберёмся*"}
-        sticker: "Опрос: «Уже выбрали» / «Ещё думаем»"
-      - messages:
-          - {who: brand, text: "Заявление с предметами ОГЭ — *до 1 марта*"}
-          - {who: brand, text: "Итоговое собеседование — *в феврале*"}
-      - messages:
-          - {who: brand, text: "Оценки за ОГЭ идут *в аттестат*"}
-          - {who: brand, text: "А в колледж берут по *среднему баллу аттестата*"}
-      - messages:
-          - {who: brand, text: "Поэтому сначала *2–3 направления*"}
-          - {who: brand, text: "Потом предметы под них. Не наоборот"}
-        sticker: "Ссылка на samreshu.pro"
-      - messages:
-          - {who: brand, text: "Родителям 8-классников: с 1 сентября 2027 года для допуска к ОГЭ понадобится ещё и *устный экзамен по истории*"}
+      - type: hero
+        scene: "A teen doing homework at a bright kitchen table, a mom standing behind with a cup of tea, both looking at a laptop and smiling, evening warm light"
+        title: "ОГЭ-2027: *2 даты*, которые решают выбор предметов"
+        sub: "Сохраните, чтобы не искать в чате класса"
+      - type: list
+        title: "Отметьте *в календаре*"
+        items:
+          - {label: "ФЕВРАЛЬ", text: "Итоговое собеседование по русскому — допуск к ОГЭ"}
+          - {label: "ДО 1 МАРТА", text: "Заявление с предметами ОГЭ. Потом поменять сложнее"}
+        sticker: "Стикер «Напоминание» или опрос «Уже выбрали / Ещё думаем»"
+      - type: myth
+        myth: "Берём предметы полегче — главное сдать"
+        truth: "Предметы — *первый шаг* к профессии. Сначала направление, потом предметы"
+      - type: number
+        number: "4,5–4,8"
+        text: "средний балл аттестата на *популярные специальности* в сильных колледжах"
+        note: "Оценки за ОГЭ идут в аттестат — поэтому выбор предметов важен"
+      - type: qa
+        q: "А нынешним 8-классникам что-то поменяют?"
+        a: "Да: с 1 сентября 2027 года для допуска к ОГЭ понадобится ещё и *устный экзамен по истории*"
         sticker: "Вопрос: «Что непонятно про ОГЭ?»"
+      - type: cta
+        title: "Не знаете, какие предметы? Начните с *направлений*"
+        sub: "«Сам решу» подскажет 2–3 направления и предметы ОГЭ под них"
+        sticker: "Ссылка на samreshu.pro (поставьте под стрелками)"
 
   - id: kolledzh
     title: Колледж
     icon: cap
     stories:
-      - scene: "A teen with a backpack in the hallway of a bright modern apartment, putting on sneakers, a mom smiling nearby holding a cup"
+      - type: hero
+        scene: "A teen with a backpack walking out of a modern apartment building door into a sunny autumn street, confident, a mom waving from the doorway"
+        title: "Колледж или 10 класс? Решает *один вопрос*"
+        sub: "И это не «где проще»"
+      - type: number
+        number: "65%"
+        text: "девятиклассников в 2026 году поступили в *колледжи и техникумы*"
+        note: "Колледж — нормальный путь. Если выбран осознанно"
+      - type: chat
+        scene: "A mom and a teen talking in a bright modern kitchen, the teen leaning on the counter, both relaxed and smiling"
         messages:
           - {who: mom, text: "Ну что, 10 класс или колледж?"}
           - {who: sam, text: "Колледж. Лишь бы не ЕГЭ"}
-          - {who: brand, text: "Это не каприз. Но нужен *следующий вопрос*"}
-      - messages:
-          - {who: brand, text: "1. Какая *специальность* интересна?"}
-          - {who: brand, text: "2. Какой путь к ней *короче*: колледж или 10 класс?"}
-          - {who: brand, text: "3. Хватит ли *баллов*?"}
+          - {who: brand, text: "Это не каприз. Следующий вопрос: *какая специальность?*"}
+      - type: myth
+        myth: "Не сдаст — пойдёт в колледж на всякий случай"
+        truth: "В некоторые техникумы *до 18 человек* на место"
+      - type: list
+        title: "3 вопроса *до выбора*"
+        style: numbers
+        items:
+          - "Какая *специальность* интересна?"
+          - "Какой путь к ней *короче*: колледж или 10 класс?"
+          - "Хватит ли *баллов* аттестата?"
         sticker: "Надпись «Сохраните»"
-      - messages:
-          - {who: brand, text: "В колледж берут по среднему баллу аттестата"}
-          - {who: brand, text: "На популярные специальности в сильных колледжах нужно *4,5–4,8*"}
-      - messages:
-          - {who: brand, text: "В 2026 году около *65%* девятиклассников поступили в колледжи и техникумы"}
-          - {who: brand, text: "Колледж — нормальный путь, если выбран *осознанно*"}
-      - messages:
-          - {who: brand, text: "Не знаете, какая специальность? Начните с *направлений*"}
-          - {who: brand, text: "«Сам решу» помогает найти 2–3 за один вечер"}
-        sticker: "Ссылка на samreshu.pro"
+      - type: cta
+        title: "Не знаете специальность? Начните с *направлений*"
+        sub: "«Сам решу» поможет найти 2–3 за один вечер"
+        sticker: "Ссылка на samreshu.pro (поставьте под стрелками)"
 
   - id: dannye
     title: Данные
     icon: lock
     stories:
-      - messages:
-          - {who: mom, text: "А какие данные вы спрашиваете?"}
-          - {who: brand, text: "Никаких *имени и телефона* ребёнка"}
-      - messages:
-          - {who: brand, text: "Ребёнок разговаривает *анонимно*"}
-          - {who: brand, text: "Так проще говорить честно: чат не оценивает"}
-      - messages:
-          - {who: mom, text: "А где хранятся ответы? Кто их видит?"}
-          - {who: brand, text: "Только *на вашем устройстве*: телефоне или компьютере, где шёл разговор"}
-          - {who: brand, text: "Мы не храним разговор и *не читаем* его"}
-      - messages:
-          - {who: brand, text: "Чтобы вести беседу, сообщения на ходу обрабатывает ИИ — без имени и телефона"}
-      - messages:
-          - {who: brand, text: "Остались вопросы о данных? *Спросите нас*"}
+      - type: hero
+        scene: "A teen sitting cross-legged on a bed in a cozy bright bedroom, typing on a phone with a calm private smile, soft daylight"
+        title: "Имя и телефон ребёнка? *Не спрашиваем*"
+        sub: "Почему анонимность — это не мелочь"
+      - type: list
+        title: "Что с ответами *ребёнка*"
+        items:
+          - "Без имени и телефона: разговор *анонимный*"
+          - "История хранится только *на вашем устройстве*"
+          - "Мы не храним разговор и *не читаем* его"
+          - "Сообщения на ходу обрабатывает ИИ — только чтобы вести беседу"
+      - type: qa
+        q: "Зачем вообще анонимно?"
+        a: "Так ребёнок *честнее*: чат не оценивает, не обижается и не расскажет учителю"
+      - type: cta
+        title: "Остались вопросы о данных? *Спросите*"
+        sub: "Ответим честно — и добавим сюда ответ для всех"
         sticker: "Вопрос: «Что важно знать о данных?»"
 
   - id: voprosy
     title: Вопросы
     icon: question
     stories:
-      - messages:
-          - {who: mom, text: "Сколько это стоит?"}
-          - {who: brand, text: "*500 ₽*"}
-          - {who: mom, text: "Сколько времени займёт?"}
-          - {who: brand, text: "*15–20 минут*. Ребёнок проходит сам"}
-      - messages:
-          - {who: mom, text: "А если ребёнок на всё скажет «не знаю»?"}
-          - {who: brand, text: "Это нормально. Чат задаёт вопросы *поменьше* — и ответы находятся"}
-      - messages:
-          - {who: mom, text: "Вы выберете ребёнку профессию?"}
-          - {who: brand, text: "Нет. Будут *2–3 направления* и предметы ОГЭ. Решает ребёнок"}
-      - messages:
-          - {who: mom, text: "Кому не подойдёт?"}
-          - {who: brand, text: "Если ребёнок уже точно знает, куда идёт, — нам почти нечего добавить"}
-          - {who: brand, text: "Это не диагноз и не приговор, а *опора для разговора*"}
-      - messages:
-          - {who: brand, text: "Есть другой вопрос? *Задайте*"}
+      - type: hero
+        scene: "A mom in her early 40s sitting at a cafe-style kitchen table with a phone and a cup of coffee, thoughtful but relaxed, bright modern interior"
+        title: "5 вопросов, которые мамы задают *первыми*"
+        sub: "Честные ответы — даже про то, кому мы не подойдём"
+      - type: qa
+        q: "Сколько стоит и сколько длится?"
+        a: "*500 ₽* один раз. *15–20 минут* — ребёнок проходит сам, когда удобно"
+      - type: qa
+        q: "А если он на всё скажет «не знаю»?"
+        a: "Это нормально. Чат задаёт вопросы *поменьше* — и ответы находятся"
+      - type: qa
+        q: "Вы выберете ребёнку профессию?"
+        a: "Нет. Будут *2–3 направления* и предметы ОГЭ. Решает сам ребёнок"
+      - type: qa
+        q: "Кому не подойдёт?"
+        a: "Если ребёнок уже точно знает, куда идёт, — нам почти нечего добавить. Это *опора для разговора*, а не диагноз"
+      - type: cta
+        title: "Есть свой вопрос? *Задайте*"
+        sub: "Самые частые ответы добавим в этот раздел"
         sticker: "Вопрос + ссылка на samreshu.pro"
 
   - id: kto-ya
@@ -129,12 +158,16 @@ highlights:
     icon: person
     # ЧЕРНОВИК: перепишите своими словами. Перед этими сторис выложите своё фото или видео-селфи.
     stories:
-      - messages:
-          - {who: brand, text: "Я Марина. Инженер по диплому — и профессию в школе выбрала *неудачно*"}
-      - messages:
-          - {who: brand, text: "Хотела быть врачом или учителем. Выбрала «компромисс»"}
-          - {who: brand, text: "Теперь знаю: выбирать надо по тому, что *нравится*"}
-      - messages:
-          - {who: brand, text: "Первым «Сам решу» прошёл мой сын"}
-          - {who: brand, text: "И заинтересовался *IT-аналитикой* — о ней он раньше даже не думал"}
+      - type: qa
+        q: "Я Марина. И профессию в школе я выбрала *неудачно*"
+        a: "Хотела быть врачом или учителем. Стала инженером — «компромисс»"
+      - type: myth
+        myth: "Выбирай, где платят и куда возьмут"
+        truth: "Выбирать надо по тому, что *нравится*. Это я поняла поздно"
+      - type: qa
+        q: "Первым «Сам решу» прошёл *мой сын*"
+        a: "И заинтересовался IT-аналитикой — о ней он раньше даже не думал"
+      - type: cta
+        title: "Хочу, чтобы ваш ребёнок выбрал *своё*"
+        sub: "Попробуйте «Сам решу»"
         sticker: "Ссылка на samreshu.pro"
