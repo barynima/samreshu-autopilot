@@ -1,5 +1,5 @@
 {
-  "offset": 320005891,
+  "offset": 320005892,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -8,7 +8,7 @@
     "voprosy-za-uzhinom",
     "pov-mam-ya-podumayu"
   ],
-  "pending": null,
+  "pending": "ne-test",
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
