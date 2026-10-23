@@ -18,7 +18,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import images, instagram, planner, render, stories, storage, telegram, text, video, vposter
+from . import images, instagram, kinetic, planner, render, stories, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -111,7 +111,8 @@ def save_job(job: dict):
 
 FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
                 "carousel": "Карусель", "reel_text": "Текстовый Reels",
-                "reel_chat": "Reels-переписка"}
+                "reel_chat": "Reels-переписка", "reel_kinetic": "Reels «Кинетический текст»"}
+FMT_SHORT = {"reel_chat": "ролик-переписка", "reel_kinetic": "ролик с цифрами", "carousel": "карусель"}
 FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodies visible, both clearly visible "
                 "and not overlapping; the top quarter of the frame is a plain empty wall (space for captions)")
 
@@ -157,6 +158,24 @@ def build_post(item: dict, feedback: str = "") -> dict:
 
     job["end"] = script.get("end", "")
     job["base"] = base
+
+    if fmt == "reel_kinetic":
+        job["hook"] = job["hook"].replace("*", "")
+        photo = _to_jpg(images.life(script["first_scene"], "9:16"))
+        rel = f"{base}_reel.mp4"
+        music = (os.environ.get("MUSIC") or "on").lower() != "off"
+        res = kinetic.render(script, photo, script.get("kicker") or item.get("rubric", ""), ROOT / rel, with_music=music)
+        job["video"], job["warnings"] = rel, res["warnings"]
+        job["cover"] = f"{base}_cover.jpg"
+        (ROOT / job["cover"]).write_bytes(res["cover"])
+        job["pics"] = []
+        for i, pic in enumerate(res["pictures"][1:], 1):
+            prel = f"{base}_k{i}.jpg"
+            (ROOT / prel).write_bytes(pic)
+            job["pics"].append(prel)
+        job["stage"] = "ready"
+        save_job(job)
+        return job
 
     if fmt == "reel_chat":
         job["dialog"] = script["dialog"]
@@ -220,6 +239,8 @@ def _pictures(job) -> list:
         pics.append((ROOT / job["cover"]).read_bytes())
     if job["format"] == "carousel":
         pics += [(ROOT / f).read_bytes() for f in job["files"][:4]]
+    elif job.get("pics"):
+        pics += [(ROOT / f).read_bytes() for f in job["pics"][:5]]
     elif job.get("slides"):
         for sl in job["slides"][1:5]:
             msg = {"who": "brand", "text": sl["text"]} if job["format"] == "reel_chat" else None
@@ -480,7 +501,7 @@ def top_up_plan(state, force=False):
         telegram.send_text(chat(state), f"⚠️ Не получилось дописать контент-план: {e}"[:3900])
         return
     git_sync("План: дописана неделя по гиду")
-    lines = [f"{p['date'][8:10]}.{p['date'][5:7]} · {p.get('type', '')} · {'ролик' if p['format'] == 'reel_chat' else 'карусель'} — {p['hook']}"
+    lines = [f"{p['date'][8:10]}.{p['date'][5:7]} · {p.get('type', '')} · {FMT_SHORT.get(p['format'], 'ролик')} — {p['hook']}"
              for p in new]
     telegram.send_text(chat(state), "🗓 Дописала план на неделю по гиду:\n" + "\n".join(lines)
                        + "\n\nЧто-то не нравится — напишите мне в Claude, поправлю.")
@@ -824,7 +845,7 @@ def handle(state, up):
             top_up_plan(state, force=True)
             ahead = [p for p in load_plan() if p["id"] not in state["done"]]
         telegram.send_text(cid, "Ближайшие посты:\n" + "\n".join(
-            f"{str(p['date'])[8:10]}.{str(p['date'])[5:7]} · {'ролик' if p['format'] == 'reel_chat' else 'карусель'} — {p['hook']}"
+            f"{str(p['date'])[8:10]}.{str(p['date'])[5:7]} · {FMT_SHORT.get(p['format'], 'ролик')} — {p['hook']}"
             for p in ahead[:10]))
     elif body.startswith("/fix"):
         if state.get("pending") and (POSTS / state["pending"] / "post.json").exists():

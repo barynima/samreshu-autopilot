@@ -284,13 +284,17 @@ def myth(s, kicker, page, _img=None):
         text = " ".join(t[0] for t in line)
         d.text((M, y), text, font=font, fill=GREY)
         lw = font.getlength(text)
-        d.line((M - 6, y + size * 0.62, M + lw + 6, y + size * 0.62), fill=CORAL, width=7)
+        if not s.get("_nostrike"):
+            d.line((M - 6, y + size * 0.62, M + lw + 6, y + size * 0.62), fill=CORAL, width=7)
         y += round(size * 1.18)
     y += 70
     d.line((M, y, M + 140, y), fill=CORAL, width=8)
     y += 70
-    _pill(d, M, y, "НА САМОМ ДЕЛЕ", CORAL, WHITE)
-    y = _draw_text(L, (M, y + 120), s["truth"], W - 2 * M, BOTTOM - y - 160, 108, 60, INK, CORAL_SOFT + (255,))
+    ghost = s.get("_ghost")  # для анимации: место занято, но правды пока не видно
+    if s.get("truth", "").strip() and not ghost:
+        _pill(d, M, y, "НА САМОМ ДЕЛЕ", CORAL, WHITE)
+    y = _draw_text(L, (M, y + 120), s["truth"], W - 2 * M, BOTTOM - y - 160, 108, 60,
+                   (0, 0, 0, 0) if ghost else INK, (0, 0, 0, 0) if ghost else CORAL_SOFT + (255,))
     _place(img, L, START, y)
     _brand(img)
     return _jpeg(img)
@@ -317,17 +321,20 @@ def list_(s, kicker, page, _img=None):
     for i, it in enumerate(items, 1):
         label = it.get("label") if isinstance(it, dict) else None
         text = it["text"] if isinstance(it, dict) else it
+        ghost = s.get("_ghost")
+        ink, mk = ((0, 0, 0, 0), (0, 0, 0, 0)) if ghost else (INK, CORAL_SOFT + (255,))
         if label:
-            d.text((M, y + 4), label, font=_f(44, "Black"), fill=CORAL)
+            d.text((M, y + 4), label, font=_f(44, "Black"), fill=(0, 0, 0, 0) if ghost else CORAL)
             ty = y + 66
-            bottom = _draw_text(L, (M, ty), text, W - 2 * M, room - 80, 64, 42, INK, CORAL_SOFT + (255,),
+            bottom = _draw_text(L, (M, ty), text, W - 2 * M, room - 80, 64, 42, ink, mk,
                                 weight="ExtraBold", lh=1.2)
             d.line((M, bottom + 26, W - M, bottom + 26), fill=(240, 220, 210), width=3)
             y = bottom + 60
         else:
-            _check(d, M, y + 4, 38, None, i if numbered else None)
-            bottom = _draw_text(L, (M + 110, y), text, W - 2 * M - 110, room - 30, 68, 42, INK,
-                                CORAL_SOFT + (255,), weight="ExtraBold", lh=1.2)
+            if not ghost:
+                _check(d, M, y + 4, 38, None, i if numbered else None)
+            bottom = _draw_text(L, (M + 110, y), text, W - 2 * M - 110, room - 30, 68, 42, ink,
+                                mk, weight="ExtraBold", lh=1.2)
             y = max(bottom, y + 90) + 44
     _place(img, L, START, y - 44)
     _brand(img)

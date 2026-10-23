@@ -123,6 +123,23 @@ SCHEMAS = {
 Каждый кадр должен останавливать палец: яркая эмоция персонажа, понятная без слов, визуальная шутка или метафора
 (Надо раздувается от новости, Сам с кольцевой лампой в роли блогера, Надо прячется за подушкой).
 Не пустые интерьеры и не «уютные натюрморты». О ребёнке не пиши «он» или «она» — пиши «ребёнок».""",
+    "reel_kinetic": f"""Reels «Кинетический текст» 15–22 секунды: крупный текст оживает на экране — цифра считается, миф
+зачёркивается, пункты появляются по одному. Кадр из жизни только на первом слайде.
+{{
+  "hook": "крючок на первом кадре, 4–9 слов: разрыв шаблона или острый вопрос; 1–2 слова в *звёздочках*",
+  "hook_sub": "подзаголовок до 40 знаков, усиливает интригу",
+  "first_scene": "{LIFE_HINT}; vertical 9:16, people in the upper and middle part, the bottom third calmer for the title",
+  "kicker": "рубрика 1–3 слова",
+  "slides": [  // ровно 3 слайда, минимум 2 РАЗНЫХ типа, в каждом 1–2 слова в *звёздочках*
+    {{"type": "number", "number": "цифра ТОЛЬКО из списка цифр правил", "text": "что она значит, до 80 знаков", "note": "вывод, до 70 знаков"}},
+    {{"type": "myth", "myth": "заблуждение мам, до 60 знаков", "truth": "как на самом деле, до 90 знаков"}},
+    {{"type": "list", "title": "до 5 слов", "style": "numbers или checks", "items": ["ровно 3 пункта, каждый до 50 знаков"]}},
+    {{"type": "qa", "q": "вопрос, до 60 знаков", "a": "ответ, до 110 знаков"}}
+  ],
+  "end": "{END_HINT}",
+  "caption": "подпись"
+}}
+Если в правилах нет подходящей цифры — не используй тип number.""",
     "carousel": f"""Карусель 4:5 в журнальной вёрстке. Обложка — кадр из жизни с крупным заголовком.
 {{
   "hook": "заголовок обложки, 4–9 слов, обещает конкретную пользу (число, вопрос, разрыв шаблона); 1–2 слова в *звёздочках*",
@@ -171,6 +188,15 @@ def _validate(fmt: str, data: dict) -> dict:
         data["hook"] = " — ".join(m.get("text", "") for m in data["dialog"]).replace("*", "")
     if not data.get("caption") or not data.get("hook"):
         raise ValueError("нет hook или caption")
+    if fmt == "reel_kinetic":
+        sl = data.get("slides") or []
+        if not data.get("hook") or not data.get("first_scene") or not data.get("end") or not (2 <= len(sl) <= 4):
+            raise ValueError("неполный кинетический ролик")
+        need = {"qa": ("q", "a"), "number": ("number", "text"), "myth": ("myth", "truth"), "list": ("title", "items")}
+        for c in sl:
+            if c.get("type") not in need or not all(c.get(k) for k in need[c["type"]]):
+                raise ValueError(f"неполный слайд {c.get('type')}")
+        return data
     if fmt == "carousel":
         cards = data.get("cards") or []
         if not data.get("cover_scene") or not data.get("hook") or not (3 <= len(cards) <= 7) or not data.get("final"):
