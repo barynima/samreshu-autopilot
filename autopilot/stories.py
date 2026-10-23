@@ -20,6 +20,18 @@ from . import render
 
 W, H = 1080, 1920
 TOP, BOTTOM = 270, 1640
+START = 470  # где начинается основной блок (потом _place двигает его в оптический центр)
+FEED = False
+
+
+def canvas(feed: bool):
+    """feed=True — слайды карусели 4:5 (1080×1350), без зон интерфейса сторис; False — сторис 9:16."""
+    global W, H, TOP, BOTTOM, START, FEED
+    FEED = feed
+    if feed:
+        W, H, TOP, BOTTOM, START = 1080, 1350, 70, 1230, 230
+    else:
+        W, H, TOP, BOTTOM, START = 1080, 1920, 270, 1640, 470
 M = 90  # поля слева и справа
 CORAL = (255, 122, 89)
 CORAL_SOFT = (255, 205, 188)
@@ -152,10 +164,11 @@ def _chrome(img, kicker, page, dark=False):
         d.text((W - M, TOP + 33), page, font=f, fill=col, anchor="rm")
 
 
-def _brand(img, dark=False):
+def _brand(img, dark=False, url=True):
     d = ImageDraw.Draw(img)
     d.text((M, BOTTOM + 60), "Сам решу", font=_f(38, "ExtraBold"), fill=WHITE if dark else CORAL, anchor="lm")
-    d.text((W - M, BOTTOM + 60), "samreshu.pro", font=_f(34, "Bold"), fill=WHITE if dark else GREY, anchor="rm")
+    if url:
+        d.text((W - M, BOTTOM + 60), "samreshu.pro", font=_f(34, "Bold"), fill=WHITE if dark else GREY, anchor="rm")
 
 
 def _photo(image_bytes):
@@ -203,13 +216,13 @@ def hero(s, kicker, page, image_bytes=None):
     img = _photo(image_bytes) if image_bytes else _placeholder().convert("RGBA")
     _gradient(img)
     _chrome(img, kicker, page, dark=True)
-    y = BOTTOM - 20
+    y = BOTTOM - 20 - (110 if FEED else 0)  # в карусели снизу — плашка «Листайте»
     if s.get("sub"):
         _draw_text(img, (M, y), s["sub"], W - 2 * M, 260, 50, 38, (255, 255, 255, 235), CORAL + (255,),
                    weight="Bold", lh=1.25, valign="bottom")
         y -= _height(s["sub"], 260, 50, 38, "Bold", 1.25) + 40
-    _draw_text(img, (M, y), s["title"], W - 2 * M, 620, 112, 70, WHITE, CORAL + (255,), valign="bottom")
-    _brand(img, dark=True)
+    _draw_text(img, (M, y), s["title"], W - 2 * M, 620 if not FEED else 470, 112, 64, WHITE, CORAL + (255,), valign="bottom")
+    _brand(img, dark=True, url=not FEED)  # в карусели справа внизу плашка «Листайте»
     return _jpeg(img)
 
 
@@ -223,7 +236,7 @@ def number(s, kicker, page, _img=None):
     deco = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     dd = ImageDraw.Draw(deco)
     for r, a in ((760, 26), (520, 22)):
-        dd.ellipse((W + 60 - r // 2, 1500 - r // 2, W + 60 + r // 2, 1500 + r // 2), fill=(255, 255, 255, a))
+        dd.ellipse((W + 60 - r // 2, H - 420 - r // 2, W + 60 + r // 2, H - 420 + r // 2), fill=(255, 255, 255, a))
     img.alpha_composite(deco)
     _chrome(img, kicker, page, dark=True)
     L = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -232,9 +245,9 @@ def number(s, kicker, page, _img=None):
     size = 400
     while _f(size).getlength(big) > W - 2 * M and size > 140:
         size -= 10
-    d.text((M - 8, 500), big, font=_f(size), fill=WHITE, anchor="ls")
-    top = 500 - round(size * 0.74)
-    y = _draw_text(L, (M, 560), s["text"], W - 2 * M, 520, 80, 52, WHITE, (255, 255, 255, 70))
+    d.text((M - 8, START + 30 + round(size * 0.74)), big, font=_f(size), fill=WHITE, anchor="ls")
+    top = START + 30
+    y = _draw_text(L, (M, START + 90 + round(size * 0.74)), s["text"], W - 2 * M, 520, 80, 52, WHITE, (255, 255, 255, 70))
     if s.get("note"):
         y = _draw_text(L, (M, y + 50), s["note"], W - 2 * M, 300, 46, 34, (255, 255, 255, 225), (255, 255, 255, 60),
                        weight="Bold", lh=1.3)
@@ -243,8 +256,9 @@ def number(s, kicker, page, _img=None):
     return _jpeg(img)
 
 
-def _place(img, layer, top, bottom, area=(400, BOTTOM - 40), bias=0.42):
+def _place(img, layer, top, bottom, area=None, bias=0.42):
     """Переносит блок контента [top, bottom] из layer в оптическую середину свободной зоны."""
+    area = area or (START - 70, BOTTOM - 40)
     h = bottom - top
     new_top = area[0] + max(0, (area[1] - area[0] - h)) * bias
     block = layer.crop((0, int(top), W, int(min(H, bottom + 40))))
@@ -263,9 +277,9 @@ def myth(s, kicker, page, _img=None):
     _chrome(img, kicker, page)
     L = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(L)
-    _pill(d, M, 470, "МИФ", (232, 228, 226), GREY)
+    _pill(d, M, START, "МИФ", (232, 228, 226), GREY)
     font, lines, size = _fit(s["myth"], W - 2 * M, 360, 80, 50, "ExtraBold")
-    y = 580
+    y = START + 110
     for line in lines:
         text = " ".join(t[0] for t in line)
         d.text((M, y), text, font=font, fill=GREY)
@@ -277,7 +291,7 @@ def myth(s, kicker, page, _img=None):
     y += 70
     _pill(d, M, y, "НА САМОМ ДЕЛЕ", CORAL, WHITE)
     y = _draw_text(L, (M, y + 120), s["truth"], W - 2 * M, BOTTOM - y - 160, 108, 60, INK, CORAL_SOFT + (255,))
-    _place(img, L, 470, y)
+    _place(img, L, START, y)
     _brand(img)
     return _jpeg(img)
 
@@ -296,7 +310,7 @@ def list_(s, kicker, page, _img=None):
     _chrome(img, kicker, page)
     L = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(L)
-    y = _draw_text(L, (M, 440), s["title"], W - 2 * M, 380, 104, 64, INK, CORAL_SOFT + (255,)) + 50
+    y = _draw_text(L, (M, START), s["title"], W - 2 * M, 380, 104, 64, INK, CORAL_SOFT + (255,)) + 50
     items = s["items"]
     room = (BOTTOM - 40 - y) / len(items)
     numbered = s.get("style") == "numbers"
@@ -315,7 +329,7 @@ def list_(s, kicker, page, _img=None):
             bottom = _draw_text(L, (M + 110, y), text, W - 2 * M - 110, room - 30, 68, 42, INK,
                                 CORAL_SOFT + (255,), weight="ExtraBold", lh=1.2)
             y = max(bottom, y + 90) + 44
-    _place(img, L, 440, y - 44)
+    _place(img, L, START, y - 44)
     _brand(img)
     return _jpeg(img)
 
@@ -323,14 +337,14 @@ def list_(s, kicker, page, _img=None):
 def qa(s, kicker, page, _img=None):
     img = Image.new("RGBA", (W, H), CREAM + (255,))
     d = ImageDraw.Draw(img)
-    d.text((W - 40, 300), "?", font=_f(900), fill=(255, 226, 214), anchor="ra")
+    d.text((W - 40, TOP + 30), "?", font=_f(900 if not FEED else 700), fill=(255, 226, 214), anchor="ra")
     _chrome(img, kicker, page)
     L = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    y = _draw_text(L, (M, 470), s["q"], W - 2 * M - 60, 560, 104, 64, INK, CORAL_SOFT + (255,))
+    y = _draw_text(L, (M, START), s["q"], W - 2 * M - 60, 560, 104, 64, INK, CORAL_SOFT + (255,))
     ImageDraw.Draw(L).line((M, y + 50, M + 140, y + 50), fill=CORAL, width=8)
     y = _draw_text(L, (M, y + 120), s["a"], W - 2 * M, BOTTOM - y - 160, 74, 46, INK, CORAL_SOFT + (255,),
                weight="ExtraBold", lh=1.22)
-    _place(img, L, 470, y)
+    _place(img, L, START, y)
     _brand(img)
     return _jpeg(img)
 
@@ -342,18 +356,21 @@ def chat(s, kicker, page, image_bytes=None):
 def cta(s, kicker, page, _img=None, auto=False):
     img = Image.new("RGBA", (W, H), CORAL + (255,))
     deco = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(deco).ellipse((-300, 1260, 520, 2080), fill=(255, 255, 255, 26))
+    ImageDraw.Draw(deco).ellipse((-300, H - 660, 520, H + 160), fill=(255, 255, 255, 26))
     img.alpha_composite(deco)
     d = ImageDraw.Draw(img)
     _chrome(img, kicker, page, dark=True)
-    y = _draw_text(img, (M, 470), s["title"], W - 2 * M, 560, 112, 70, WHITE, (255, 255, 255, 70))
+    y = _draw_text(img, (M, START), s["title"], W - 2 * M, 560 if not FEED else 420, 112, 64, WHITE, (255, 255, 255, 70))
     if s.get("sub"):
         y = _draw_text(img, (M, y + 40), s["sub"], W - 2 * M, 300, 52, 38, (255, 255, 255, 235), (255, 255, 255, 60),
                        weight="Bold", lh=1.3)
     # стрелка вниз к стикеру
-    if auto:  # публикует бот: стикер-ссылку не добавить, поэтому ведём в шапку профиля
+    if FEED and not s.get("link"):
+        _brand(img, dark=True)
+        return _jpeg(img)
+    if auto or FEED:  # стикер-ссылку не добавить — ведём в шапку профиля
         d = ImageDraw.Draw(img)
-        by = max(y + 110, 1150)
+        by = max(y + 80, BOTTOM - 490) if not FEED else min(max(y + 70, START + 500), BOTTOM - 250)
         f1, f2 = _f(64, "Black"), _f(40, "ExtraBold")
         d.rounded_rectangle((M, by, W - M, by + 230), radius=60, fill=WHITE)
         d.text((W // 2, by + 82), "samreshu.pro", font=f1, fill=CORAL, anchor="mm")
@@ -362,7 +379,7 @@ def cta(s, kicker, page, _img=None, auto=False):
         return _jpeg(img)
     arrows = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(arrows)
-    cx, ay = W // 2, max(y + 90, 1180)
+    cx, ay = W // 2, max(y + 90, BOTTOM - 460)
     for k in range(3):
         yy = ay + k * 46
         a = 255 - k * 70

@@ -131,14 +131,21 @@ def build_post(item: dict, feedback: str = "") -> dict:
     job["base"] = base
 
     if fmt == "carousel":
-        cover = render.chat_cover(images.life(script["cover_scene"], "4:5"),
-                                  [{"who": "brand", "text": script["hook"]}], size=(render.W, render.H))
-        cover = render.swipe_badge(cover)  # без призыва листать мамы не понимают, что это карусель
-        cards = script["cards"]
-        n = len(cards) + 2
-        blobs = [cover] + [render.text_card(c.get("title", ""), c["text"], f"{i}/{n}")
-                           for i, c in enumerate(cards, 2)]
-        blobs.append(render.text_card("", script["final"], f"{n}/{n}", final=True))
+        job["hook"] = job["hook"].replace("*", "")
+        stories.canvas(True)  # слайды 4:5 на журнальном движке, как «Актуальное»
+        try:
+            kicker = script.get("kicker") or item.get("rubric", "")
+            cards = script["cards"]
+            n = len(cards) + 2
+            cover = stories.slide({"type": "hero", "title": script["hook"], "sub": script.get("cover_sub", "")},
+                                  kicker, f"1/{n}", images.life(script["cover_scene"], "4:5"))
+            cover = render.swipe_badge(cover)  # без призыва листать мамы не понимают, что это карусель
+            blobs = [cover] + [stories.slide(c, kicker, f"{i}/{n}") for i, c in enumerate(cards, 2)]
+            fin = script["final"]
+            blobs.append(stories.slide({"type": "cta", "title": fin.get("title", ""), "sub": fin.get("sub", ""),
+                                        "link": item.get("cta") == "Ссылка в профиле"}, kicker, f"{n}/{n}"))
+        finally:
+            stories.canvas(False)
         job["files"] = []
         for i, b in enumerate(blobs, 1):
             rel = f"{base}_{i}.jpg"
@@ -202,7 +209,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
     return job
 
 
-MIN_SCORE = int(os.environ.get("MIN_SCORE") or 8)
+MIN_SCORE = int(os.environ.get("MIN_SCORE") or 9)
 MAX_TRIES = int(os.environ.get("CRITIC_TRIES") or 3)
 
 

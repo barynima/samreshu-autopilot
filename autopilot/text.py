@@ -17,6 +17,17 @@ NAMING = ("In scene and motion prompts ALWAYS call the characters exactly 'Sam (
           "Sam has no mouth: no lip movement, show emotion with eyes, eyebrows and body. "
           "All shots of one video happen in ONE place (same room, same light): describe that place identically "
           "in every scene. Nado must be visible in every shot where Nado speaks. ")
+TOY_FORMATS = {"reel_scene", "reel_pov", "reel_confess", "reel_text"}
+LIFE_NAMING = ("Scenes are real life photos (not toys, not cartoons): describe people plainly — a mom in her early 40s, "
+               "a teen girl or a teen boy in trendy 2026 clothes, sometimes a dad; their action, emotion and the room. "
+               "Never mention Sam, Nado, toys or clouds in scene prompts.")
+EXAMPLES = """«От „не знаю“ до *2–3 направлений* за один вечер»
+«Миф: нужен ещё один тест на 40 вопросов. На самом деле: нужен *разговор*, где не страшно ответить „не знаю“»
+«65% девятиклассников в 2026 году поступили в *колледжи и техникумы*. Колледж — нормальный путь, если выбран осознанно»
+«Колледж или 10 класс? Решает *один вопрос*. И это не „где проще“»
+«А если ребёнок на всё скажет „не знаю“? Это нормально. Чат задаёт вопросы *поменьше* — и ответы находятся»
+Хорошо: одна мысль на фразу, конкретика (цифра, дата, вопрос), неожиданный поворот, разговорные слова мам.
+Плохо: общие слова («важно поддерживать ребёнка»), канцелярит, лекция, три мысли в одной фразе."""
 END_HINT = ("финальная карточка-крючок, до 9 слов: обещание КОНКРЕТНОЙ пользы, которая ждёт в описании и которой нет "
             "в ролике (например: «3 вопроса вместо „кем хочешь стать“ — в описании», «Что делать сегодня вечером — "
             "в описании»); без слова «подпишитесь»")
@@ -112,16 +123,22 @@ SCHEMAS = {
 Каждый кадр должен останавливать палец: яркая эмоция персонажа, понятная без слов, визуальная шутка или метафора
 (Надо раздувается от новости, Сам с кольцевой лампой в роли блогера, Надо прячется за подушкой).
 Не пустые интерьеры и не «уютные натюрморты». О ребёнке не пиши «он» или «она» — пиши «ребёнок».""",
-    "carousel": f"""Текстовая карусель 4:5.
+    "carousel": f"""Карусель 4:5 в журнальной вёрстке. Обложка — кадр из жизни с крупным заголовком.
 {{
-  "hook": "заголовок обложки, 3–6 слов",
-  "cover_scene": "{LIFE_HINT}; vertical 4:5, the top third calm for a chat bubble with the title",
-  "cards": [  // 5–7 карточек: одна мысль или один вопрос на карточку
-    {{"title": "до 6 слов", "text": "до 160 символов"}}
+  "hook": "заголовок обложки, 4–9 слов, обещает конкретную пользу (число, вопрос, разрыв шаблона); 1–2 слова в *звёздочках*",
+  "cover_sub": "подзаголовок обложки до 60 символов: зачем листать или сохранять",
+  "cover_scene": "{LIFE_HINT}; vertical 4:5, people in the upper and middle part, the bottom third calmer for the title",
+  "kicker": "рубрика 1–3 слова (например «ОГЭ без паники», «Вместо „кем станешь“»)",
+  "cards": [  // 4–6 слайдов, минимум 3 РАЗНЫХ типа; одна мысль на слайд; в каждом 1–2 слова в *звёздочках*
+    {{"type": "qa", "q": "вопрос мамы или вопрос ребёнку, до 70 знаков", "a": "ответ, до 140 знаков"}},
+    {{"type": "number", "number": "цифра ТОЛЬКО из списка цифр правил (14%, 65%, 4,5–4,8, 1 марта…)", "text": "что она значит, до 90 знаков", "note": "что с этим делать, до 90 знаков"}},
+    {{"type": "myth", "myth": "распространённое заблуждение мам, до 70 знаков", "truth": "как на самом деле, до 110 знаков"}},
+    {{"type": "list", "title": "до 5 слов", "style": "numbers или checks", "items": ["2–4 пункта, каждый до 60 знаков"]}}
   ],
-  "final": "последняя карточка: один шаг и призыв, до 140 символов",
+  "final": {{"title": "последний слайд: один шаг на сегодня или призыв сохранить, до 50 знаков", "sub": "до 80 знаков: что ещё ждёт в описании"}},
   "caption": "подпись"
-}}""",
+}}
+Если в правилах нет подходящей цифры — не используй тип number.""",
 }
 
 CAPTION_RULE = """Подпись (caption): до 800 знаков. ПЕРВАЯ строка сразу выполняет обещание финальной карточки ролика
@@ -139,7 +156,10 @@ def _system(fmt: str) -> str:
 ФОРМАТ ПОСТА:
 {SCHEMAS[fmt]}
 
-ПРОМПТЫ ДЛЯ КАРТИНОК И ВИДЕО (на английском): {NAMING}
+ПРОМПТЫ ДЛЯ КАРТИНОК И ВИДЕО (на английском): {NAMING if fmt in TOY_FORMATS else LIFE_NAMING}
+
+ОБРАЗЦЫ ТОНА (так пишут лучшие посты аккаунта — коротко, конкретно, с одним выделенным словом):
+{EXAMPLES}
 
 {CAPTION_RULE}
 
@@ -152,8 +172,17 @@ def _validate(fmt: str, data: dict) -> dict:
     if not data.get("caption") or not data.get("hook"):
         raise ValueError("нет hook или caption")
     if fmt == "carousel":
-        if not data.get("cover_scene") or not (3 <= len(data.get("cards") or []) <= 8) or not data.get("final"):
+        cards = data.get("cards") or []
+        if not data.get("cover_scene") or not data.get("hook") or not (3 <= len(cards) <= 7) or not data.get("final"):
             raise ValueError("неполная карусель")
+        need = {"qa": ("q", "a"), "number": ("number", "text"), "myth": ("myth", "truth"), "list": ("title", "items")}
+        for c in cards:
+            if c.get("type") not in need:  # старый вид карточки {title, text}
+                c.update({"type": "qa", "q": c.get("title") or c.get("q", ""), "a": c.get("text") or c.get("a", "")})
+            if not all(c.get(k) for k in need[c["type"]]):
+                raise ValueError(f"неполный слайд {c.get('type')}")
+        if isinstance(data["final"], str):
+            data["final"] = {"title": data["final"], "sub": ""}
         return data
     if not data.get("end"):
         raise ValueError("нет финальной карточки end")
@@ -269,10 +298,13 @@ CRITIC = """Ты — строгий главный редактор и арт-д
 5. Текст: живой, короткий, без канцелярита и ИИ-оборотов; нет «он/она» и глаголов с родом про ребёнка; нет страха,
    обещаний, цены, выдуманных историй и цифр не из списка?
 6. Есть один понятный ход на сегодня и мягкий призыв?
-7. Есть ли в посте что-то неожиданное — то, ради чего его сохранят?
+7. Есть ли в посте что-то неожиданное — то, ради чего его сохранят? Честно: мама СОХРАНИТ это или перешлёт подруге?
+   Если нет — не больше 7 баллов, даже если правила соблюдены.
 8. Финал ролика обещает конкретную пользу в описании, а первая строка описания сразу её даёт? Если ролик ничем
    не зовёт читать описание — это минус 2 балла.
-Будь жёстким: 8+ ставь только тому, что не стыдно показать лучшим SMM-командам. Средний пост — 5–6.
+Будь жёстким: 9+ ставь только тому, что не стыдно показать лучшим SMM-командам. Средний пост — 5–6.
+Эталон уровня 9–10 — такие фразы:
+{examples}
 
 ПРАВИЛА АККАУНТА:
 {rules}
@@ -292,7 +324,7 @@ def critique(script: dict, pictures: list) -> dict:
     from datetime import date
     today = f"Сегодня {date.today():%d.%m.%Y}: нынешние 9-классники сдают ОГЭ в 2027 году, 8-классники — в 2028. "
     data = google.generate(model, {
-        "systemInstruction": {"parts": [{"text": today + CRITIC.format(rules=RULES)}]},
+        "systemInstruction": {"parts": [{"text": today + CRITIC.format(rules=RULES, examples=EXAMPLES)}]},
         "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
     }, timeout=240)
