@@ -95,3 +95,11 @@ def my_media() -> list:
                     "link": m.get("permalink", ""), "date": m.get("timestamp", "")[:10],
                     "files": [f for f in files if f[1]]})
     return sorted(out, key=lambda m: m["date"])
+
+
+def publish_story(image_url: str) -> str:
+    """Сторис-картинка. Стикеры (ссылка, опрос) и «Актуальное» через API недоступны."""
+    user_id = _get("me", fields="user_id")["user_id"]
+    container = _post(f"{user_id}/media", media_type="STORIES", image_url=image_url)["id"]
+    _wait(container)
+    return _post(f"{user_id}/media_publish", creation_id=container)["id"]

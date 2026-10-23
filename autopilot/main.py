@@ -538,7 +538,7 @@ def cmd_stories(state, only: str = ""):
             telegram.send_text(cid, "Нет такого хайлайта. Есть: " + ", ".join(h["id"] for h in all_h))
         return
     for h in data:
-        files, notes = [], []
+        files, auto, notes = [], [], []
         cover = render.highlight_cover(h.get("icon", ""))
         n = len(h["stories"])
         for i, s in enumerate(h["stories"], 1):
@@ -549,6 +549,7 @@ def cmd_stories(state, only: str = ""):
                 except Exception as e:  # noqa: BLE001
                     notes.append(f"Сторис {i}: кадр не нарисовался ({str(e)[:80]}), сделала без него")
             files.append(stories.slide(s, h["title"], f"{i}/{n}", img))
+            auto.append(stories.slide(s, h["title"], f"{i}/{n}", img, auto=True))
             if s.get("sticker"):
                 notes.append(f"Сторис {i}: добавьте стикер — {s['sticker']}")
         if not cid:
@@ -562,11 +563,27 @@ def cmd_stories(state, only: str = ""):
                 z.writestr(f"{h['id']}-{i:02d}.jpg", pic)
         telegram.send_document(cid, buf.getvalue(), f"{h['id']}.zip",
                                "Файлы в полном качестве: 00 — обложка, дальше сторис по порядку")
+        # версия для публикации ботом: заливаем в облако, ссылки живут сутки
+        urls = []
+        tmp = POSTS / "_stories"
+        tmp.mkdir(parents=True, exist_ok=True)
+        stamp = time.strftime("%Y%m%d%H%M%S")
+        for i, pic in enumerate(auto, 1):
+            f = tmp / f"{h['id']}-{i:02d}.jpg"
+            f.write_bytes(pic)
+            urls.append(storage.public_url(f, f"stories/{h['id']}-{stamp}-{i:02d}.jpg"))
+            f.unlink()
+        state.setdefault("stories_ready", {})[h["id"]] = {"urls": urls, "at": time.time()}
+        save_state(state)
         tips = "\n".join(notes) if notes else "Стикеры не нужны."
-        telegram.send_text(cid, f"Как выложить «{h['title']}»:\n1. Опубликуйте сторис по порядку, добавьте стикеры.\n"
-                                f"2. На последней нажмите «Выделить» → «Новое» → название «{h['title']}».\n"
-                                f"3. Обложка: «Редактировать актуальное» → «Изменить обложку» → файл 00.\n"
-                                f"{tips}\nНе нравится? /stories {h['id']} — нарисую заново.")
+        telegram.send_text(cid, f"«{h['title']}» — как выложить:\n\n"
+                                f"⚡ Быстро: кнопка ниже — бот сам опубликует {len(urls)} сторис по порядку. "
+                                f"Стикеров не будет (их нельзя поставить через Instagram API): опросы пропадут, "
+                                f"а на последней сторис вместо стикера-ссылки будет «samreshu.pro — ссылка в шапке профиля».\n\n"
+                                f"✋ Вручную со стикерами: выложите файлы из архива и добавьте:\n{tips}\n\n"
+                                f"Потом в профиле: «Актуальное» → «+» → отметьте эти сторис → название «{h['title']}» → "
+                                f"обложка — файл 00 из архива.\nНе нравится? /stories {h['id']} — нарисую заново.",
+                           [[{"text": f"📤 Выложить «{h['title']}» в сторис", "callback_data": f"story:{h['id']}"}]])
 
 
 # ---------- проба визуала ----------
@@ -688,6 +705,24 @@ def handle(state, up):
             if state.get("pending") and (REFS / "sam.png").exists() and (REFS / "nado.png").exists():
                 telegram.send_text(cid, "Оба эталона выбраны. Перерисовать текущий пост уже с ними?",
                                    [[{"text": "🎨 Перерисовать", "callback_data": f"again:{state['pending']}"}]])
+        elif kind == "story":
+            ready = (state.get("stories_ready") or {}).get(arg)
+            if not ready or time.time() - ready["at"] > 20 * 3600:
+                telegram.send_text(cid, f"Эти сторис устарели. Отправьте /stories {arg} — нарисую и пришлю заново.")
+            else:
+                telegram.send_text(cid, f"Публикую {len(ready['urls'])} сторис по порядку…")
+                done = 0
+                for url in ready["urls"]:
+                    try:
+                        instagram.publish_story(url)
+                        done += 1
+                        time.sleep(5)
+                    except Exception as e:  # noqa: BLE001
+                        telegram.send_text(cid, f"⚠️ Сторис {done + 1} не вышла: {e}"[:1500])
+                        break
+                state["stories_ready"].pop(arg, None)
+                telegram.send_text(cid, f"✅ Опубликовано сторис: {done}.\nТеперь в профиле: «Актуальное» → «+» → "
+                                        "отметьте их → название → обложка из архива (файл 00).")
         elif kind == "vkall":
             vk_import(state, confirm=True)
         elif kind == "refs":

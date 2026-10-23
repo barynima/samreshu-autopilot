@@ -339,7 +339,7 @@ def chat(s, kicker, page, image_bytes=None):
     return render.story_chat(s["messages"], image_bytes)
 
 
-def cta(s, kicker, page, _img=None):
+def cta(s, kicker, page, _img=None, auto=False):
     img = Image.new("RGBA", (W, H), CORAL + (255,))
     deco = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ImageDraw.Draw(deco).ellipse((-300, 1260, 520, 2080), fill=(255, 255, 255, 26))
@@ -351,6 +351,15 @@ def cta(s, kicker, page, _img=None):
         y = _draw_text(img, (M, y + 40), s["sub"], W - 2 * M, 300, 52, 38, (255, 255, 255, 235), (255, 255, 255, 60),
                        weight="Bold", lh=1.3)
     # стрелка вниз к стикеру
+    if auto:  # публикует бот: стикер-ссылку не добавить, поэтому ведём в шапку профиля
+        d = ImageDraw.Draw(img)
+        by = max(y + 110, 1150)
+        f1, f2 = _f(64, "Black"), _f(40, "ExtraBold")
+        d.rounded_rectangle((M, by, W - M, by + 230), radius=60, fill=WHITE)
+        d.text((W // 2, by + 82), "samreshu.pro", font=f1, fill=CORAL, anchor="mm")
+        d.text((W // 2, by + 160), "ссылка — в шапке профиля", font=f2, fill=INK, anchor="mm")
+        _brand(img, dark=True)
+        return _jpeg(img)
     arrows = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(arrows)
     cx, ay = W // 2, max(y + 90, 1180)
@@ -367,5 +376,9 @@ def cta(s, kicker, page, _img=None):
 KINDS = {"hero": hero, "number": number, "myth": myth, "list": list_, "qa": qa, "chat": chat, "cta": cta}
 
 
-def slide(s, kicker, page, image_bytes=None):
-    return KINDS[s.get("type", "chat")](s, kicker, page, image_bytes)
+def slide(s, kicker, page, image_bytes=None, auto=False):
+    """auto=True — версия для публикации ботом (без мест под ручные стикеры)."""
+    kind = s.get("type", "chat")
+    if kind == "cta":
+        return cta(s, kicker, page, image_bytes, auto=auto)
+    return KINDS[kind](s, kicker, page, image_bytes)
