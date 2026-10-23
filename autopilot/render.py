@@ -561,12 +561,15 @@ def story_chat(messages: list, image_bytes: bytes = None) -> bytes:
     return chat_cover(image_bytes or _chat_wallpaper(), messages, size=(RW, RH))
 
 
-def highlight_cover(icon: str) -> bytes:
-    """Обложка «Актуального»: коралловый фон и простая белая иконка по центру (Instagram вырезает круг)."""
-    img = Image.new("RGB", (RW, RH), CORAL)
+def highlight_cover(icon: str, bg=(255, 255, 255), fg=CORAL, ring=True) -> bytes:
+    """Обложка «Актуального»: белый фон, коралловое кольцо и иконка (Instagram вырезает круг по центру)."""
+    img = Image.new("RGB", (RW, RH), bg)
     d = ImageDraw.Draw(img)
     cx, cy, s = RW // 2, RH // 2, 170
-    white, t = (255, 255, 255), 26
+    if ring:
+        d.ellipse((cx - 450, cy - 450, cx + 450, cy + 450), outline=fg, width=14)
+    white, t = fg, 26
+    CORAL_ = bg
     if icon == "chat":
         d.rounded_rectangle((cx - s, cy - s * 0.75, cx + s, cy + s * 0.55), radius=70, outline=white, width=t)
         d.polygon([(cx - s * 0.55, cy + s * 0.5), (cx - s * 0.75, cy + s * 0.95), (cx - s * 0.15, cy + s * 0.5)], fill=white)
@@ -591,8 +594,8 @@ def highlight_cover(icon: str) -> bytes:
         d.arc((cx - s * 0.55, cy - s * 0.95, cx + s * 0.55, cy + s * 0.15), 180, 360, fill=white, width=t + 6)
         d.line((cx - s * 0.55 + 16, cy - s * 0.4, cx - s * 0.55 + 16, cy - s * 0.1), fill=white, width=t + 6)
         d.line((cx + s * 0.55 - 16, cy - s * 0.4, cx + s * 0.55 - 16, cy - s * 0.1), fill=white, width=t + 6)
-        d.ellipse((cx - 30, cy + s * 0.25, cx + 30, cy + s * 0.25 + 60), fill=CORAL)
-        d.rectangle((cx - 12, cy + s * 0.25 + 40, cx + 12, cy + s * 0.75), fill=CORAL)
+        d.ellipse((cx - 30, cy + s * 0.25, cx + 30, cy + s * 0.25 + 60), fill=CORAL_)
+        d.rectangle((cx - 12, cy + s * 0.25 + 40, cx + 12, cy + s * 0.75), fill=CORAL_)
     elif icon == "question":
         d.text((cx, cy), "?", font=_font(420), fill=white, anchor="mm")
     elif icon == "person":
