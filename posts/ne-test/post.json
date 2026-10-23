@@ -1,107 +1,94 @@
 {
   "id": "ne-test",
   "format": "reel_chat",
-  "hook": "Ну что, что в школьном тесте вышло? — Бухгалтер. Я там наугад тыкал.",
-  "caption": "Вместо вопросов «кем хочешь стать?» наш ИИ-помощник обсуждает то, что ребёнку и так интересно: любимые игры, каналы, которые он смотрит, что получается легко, а что бесит. Так «просто сидит в телефоне» превращается в карту интересов.\n\nИ это нормально, если школьный тест показал «бухгалтера», а ребёнок днями напролёт собирает моды для игр. Тесты видят только ответы на вопросы, а не самого человека.\n\n«Сам решу» — не анкета, а анонимный разговор. За один вечер он помогает найти 2–3 подходящих направления и понять, какие предметы ОГЭ под них выбирать. Решает ребёнок, а у вас появляется опора для спокойного разговора.\n\nА вашему ребёнку выпадала в тестах профессия, которая вызвала только смех?\n\nПосмотрите, как это работает. Ссылка в профиле.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии",
+  "hook": "Ну что там в школьном тесте вышло? — Бухгалтер. Я наугад тыкал.",
+  "caption": "Вот 3 вопроса, которые можно задать сегодня вечером вместо «Ну что, ты решил?»:\n1. Что самое интересное ты делал/видел/читал на этой неделе?\n2. Если бы не надо было думать про зарплату и престиж, чему бы ты хотел научиться?\n3. Какое дурацкое занятие приносит тебе радость?\n\nУзнать в школьном тесте, что твой ребёнок — будущий «бухгалтер», когда он днями собирает кастомные клавиатуры, — обидно. Но это не значит, что ему «ничего не интересно». Это значит, что старые тесты не работают. Они не видят человека.\n\n«Сам решу» — это тоже не тест. Это анонимный разговор с умным чат-ботом на языке подростка. Он помогает самому разобраться в интересах и связать их с предметами ОГЭ и будущими направлениями. Без давления и «мама сказала». На выходе — 2-3 идеи, которые можно обсуждать всерьёз.\n\nА у вас что в школьных тестах выходило? Помните?\n\nПопробовать, как это работает, — ссылка в профиле.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
   "script": {
     "dialog": [
       {
         "who": "mom",
-        "text": "Ну что, что в школьном тесте вышло?"
+        "text": "Ну что там в школьном тесте вышло?"
       },
       {
         "who": "sam",
-        "text": "Бухгалтер. Я там *наугад* тыкал."
+        "text": "Бухгалтер. Я *наугад* тыкал."
       }
     ],
-    "first_scene": "Candid smartphone photo from the mom's real life: a modern, bright kitchen in a middle-class Russian apartment. A woman in her early 40s, well-kept, sits at the breakfast bar, looking with a curious smile at a person of about 15. The person, wearing an oversized hoodie, looks down at a piece of paper and scoffs, their face turned away from the camera. Morning light streams in. No text in the picture.",
-    "first_motion": "The person in the hoodie shakes their head slightly and pushes the paper away, while the woman gives a small, understanding chuckle. Natural movement for ~4 seconds.",
+    "first_scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A mom in her early 40s and a young person around 15 are sitting at a bright kitchen table. The young person, wearing an oversized hoodie, shrugs while looking at a paper, face turned away from the camera. The mom looks on with a warm, slightly puzzled smile. Morning sun streams through the window.",
+    "first_motion": "video prompt in ENGLISH, 1 sentence: The young person in the hoodie makes a dismissive gesture with their hand over the paper and turns to look out the window, while the woman gently shakes her head with a knowing smile.",
     "slides": [
       {
-        "text": "Мы тоже не верим в тесты на *20 минут*.",
-        "scene": "A different family: view from behind of a person in wide jeans and a t-shirt, slouched over a desk covered in textbooks in a sunlit room. They are idly spinning a pen, looking bored. The person's face is not visible.",
-        "motion": "The person sighs and lets the pen drop onto the books, leaning back in their chair. Natural movement for ~4 seconds."
+        "text": "Знакомо? Это *нормально*. Тесты в школе часто ошибаются.",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A different family in a cozy living room. A young person, back to camera, points at something on a laptop screen. The father, sitting next to them, is laughing. The room is filled with soft afternoon light.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The father pats the young person's shoulder comfortingly as they both look at the laptop screen and laugh."
       },
       {
-        "text": "«Сам решу» — это не тест, а *разговор*.",
-        "scene": "A different setting: close-up shot over the shoulder of a person holding a smartphone. Their thumbs are moving as if they are typing in a chat app. The screen is bright but out of focus. The background is a cozy living room in another apartment.",
-        "motion": "The person's thumbs type quickly and then pause, as if reading a new message that just appeared on the screen."
+        "text": "Потому что спрашивают «кем быть?», а не «что *тебе интересно*?»",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A young person with curly hair is completely absorbed in assembling a complex model kit on the floor of a bright, sunlit room. Their face is not visible, only their focused posture. A different mom watches from the doorway with a fond expression.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The person's hands move deftly, connecting two small pieces of the model kit with a click, showing intense concentration."
       },
       {
-        "text": "Анонимно и на языке подростка. *Без давления*.",
-        "scene": "A different family: a person in headphones is lying on a large beanbag chair in their modern room, feet up, looking relaxed. Sunlight streams in through the window. Their face is obscured by the angle and the headphones.",
-        "motion": "The person's head nods slightly to music that we can't hear, and one hand lazily scrolls on a phone."
-      },
-      {
-        "text": "На выходе — 2–3 направления и предметы *для ОГЭ*.",
-        "scene": "A different family: a woman and a person in a baseball cap are sitting side-by-side on a sofa, looking at a laptop screen together. The woman is pointing at the screen and smiling, the person is leaning in, looking interested. The person's face is mostly hidden by the cap.",
-        "motion": "The woman points at something on the screen, and the person in the cap nods in agreement, then types something on the keyboard."
+        "text": "Разговор, который начинается с *увлечений*, а не со списка профессий.",
+        "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A young person in a hoodie is excitedly showing something on their smartphone to their mom on a cozy sofa in a modern living room. The mom is leaning in, smiling and listening intently. We see them from the side, their faces are partially visible but not in sharp focus, conveying a private, warm moment. A different family and apartment than the other slides.",
+        "motion": "video prompt in ENGLISH, 1 sentence: The young person's finger taps the screen to point something out, and the woman nods in understanding, her smile widening."
       }
     ],
-    "end": "Как устроен этот „разговор“ — в описании",
-    "caption": "Вместо вопросов «кем хочешь стать?» наш ИИ-помощник обсуждает то, что ребёнку и так интересно: любимые игры, каналы, которые он смотрит, что получается легко, а что бесит. Так «просто сидит в телефоне» превращается в карту интересов.\n\nИ это нормально, если школьный тест показал «бухгалтера», а ребёнок днями напролёт собирает моды для игр. Тесты видят только ответы на вопросы, а не самого человека.\n\n«Сам решу» — не анкета, а анонимный разговор. За один вечер он помогает найти 2–3 подходящих направления и понять, какие предметы ОГЭ под них выбирать. Решает ребёнок, а у вас появляется опора для спокойного разговора.\n\nА вашему ребёнку выпадала в тестах профессия, которая вызвала только смех?\n\nПосмотрите, как это работает. Ссылка в профиле.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии",
-    "hook": "Ну что, что в школьном тесте вышло? — Бухгалтер. Я там наугад тыкал."
+    "end": "Как начать разговор без ссор — в описании",
+    "caption": "Вот 3 вопроса, которые можно задать сегодня вечером вместо «Ну что, ты решил?»:\n1. Что самое интересное ты делал/видел/читал на этой неделе?\n2. Если бы не надо было думать про зарплату и престиж, чему бы ты хотел научиться?\n3. Какое дурацкое занятие приносит тебе радость?\n\nУзнать в школьном тесте, что твой ребёнок — будущий «бухгалтер», когда он днями собирает кастомные клавиатуры, — обидно. Но это не значит, что ему «ничего не интересно». Это значит, что старые тесты не работают. Они не видят человека.\n\n«Сам решу» — это тоже не тест. Это анонимный разговор с умным чат-ботом на языке подростка. Он помогает самому разобраться в интересах и связать их с предметами ОГЭ и будущими направлениями. Без давления и «мама сказала». На выходе — 2-3 идеи, которые можно обсуждать всерьёз.\n\nА у вас что в школьных тестах выходило? Помните?\n\nПопробовать, как это работает, — ссылка в профиле.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+    "hook": "Ну что там в школьном тесте вышло? — Бухгалтер. Я наугад тыкал."
   },
   "warnings": [],
-  "base": "posts/ne-test/202610231237",
-  "end": "Как устроен этот „разговор“ — в описании",
+  "base": "posts/ne-test/202610231318",
+  "end": "Как начать разговор без ссор — в описании",
   "dialog": [
     {
       "who": "mom",
-      "text": "Ну что, что в школьном тесте вышло?"
+      "text": "Ну что там в школьном тесте вышло?"
     },
     {
       "who": "sam",
-      "text": "Бухгалтер. Я там *наугад* тыкал."
+      "text": "Бухгалтер. Я *наугад* тыкал."
     }
   ],
   "slides": [
     {
       "text": "",
-      "scene": "Candid smartphone photo from the mom's real life: a modern, bright kitchen in a middle-class Russian apartment. A woman in her early 40s, well-kept, sits at the breakfast bar, looking with a curious smile at a person of about 15. The person, wearing an oversized hoodie, looks down at a piece of paper and scoffs, their face turned away from the camera. Morning light streams in. No text in the picture.",
-      "motion": "The person in the hoodie shakes their head slightly and pushes the paper away, while the woman gives a small, understanding chuckle. Natural movement for ~4 seconds.",
-      "image": "posts/ne-test/202610231237_slide1.jpg",
-      "clip": "posts/ne-test/202610231237_clip1.mp4"
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A mom in her early 40s and a young person around 15 are sitting at a bright kitchen table. The young person, wearing an oversized hoodie, shrugs while looking at a paper, face turned away from the camera. The mom looks on with a warm, slightly puzzled smile. Morning sun streams through the window.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The young person in the hoodie makes a dismissive gesture with their hand over the paper and turns to look out the window, while the woman gently shakes her head with a knowing smile.",
+      "image": "posts/ne-test/202610231318_slide1.jpg",
+      "clip": "posts/ne-test/202610231318_clip1.mp4"
     },
     {
-      "text": "Мы тоже не верим в тесты на *20 минут*.",
-      "scene": "A different family: view from behind of a person in wide jeans and a t-shirt, slouched over a desk covered in textbooks in a sunlit room. They are idly spinning a pen, looking bored. The person's face is not visible.",
-      "motion": "The person sighs and lets the pen drop onto the books, leaning back in their chair. Natural movement for ~4 seconds.",
-      "image": "posts/ne-test/202610231237_slide2.jpg",
-      "clip": "posts/ne-test/202610231237_clip2.mp4"
+      "text": "Знакомо? Это *нормально*. Тесты в школе часто ошибаются.",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A different family in a cozy living room. A young person, back to camera, points at something on a laptop screen. The father, sitting next to them, is laughing. The room is filled with soft afternoon light.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The father pats the young person's shoulder comfortingly as they both look at the laptop screen and laugh.",
+      "image": "posts/ne-test/202610231318_slide2.jpg",
+      "clip": "posts/ne-test/202610231318_clip2.mp4"
     },
     {
-      "text": "«Сам решу» — это не тест, а *разговор*.",
-      "scene": "A different setting: close-up shot over the shoulder of a person holding a smartphone. Their thumbs are moving as if they are typing in a chat app. The screen is bright but out of focus. The background is a cozy living room in another apartment.",
-      "motion": "The person's thumbs type quickly and then pause, as if reading a new message that just appeared on the screen.",
-      "image": "posts/ne-test/202610231237_slide3.jpg",
-      "clip": "posts/ne-test/202610231237_clip3.mp4"
+      "text": "Потому что спрашивают «кем быть?», а не «что *тебе интересно*?»",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A young person with curly hair is completely absorbed in assembling a complex model kit on the floor of a bright, sunlit room. Their face is not visible, only their focused posture. A different mom watches from the doorway with a fond expression.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The person's hands move deftly, connecting two small pieces of the model kit with a click, showing intense concentration.",
+      "image": "posts/ne-test/202610231318_slide3.jpg",
+      "clip": "posts/ne-test/202610231318_clip3.mp4"
     },
     {
-      "text": "Анонимно и на языке подростка. *Без давления*.",
-      "scene": "A different family: a person in headphones is lying on a large beanbag chair in their modern room, feet up, looking relaxed. Sunlight streams in through the window. Their face is obscured by the angle and the headphones.",
-      "motion": "The person's head nods slightly to music that we can't hear, and one hand lazily scrolls on a phone.",
-      "image": "posts/ne-test/202610231237_slide4.jpg",
-      "clip": "posts/ne-test/202610231237_clip4.mp4"
-    },
-    {
-      "text": "На выходе — 2–3 направления и предметы *для ОГЭ*.",
-      "scene": "A different family: a woman and a person in a baseball cap are sitting side-by-side on a sofa, looking at a laptop screen together. The woman is pointing at the screen and smiling, the person is leaning in, looking interested. The person's face is mostly hidden by the cap.",
-      "motion": "The woman points at something on the screen, and the person in the cap nods in agreement, then types something on the keyboard.",
-      "image": "posts/ne-test/202610231237_slide5.jpg",
-      "clip": "posts/ne-test/202610231237_clip5.mp4"
+      "text": "Разговор, который начинается с *увлечений*, а не со списка профессий.",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: A young person in a hoodie is excitedly showing something on their smartphone to their mom on a cozy sofa in a modern living room. The mom is leaning in, smiling and listening intently. We see them from the side, their faces are partially visible but not in sharp focus, conveying a private, warm moment. A different family and apartment than the other slides.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The young person's finger taps the screen to point something out, and the woman nods in understanding, her smile widening.",
+      "image": "posts/ne-test/202610231318_slide4.jpg",
+      "clip": "posts/ne-test/202610231318_clip4.mp4"
     }
   ],
-  "cover": "posts/ne-test/202610231237_cover.jpg",
-  "video": "posts/ne-test/202610231237_reel.mp4",
+  "cover": "posts/ne-test/202610231318_cover.jpg",
+  "video": "posts/ne-test/202610231318_reel.mp4",
   "stage": "ready",
   "review": {
-    "score": 9,
-    "verdict": "Отличная работа, почти эталон. Крючок и текст — в яблочко, визуал почти идеален.",
+    "score": 8,
+    "verdict": "Почти идеально, но дьявол в деталях.",
     "fixes": [
-      "На третьем слайде картинка сложна для восприятия. Лучше показать подростка, который сам увлечённо переписывается в телефоне — это точнее иллюстрирует идею «разговора».",
-      "На четвёртом слайде пиксельное лицо — слабое решение. Ищи ракурс, который скрывает лицо естественно, без артефактов и замазывания.",
-      "Второй абзац подписи дублирует мысль из ролика. Убери его, а ключевую идею про «карту интересов» из «сидения в телефоне» перенеси в первый абзац. Так будет плотнее."
+      "В описании убрать гендерные местоимения про ребёнка. Заменить «когда он днями собирает» на «когда все дни уходят на сборку», а «не значит, что ему „ничего не интересно“» на «не значит, что интересов и правда нет».",
+      "Сделать первый вопрос в описании более живым и лаконичным. Вместо «Что самое интересное ты делал/видел/читал на этой неделе?» можно спросить: «Что самое интересное ты узнал или увидел на этой неделе?»"
     ]
   },
   "attempt": 1
