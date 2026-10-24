@@ -1,95 +1,93 @@
 {
   "id": "ne-lenivyy",
   "format": "reel_chat",
-  "hook": "Опять за играми? А уроки? — Мам, у нас рейд.",
-  "caption": "Что ребёнок делает в игре? Это подскажет, что ему интересно на самом деле.\n\n1. **Стратегия:** Просчитывает ходы, анализирует ресурсы, ведёт команду к победе. Это навыки менеджера проектов, логиста, аналитика.\n2. **Созидание:** Создаёт миры, проектирует здания, кастомизирует персонажей. Присмотритесь к дизайну, архитектуре, 3D-моделированию.\n3. **Переговоры:** Договаривается, разрешает конфликты, поддерживает своих. Это таланты для HR, менеджера по продажам, организатора мероприятий.\n\nЕсли слова «рейд» и «скилл» вызывают у вас только тревогу — это нормально. Вы не одна. Но вместо запрета попробуйте один вечер просто понаблюдать. Увлечение играми — это не «пустая трата времени», а тренировка очень конкретных навыков.\n\nА у вас дома чаще слышно «рейд» или что-то другое?\n\nОтправьте мужу, чтобы вместе посмотреть на увлечение ребёнка под другим углом.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+  "hook": "Опять за компьютером? А уроки? — Мам, сейчас рейд, потом.",
+  "caption": "Вот 3 вопроса, которые помогут начать разговор об играх без ссор:\n\n1. Что тебе в этой игре нравится больше всего? Строить, сражаться, исследовать мир?\n2. А почему ты выбрал именно этого персонажа или эту роль в команде?\n3. Расскажи про самую сложную задачу, которую вы решили. Как у вас получилось?\n\nЗнакомо, когда ребёнок часами сидит в телефоне или за компьютером? Это нормально, что вы переживаете. Но это не всегда «потеря времени». В увлечениях уже есть подсказки.\n\nПопробуйте сегодня вечером вместо вопроса про уроки задать один из этих. С искренним интересом. Тот, кто собирает команду в рейд, может стать отличным организатором. А стратег, который ведёт всех к победе, — лидером, за которым идут люди. Ответ может вас удивить.\n\nА что обычно отвечает ваш ребёнок?\n\nОтправьте мужу.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
   "script": {
     "dialog": [
       {
         "who": "mom",
-        "text": "Опять за играми? А уроки?"
+        "text": "Опять за компьютером? А уроки?"
       },
       {
         "who": "sam",
-        "text": "*Мам*, у нас рейд."
+        "text": "Мам, сейчас *рейд*, потом."
       }
     ],
-    "first_scene": "eye-level medium shot of a bright, modern living room. A person in an oversized hoodie sits with their back to the camera at a desk, focused on a glowing computer screen. A woman in her early 40s stands in the doorway, hands on hips, with a curious, slightly exasperated smile. Warm, natural light fills the space.",
-    "first_motion": "The person at the desk makes a quick gesture with their hand without turning around, while the woman in the doorway shakes her head with a small laugh.",
+    "first_scene": "A person in a hoodie sits with their back to the camera at a desk with a gaming setup. In the doorway of the modern teen bedroom, a woman in her early 40s looks on with a mix of concern and curiosity. Warm afternoon sun fills the room.",
+    "first_motion": "The person at the desk clicks the mouse energetically, and the woman in the doorway's expression softens into a faint, thoughtful smile.",
     "slides": [
       {
-        "text": "Это не просто игра. Это *интерес*, который ищет выход.",
-        "scene": "Close-up from behind of a person with short, dyed hair sitting on a beanbag chair in a cozy, sunlit bedroom, holding a game controller. The room is tidy with shelves of books and collectibles. The person's face is not visible.",
-        "motion": "The person's thumbs move skillfully over the controller's joysticks as they lean forward slightly into the game."
+        "text": "Это не лень. Это тоже *выбор*, только на языке игры.",
+        "scene": "Different setting: a teen girl with headphones is curled up on a large beanbag chair in a bright living room, intensely focused on a tablet. Her face is obscured by the angle and her hair. Sunlight streams through a large window.",
+        "motion": "The person's fingers swipe quickly across the tablet screen as they lean forward slightly, fully absorbed."
       },
       {
-        "text": "В играх уже есть *подсказки*: что ребёнок строит, с кем торгуется, о чём спорит.",
-        "scene": "A man in his 40s and a person in a baseball cap sit together on a bright kitchen sofa, looking at a tablet the person is holding. The man is pointing at the screen, looking engaged and smiling. Morning sun streams through the window. The person's face is turned away.",
-        "motion": "The person holding the tablet nods enthusiastically and taps the screen to show the man something."
+        "text": "Договариваться, руководить, строить — *решения* принимаются уже там.",
+        "scene": "Different family: view from behind two people, a teen boy and possibly his dad, sitting side-by-side on a sofa, controllers in hand, laughing at something on the large TV screen. Cozy, contemporary living room.",
+        "motion": "One person gestures excitedly with their controller, and the other laughs without looking away from the screen."
       },
       {
-        "text": "Посмотрите на игру как на *данные*, а не как на проблему.",
-        "scene": "View from the back seat of a car. A woman is driving, glancing with a smile at the person in the passenger seat, who is gesturing animatedly while talking. The sun is setting, casting a warm glow. The passenger's face is obscured.",
-        "motion": "The person in the passenger seat points forward excitedly, and the woman laughs, nodding along."
+        "text": "Игры — не проблема. Это *подсказки* о талантах ребёнка.",
+        "scene": "Another different family: a woman in her early 40s is sitting in a bright kitchen, listening with a genuine smile as a person in an oversized sweater shows her something on their phone, pointing and explaining.",
+        "motion": "The woman nods, leaning in closer to the phone screen, fully engaged in the conversation."
       }
     ],
-    "end": "3 типа игроков и профессии для них — в описании",
-    "caption": "Что ребёнок делает в игре? Это подскажет, что ему интересно на самом деле.\n\n1. **Стратегия:** Просчитывает ходы, анализирует ресурсы, ведёт команду к победе. Это навыки менеджера проектов, логиста, аналитика.\n2. **Созидание:** Создаёт миры, проектирует здания, кастомизирует персонажей. Присмотритесь к дизайну, архитектуре, 3D-моделированию.\n3. **Переговоры:** Договаривается, разрешает конфликты, поддерживает своих. Это таланты для HR, менеджера по продажам, организатора мероприятий.\n\nЕсли слова «рейд» и «скилл» вызывают у вас только тревогу — это нормально. Вы не одна. Но вместо запрета попробуйте один вечер просто понаблюдать. Увлечение играми — это не «пустая трата времени», а тренировка очень конкретных навыков.\n\nА у вас дома чаще слышно «рейд» или что-то другое?\n\nОтправьте мужу, чтобы вместе посмотреть на увлечение ребёнка под другим углом.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
-    "hook": "Опять за играми? А уроки? — Мам, у нас рейд."
+    "end": "3 вопроса геймеру вместо «сделал уроки?» — в описании",
+    "caption": "Вот 3 вопроса, которые помогут начать разговор об играх без ссор:\n\n1. Что тебе в этой игре нравится больше всего? Строить, сражаться, исследовать мир?\n2. А почему ты выбрал именно этого персонажа или эту роль в команде?\n3. Расскажи про самую сложную задачу, которую вы решили. Как у вас получилось?\n\nЗнакомо, когда ребёнок часами сидит в телефоне или за компьютером? Это нормально, что вы переживаете. Но это не всегда «потеря времени». В увлечениях уже есть подсказки.\n\nПопробуйте сегодня вечером вместо вопроса про уроки задать один из этих. С искренним интересом. Тот, кто собирает команду в рейд, может стать отличным организатором. А стратег, который ведёт всех к победе, — лидером, за которым идут люди. Ответ может вас удивить.\n\nА что обычно отвечает ваш ребёнок?\n\nОтправьте мужу.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+    "hook": "Опять за компьютером? А уроки? — Мам, сейчас рейд, потом."
   },
   "warnings": [],
-  "base": "posts/ne-lenivyy/202610241044",
-  "end": "3 типа игроков и профессии для них — в описании",
+  "base": "posts/ne-lenivyy/202610241102",
+  "end": "3 вопроса геймеру вместо «сделал уроки?» — в описании",
   "dialog": [
     {
       "who": "mom",
-      "text": "Опять за играми? А уроки?"
+      "text": "Опять за компьютером? А уроки?"
     },
     {
       "who": "sam",
-      "text": "*Мам*, у нас рейд."
+      "text": "Мам, сейчас *рейд*, потом."
     }
   ],
   "slides": [
     {
       "text": "",
-      "scene": "eye-level medium shot of a bright, modern living room. A person in an oversized hoodie sits with their back to the camera at a desk, focused on a glowing computer screen. A woman in her early 40s stands in the doorway, hands on hips, with a curious, slightly exasperated smile. Warm, natural light fills the space.",
-      "motion": "The person at the desk makes a quick gesture with their hand without turning around, while the woman in the doorway shakes her head with a small laugh.",
-      "image": "posts/ne-lenivyy/202610241044_slide1.jpg",
-      "clip": "posts/ne-lenivyy/202610241044_clip1.mp4"
+      "scene": "A person in a hoodie sits with their back to the camera at a desk with a gaming setup. In the doorway of the modern teen bedroom, a woman in her early 40s looks on with a mix of concern and curiosity. Warm afternoon sun fills the room.",
+      "motion": "The person at the desk clicks the mouse energetically, and the woman in the doorway's expression softens into a faint, thoughtful smile.",
+      "image": "posts/ne-lenivyy/202610241102_slide1.jpg",
+      "clip": "posts/ne-lenivyy/202610241102_clip1.mp4"
     },
     {
-      "text": "Это не просто игра. Это *интерес*, который ищет выход.",
-      "scene": "Close-up from behind of a person with short, dyed hair sitting on a beanbag chair in a cozy, sunlit bedroom, holding a game controller. The room is tidy with shelves of books and collectibles. The person's face is not visible.",
-      "motion": "The person's thumbs move skillfully over the controller's joysticks as they lean forward slightly into the game.",
-      "image": "posts/ne-lenivyy/202610241044_slide2.jpg",
-      "clip": "posts/ne-lenivyy/202610241044_clip2.mp4"
+      "text": "Это не лень. Это тоже *выбор*, только на языке игры.",
+      "scene": "Different setting: a teen girl with headphones is curled up on a large beanbag chair in a bright living room, intensely focused on a tablet. Her face is obscured by the angle and her hair. Sunlight streams through a large window.",
+      "motion": "The person's fingers swipe quickly across the tablet screen as they lean forward slightly, fully absorbed.",
+      "image": "posts/ne-lenivyy/202610241102_slide2.jpg",
+      "clip": "posts/ne-lenivyy/202610241102_clip2.mp4"
     },
     {
-      "text": "В играх уже есть *подсказки*: что ребёнок строит, с кем торгуется, о чём спорит.",
-      "scene": "A man in his 40s and a person in a baseball cap sit together on a bright kitchen sofa, looking at a tablet the person is holding. The man is pointing at the screen, looking engaged and smiling. Morning sun streams through the window. The person's face is turned away.",
-      "motion": "The person holding the tablet nods enthusiastically and taps the screen to show the man something.",
-      "image": "posts/ne-lenivyy/202610241044_slide3.jpg",
-      "clip": "posts/ne-lenivyy/202610241044_clip3.mp4"
+      "text": "Договариваться, руководить, строить — *решения* принимаются уже там.",
+      "scene": "Different family: view from behind two people, a teen boy and possibly his dad, sitting side-by-side on a sofa, controllers in hand, laughing at something on the large TV screen. Cozy, contemporary living room.",
+      "motion": "One person gestures excitedly with their controller, and the other laughs without looking away from the screen.",
+      "image": "posts/ne-lenivyy/202610241102_slide3.jpg",
+      "clip": "posts/ne-lenivyy/202610241102_clip3.mp4"
     },
     {
-      "text": "Посмотрите на игру как на *данные*, а не как на проблему.",
-      "scene": "View from the back seat of a car. A woman is driving, glancing with a smile at the person in the passenger seat, who is gesturing animatedly while talking. The sun is setting, casting a warm glow. The passenger's face is obscured.",
-      "motion": "The person in the passenger seat points forward excitedly, and the woman laughs, nodding along.",
-      "image": "posts/ne-lenivyy/202610241044_slide4.jpg",
-      "clip": "posts/ne-lenivyy/202610241044_clip4.mp4"
+      "text": "Игры — не проблема. Это *подсказки* о талантах ребёнка.",
+      "scene": "Another different family: a woman in her early 40s is sitting in a bright kitchen, listening with a genuine smile as a person in an oversized sweater shows her something on their phone, pointing and explaining.",
+      "motion": "The woman nods, leaning in closer to the phone screen, fully engaged in the conversation.",
+      "image": "posts/ne-lenivyy/202610241102_slide4.jpg",
+      "clip": "posts/ne-lenivyy/202610241102_clip4.mp4"
     }
   ],
-  "cover": "posts/ne-lenivyy/202610241044_cover.jpg",
-  "video": "posts/ne-lenivyy/202610241044_reel.mp4",
+  "cover": "posts/ne-lenivyy/202610241102_cover.jpg",
+  "video": "posts/ne-lenivyy/202610241102_reel.mp4",
   "stage": "ready",
   "review": {
-    "score": 9,
-    "verdict": "Отличный пост, который бьёт точно в боль мамы и даёт неожиданное решение. Почти эталон.",
+    "score": 10,
+    "verdict": "Пост — эталон. Идея, текст и картинки работают вместе, чтобы мама узнала себя, выдохнула и получила пользу за 30 секунд.",
     "fixes": [
-      "В подписи абзац после списка сделать короче и энергичнее: «Слова „рейд“ и „скилл“ вызывают тревогу? Это нормально. Попробуйте один вечер не запрещать, а просто понаблюдать — и увидите, как за игрой тренируются очень конкретные навыки».",
-      "Текст на третьем слайде «что ребёнок строит, с кем торгуется, о чём спорит» — отлично. Но на картинке папа с ребёнком смотрят в планшет, это не вяжется с торговлей и спорами в игре. Заменить на кадр, где подросток в наушниках с микрофоном активно жестикулирует, как будто говорит с командой.",
-      "На втором слайде фразу «Это интерес, который ищет выход» можно сделать конкретнее, например: «Это подсказка, где искать его настоящие интересы»."
+      "В подписи можно усилить связь между действием и результатом. Вместо «Попробуйте сегодня вечером...» — «Замените сегодня „сделал уроки?“ на один из этих вопросов. С искренним интересом — и, возможно, вы увидите будущего организатора или лидера»."
     ]
   },
   "attempt": 1
