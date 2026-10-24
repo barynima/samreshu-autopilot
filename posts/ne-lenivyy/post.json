@@ -1,94 +1,96 @@
 {
   "id": "ne-lenivyy",
   "format": "reel_chat",
-  "hook": "Опять за компьютером? Уроки готовы? — Мам, у нас рейд.",
-  "caption": "Что игра говорит о ребёнке? Посмотрите, какую роль ребёнок выбирает в игре:\n\n- Лидер команды?\n- Стратег, который просчитывает ходы?\n- Торговец в поиске лучших сделок?\n- Исследователь, который открывает новые миры?\n- Строитель, создающий что-то с нуля?\n\nНормально, если увлечение кажется вам просто «стрелялкой». За ним почти всегда стоит что-то большее.\n\nЭто первые зацепки, чтобы начать разговор о сильных сторонах. О том, что интересно по-настоящему. «Сам решу» — это чат, который говорит с подростком на одном языке и помогает превратить увлечения в 2–3 подходящих направления. Без ссор и тестов. Ссылка в профиле.\n\nА у вас дома чаще «рейды» или «катки»? 😉\n\nОтправьте мужу.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #профориентацияподростков",
+  "hook": "Опять за играми? А уроки? — Мам, у нас рейд.",
+  "caption": "Что ребёнок делает в игре? Это подскажет, что ему интересно на самом деле.\n\n1. **Стратегия:** Просчитывает ходы, анализирует ресурсы, ведёт команду к победе. Это навыки менеджера проектов, логиста, аналитика.\n2. **Созидание:** Создаёт миры, проектирует здания, кастомизирует персонажей. Присмотритесь к дизайну, архитектуре, 3D-моделированию.\n3. **Переговоры:** Договаривается, разрешает конфликты, поддерживает своих. Это таланты для HR, менеджера по продажам, организатора мероприятий.\n\nЕсли слова «рейд» и «скилл» вызывают у вас только тревогу — это нормально. Вы не одна. Но вместо запрета попробуйте один вечер просто понаблюдать. Увлечение играми — это не «пустая трата времени», а тренировка очень конкретных навыков.\n\nА у вас дома чаще слышно «рейд» или что-то другое?\n\nОтправьте мужу, чтобы вместе посмотреть на увлечение ребёнка под другим углом.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
   "script": {
     "dialog": [
       {
         "who": "mom",
-        "text": "Опять за компьютером? Уроки готовы?"
+        "text": "Опять за играми? А уроки?"
       },
       {
         "who": "sam",
-        "text": "Мам, у нас *рейд*."
+        "text": "*Мам*, у нас рейд."
       }
     ],
-    "first_scene": "A woman in her early 40s looks over the shoulder of a person in a black hoodie sitting at a gaming computer in a brightly lit room. The person's face is not visible, only the back of their head and large headphones. The mom has a slightly puzzled, but warm and curious, expression.",
-    "first_motion": "The person at the computer clicks the mouse rapidly, and the mom sighs softly with a slight, knowing smile.",
+    "first_scene": "eye-level medium shot of a bright, modern living room. A person in an oversized hoodie sits with their back to the camera at a desk, focused on a glowing computer screen. A woman in her early 40s stands in the doorway, hands on hips, with a curious, slightly exasperated smile. Warm, natural light fills the space.",
+    "first_motion": "The person at the desk makes a quick gesture with their hand without turning around, while the woman in the doorway shakes her head with a small laugh.",
     "slides": [
       {
-        "text": "Вы видите игру. Ребёнок в ней — *ищет себя*.",
-        "scene": "A different setting. A person in trendy wide jeans and a colorful sweatshirt is sitting on a beanbag chair in a sunny living room, intensely focused on a handheld gaming device. Their face is obscured by their hair and the angle.",
-        "motion": "The person's thumbs move quickly over the controls, their body slightly leaning with the game's action."
+        "text": "Это не просто игра. Это *интерес*, который ищет выход.",
+        "scene": "Close-up from behind of a person with short, dyed hair sitting on a beanbag chair in a cozy, sunlit bedroom, holding a game controller. The room is tidy with shelves of books and collectibles. The person's face is not visible.",
+        "motion": "The person's thumbs move skillfully over the controller's joysticks as they lean forward slightly into the game."
       },
       {
-        "text": "Компьютерные игры — это *данные*, а не просто потеря времени.",
-        "scene": "Another family. A dad in his 40s and a person in an oversized t-shirt are sitting on a couch, looking at a large TV screen showing a game. The dad is smiling, pointing at the screen, seen from the side. The person's face is turned towards the TV.",
-        "motion": "The dad laughs and pats the person on the shoulder, who nods without looking away from the screen."
+        "text": "В играх уже есть *подсказки*: что ребёнок строит, с кем торгуется, о чём спорит.",
+        "scene": "A man in his 40s and a person in a baseball cap sit together on a bright kitchen sofa, looking at a tablet the person is holding. The man is pointing at the screen, looking engaged and smiling. Morning sun streams through the window. The person's face is turned away.",
+        "motion": "The person holding the tablet nods enthusiastically and taps the screen to show the man something."
       },
       {
-        "text": "Что выбирает? Как договаривается? Что строит? Это *всё подсказки*.",
-        "scene": "Close-up shot from behind of a person sketching something in a notebook at a desk. Next to the notebook is a tablet displaying a fantasy world map from a game. Sunlight streams from a window.",
-        "motion": "A hand moves a pencil across the paper, drawing a structure that resembles something on the tablet screen."
+        "text": "Посмотрите на игру как на *данные*, а не как на проблему.",
+        "scene": "View from the back seat of a car. A woman is driving, glancing with a smile at the person in the passenger seat, who is gesturing animatedly while talking. The sun is setting, casting a warm glow. The passenger's face is obscured.",
+        "motion": "The person in the passenger seat points forward excitedly, and the woman laughs, nodding along."
       }
     ],
-    "end": "Что игра *говорит о ребёнке* — в описании",
-    "caption": "Что игра говорит о ребёнке? Посмотрите, какую роль ребёнок выбирает в игре:\n\n- Лидер команды?\n- Стратег, который просчитывает ходы?\n- Торговец в поиске лучших сделок?\n- Исследователь, который открывает новые миры?\n- Строитель, создающий что-то с нуля?\n\nНормально, если увлечение кажется вам просто «стрелялкой». За ним почти всегда стоит что-то большее.\n\nЭто первые зацепки, чтобы начать разговор о сильных сторонах. О том, что интересно по-настоящему. «Сам решу» — это чат, который говорит с подростком на одном языке и помогает превратить увлечения в 2–3 подходящих направления. Без ссор и тестов. Ссылка в профиле.\n\nА у вас дома чаще «рейды» или «катки»? 😉\n\nОтправьте мужу.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #профориентацияподростков",
-    "hook": "Опять за компьютером? Уроки готовы? — Мам, у нас рейд."
+    "end": "3 типа игроков и профессии для них — в описании",
+    "caption": "Что ребёнок делает в игре? Это подскажет, что ему интересно на самом деле.\n\n1. **Стратегия:** Просчитывает ходы, анализирует ресурсы, ведёт команду к победе. Это навыки менеджера проектов, логиста, аналитика.\n2. **Созидание:** Создаёт миры, проектирует здания, кастомизирует персонажей. Присмотритесь к дизайну, архитектуре, 3D-моделированию.\n3. **Переговоры:** Договаривается, разрешает конфликты, поддерживает своих. Это таланты для HR, менеджера по продажам, организатора мероприятий.\n\nЕсли слова «рейд» и «скилл» вызывают у вас только тревогу — это нормально. Вы не одна. Но вместо запрета попробуйте один вечер просто понаблюдать. Увлечение играми — это не «пустая трата времени», а тренировка очень конкретных навыков.\n\nА у вас дома чаще слышно «рейд» или что-то другое?\n\nОтправьте мужу, чтобы вместе посмотреть на увлечение ребёнка под другим углом.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс",
+    "hook": "Опять за играми? А уроки? — Мам, у нас рейд."
   },
   "warnings": [],
-  "base": "posts/ne-lenivyy/202610241018",
-  "end": "Что игра *говорит о ребёнке* — в описании",
+  "base": "posts/ne-lenivyy/202610241044",
+  "end": "3 типа игроков и профессии для них — в описании",
   "dialog": [
     {
       "who": "mom",
-      "text": "Опять за компьютером? Уроки готовы?"
+      "text": "Опять за играми? А уроки?"
     },
     {
       "who": "sam",
-      "text": "Мам, у нас *рейд*."
+      "text": "*Мам*, у нас рейд."
     }
   ],
   "slides": [
     {
       "text": "",
-      "scene": "A woman in her early 40s looks over the shoulder of a person in a black hoodie sitting at a gaming computer in a brightly lit room. The person's face is not visible, only the back of their head and large headphones. The mom has a slightly puzzled, but warm and curious, expression.",
-      "motion": "The person at the computer clicks the mouse rapidly, and the mom sighs softly with a slight, knowing smile.",
-      "image": "posts/ne-lenivyy/202610241018_slide1.jpg",
-      "clip": "posts/ne-lenivyy/202610241018_clip1.mp4"
+      "scene": "eye-level medium shot of a bright, modern living room. A person in an oversized hoodie sits with their back to the camera at a desk, focused on a glowing computer screen. A woman in her early 40s stands in the doorway, hands on hips, with a curious, slightly exasperated smile. Warm, natural light fills the space.",
+      "motion": "The person at the desk makes a quick gesture with their hand without turning around, while the woman in the doorway shakes her head with a small laugh.",
+      "image": "posts/ne-lenivyy/202610241044_slide1.jpg",
+      "clip": "posts/ne-lenivyy/202610241044_clip1.mp4"
     },
     {
-      "text": "Вы видите игру. Ребёнок в ней — *ищет себя*.",
-      "scene": "A different setting. A person in trendy wide jeans and a colorful sweatshirt is sitting on a beanbag chair in a sunny living room, intensely focused on a handheld gaming device. Their face is obscured by their hair and the angle.",
-      "motion": "The person's thumbs move quickly over the controls, their body slightly leaning with the game's action.",
-      "image": "posts/ne-lenivyy/202610241018_slide2.jpg",
-      "clip": "posts/ne-lenivyy/202610241018_clip2.mp4"
+      "text": "Это не просто игра. Это *интерес*, который ищет выход.",
+      "scene": "Close-up from behind of a person with short, dyed hair sitting on a beanbag chair in a cozy, sunlit bedroom, holding a game controller. The room is tidy with shelves of books and collectibles. The person's face is not visible.",
+      "motion": "The person's thumbs move skillfully over the controller's joysticks as they lean forward slightly into the game.",
+      "image": "posts/ne-lenivyy/202610241044_slide2.jpg",
+      "clip": "posts/ne-lenivyy/202610241044_clip2.mp4"
     },
     {
-      "text": "Компьютерные игры — это *данные*, а не просто потеря времени.",
-      "scene": "Another family. A dad in his 40s and a person in an oversized t-shirt are sitting on a couch, looking at a large TV screen showing a game. The dad is smiling, pointing at the screen, seen from the side. The person's face is turned towards the TV.",
-      "motion": "The dad laughs and pats the person on the shoulder, who nods without looking away from the screen.",
-      "image": "posts/ne-lenivyy/202610241018_slide3.jpg",
-      "clip": "posts/ne-lenivyy/202610241018_clip3.mp4"
+      "text": "В играх уже есть *подсказки*: что ребёнок строит, с кем торгуется, о чём спорит.",
+      "scene": "A man in his 40s and a person in a baseball cap sit together on a bright kitchen sofa, looking at a tablet the person is holding. The man is pointing at the screen, looking engaged and smiling. Morning sun streams through the window. The person's face is turned away.",
+      "motion": "The person holding the tablet nods enthusiastically and taps the screen to show the man something.",
+      "image": "posts/ne-lenivyy/202610241044_slide3.jpg",
+      "clip": "posts/ne-lenivyy/202610241044_clip3.mp4"
     },
     {
-      "text": "Что выбирает? Как договаривается? Что строит? Это *всё подсказки*.",
-      "scene": "Close-up shot from behind of a person sketching something in a notebook at a desk. Next to the notebook is a tablet displaying a fantasy world map from a game. Sunlight streams from a window.",
-      "motion": "A hand moves a pencil across the paper, drawing a structure that resembles something on the tablet screen.",
-      "image": "posts/ne-lenivyy/202610241018_slide4.jpg",
-      "clip": "posts/ne-lenivyy/202610241018_clip4.mp4"
+      "text": "Посмотрите на игру как на *данные*, а не как на проблему.",
+      "scene": "View from the back seat of a car. A woman is driving, glancing with a smile at the person in the passenger seat, who is gesturing animatedly while talking. The sun is setting, casting a warm glow. The passenger's face is obscured.",
+      "motion": "The person in the passenger seat points forward excitedly, and the woman laughs, nodding along.",
+      "image": "posts/ne-lenivyy/202610241044_slide4.jpg",
+      "clip": "posts/ne-lenivyy/202610241044_clip4.mp4"
     }
   ],
-  "cover": "posts/ne-lenivyy/202610241018_cover.jpg",
-  "video": "posts/ne-lenivyy/202610241018_reel.mp4",
+  "cover": "posts/ne-lenivyy/202610241044_cover.jpg",
+  "video": "posts/ne-lenivyy/202610241044_reel.mp4",
   "stage": "ready",
   "review": {
     "score": 9,
-    "verdict": "Почти безупречно, но дьявол в деталях. Это уровень, который не стыдно показать.",
+    "verdict": "Отличный пост, который бьёт точно в боль мамы и даёт неожиданное решение. Почти эталон.",
     "fixes": [
-      "На первом кадре на мониторе игра Hearthstone, в которой нет «рейдов». Это несоответствие, которое заметит подросток. Замените игру на экране на любую MMORPG (World of Warcraft, Lost Ark и т.д.) или поменяйте слово «рейд» на что-то более универсальное для карточных игр, например, «Мам, у меня важная катка»."
+      "В подписи абзац после списка сделать короче и энергичнее: «Слова „рейд“ и „скилл“ вызывают тревогу? Это нормально. Попробуйте один вечер не запрещать, а просто понаблюдать — и увидите, как за игрой тренируются очень конкретные навыки».",
+      "Текст на третьем слайде «что ребёнок строит, с кем торгуется, о чём спорит» — отлично. Но на картинке папа с ребёнком смотрят в планшет, это не вяжется с торговлей и спорами в игре. Заменить на кадр, где подросток в наушниках с микрофоном активно жестикулирует, как будто говорит с командой.",
+      "На втором слайде фразу «Это интерес, который ищет выход» можно сделать конкретнее, например: «Это подсказка, где искать его настоящие интересы»."
     ]
   },
-  "attempt": 2
+  "attempt": 1
 }
