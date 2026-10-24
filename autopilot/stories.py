@@ -213,15 +213,24 @@ def _placeholder():
 # ---------- типы слайдов ----------
 
 def hero(s, kicker, page, image_bytes=None):
-    img = _photo(image_bytes) if image_bytes else _placeholder().convert("RGBA")
-    _gradient(img)
+    if image_bytes:
+        img = _photo(image_bytes)
+        _gradient(img)
+    else:  # кадр не прошёл проверку — фирменный фон вместо фото
+        img = Image.new("RGBA", (W, H), CORAL + (255,))
+        deco = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        dd = ImageDraw.Draw(deco)
+        dd.ellipse((W - 520, TOP + 80, W + 380, TOP + 980), fill=(255, 255, 255, 30))
+        dd.ellipse((-260, H // 2, 480, H // 2 + 740), fill=(255, 255, 255, 22))
+        img.alpha_composite(deco)
     _chrome(img, kicker, page, dark=True)
     y = BOTTOM - 20 - (110 if FEED else 0)  # в карусели снизу — плашка «Листайте»
     if s.get("sub"):
         _draw_text(img, (M, y), s["sub"], W - 2 * M, 260, 50, 38, (255, 255, 255, 235), CORAL + (255,),
                    weight="Bold", lh=1.25, valign="bottom")
         y -= _height(s["sub"], 260, 50, 38, "Bold", 1.25) + 40
-    _draw_text(img, (M, y), s["title"], W - 2 * M, 620 if not FEED else 470, 112, 64, WHITE, CORAL + (255,), valign="bottom")
+    mark = CORAL + (255,) if image_bytes else (255, 255, 255, 70)
+    _draw_text(img, (M, y), s["title"], W - 2 * M, 620 if not FEED else 470, 112, 64, WHITE, mark, valign="bottom")
     _brand(img, dark=True, url=not FEED)  # в карусели справа внизу плашка «Листайте»
     return _jpeg(img)
 

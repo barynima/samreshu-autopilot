@@ -139,7 +139,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
             cards = script["cards"]
             n = len(cards) + 2
             cover = stories.slide({"type": "hero", "title": script["hook"], "sub": script.get("cover_sub", "")},
-                                  kicker, f"1/{n}", images.life(script["cover_scene"], "4:5"))
+                                  kicker, f"1/{n}", _checked_or_none(job, script["cover_scene"], "4:5"))
             cover = render.swipe_badge(cover)  # без призыва листать мамы не понимают, что это карусель
             blobs = [cover] + [stories.slide(c, kicker, f"{i}/{n}") for i, c in enumerate(cards, 2)]
             fin = script["final"]
@@ -161,7 +161,11 @@ def build_post(item: dict, feedback: str = "") -> dict:
 
     if fmt == "reel_kinetic":
         job["hook"] = job["hook"].replace("*", "")
-        photo = _to_jpg(images.life(script["first_scene"], "9:16"))
+        photo, rep = images.life_checked(script["first_scene"], "9:16")
+        if photo is None:
+            job["warnings"].append("Кадр из жизни не прошёл проверку на брак — первый слайд без фото.")
+        else:
+            photo = _to_jpg(photo)
         rel = f"{base}_reel.mp4"
         music = (os.environ.get("MUSIC") or "on").lower() != "off"
         res = kinetic.render(script, photo, script.get("kicker") or item.get("rubric", ""), ROOT / rel, with_music=music)
@@ -180,11 +184,19 @@ def build_post(item: dict, feedback: str = "") -> dict:
     if fmt == "reel_chat":
         job["dialog"] = script["dialog"]
         job["slides"] = []
+        # Один проверенный кадр на весь ролик: каждый лишний кадр нейросети — новый шанс на брак (три руки и т.п.)
+        photo, rep = images.life_checked(script["first_scene"], "9:16")
+        if photo is None:
+            job["warnings"].append("Кадр из жизни не прошёл проверку на брак ("
+                                   + "; ".join((rep or {}).get("problems", [])[:2]) + ") — ролик на фоне мессенджера.")
+            photo = render._chat_wallpaper()
+        first_rel = f"{base}_slide1.jpg"
+        (ROOT / first_rel).write_bytes(_to_jpg(photo))
+        rest_rel = f"{base}_slide2.jpg"
+        (ROOT / rest_rel).write_bytes(_soft_bg(photo))
         first = {"text": "", "scene": script["first_scene"], "motion": script.get("first_motion", "")}
         for i, sl in enumerate([first] + script["slides"]):
-            rel = f"{base}_slide{i + 1}.jpg"
-            (ROOT / rel).write_bytes(_to_jpg(images.life(sl["scene"], "9:16")))  # разные семьи: больше мам узнают себя
-            job["slides"].append({**sl, "image": rel})
+            job["slides"].append({**sl, "image": first_rel if i == 0 else rest_rel})
         cover = f"{base}_cover.jpg"
         (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"]))
         job["cover"] = cover
@@ -253,8 +265,8 @@ def _pictures(job) -> list:
 
 def animate_chat(job) -> None:
     """Оживляет одобренные кадры Reels-переписки через Veo; не получилось — кадр остаётся картинкой."""
-    if (os.environ.get("CHAT_VIDEO") or "veo").lower() != "veo":
-        return
+    if (os.environ.get("CHAT_VIDEO") or "off").lower() != "veo":
+        return  # по умолчанию без Veo: оживление людей даёт брак (лишние руки, «плывущие» лица)
     failed = 0
     for i, sl in enumerate(job["slides"]):
         if sl.get("clip"):
@@ -553,6 +565,24 @@ def cmd_refs(state, count=3):
             ]])
     if cid:
         telegram.send_text(cid, "Не нравится ни один?", [[{"text": "🔁 Нарисовать заново", "callback_data": "refs:all"}]])
+
+
+def _checked_or_none(job, scene, aspect):
+    photo, rep = images.life_checked(scene, aspect)
+    if photo is None:
+        job["warnings"].append("Кадр для обложки не прошёл проверку на брак — обложка без фото.")
+    return photo
+
+
+def _soft_bg(data: bytes) -> bytes:
+    """Фон для сообщений после диалога: тот же кадр, размытый и чуть светлее — внимание на тексте."""
+    import io
+    from PIL import Image, ImageEnhance, ImageFilter
+    img = render.fit_vertical(data).filter(ImageFilter.GaussianBlur(22))
+    img = ImageEnhance.Brightness(img).enhance(1.08)
+    out = io.BytesIO()
+    img.save(out, "JPEG", quality=90)
+    return out.getvalue()
 
 
 def _to_jpg(data: bytes) -> bytes:

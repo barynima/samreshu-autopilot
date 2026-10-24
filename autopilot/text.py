@@ -43,10 +43,11 @@ MOTION_HINT = ("video prompt in ENGLISH, 1–2 sentences: what moves during ~5 s
                "characters keep exactly the same look; no camera moves, static shot")
 
 LIFE_HINT = ("photo prompt in ENGLISH for a candid smartphone photo from the mom's real life: a modern renovated "
-             "middle-class Russian apartment; the mom (early 40s, well-kept) and/or the teen (14–15, a girl or a boy, trendy 2026 clothes, "
-             "face never visible — back view or turned away); one clear everyday moment the mom recognizes, shown in a warm, light, slightly funny way "
-             "(teen in headphones at a sunny desk, phone at breakfast, mom laughing at a teen's answer, talk in a bright kitchen); "
-             "daytime, bright, smiling or curious faces; no text in the picture")
+             "middle-class Russian apartment; ONE person (the mom, early 40s, OR the teen 14–15, girl or boy, face never visible) "
+             "or at most two; one simple everyday moment the mom recognizes (mom reading a message on her phone at the kitchen "
+             "table, teen in headphones at a desk seen from behind, mom with a mug by the window); name the exact emotion that "
+             "fits the story (thinking, amused by a message, a bit tired, focused) — not a generic smile; simple pose, hands "
+             "holding one object or resting; indoors only, no cars; daylight; no text in the picture")
 
 LIFE_MOTION = ("video prompt in ENGLISH, 1 sentence: natural everyday movement for ~4 seconds in this photo (someone laughs, "
                "types, turns a page, shrugs, steam rises from a mug); NEVER use words teen, teenager, kid, child, boy, girl, "
@@ -96,7 +97,7 @@ SCHEMAS = {
   "first_scene": "{{LIFE_HINT}}",
   "first_motion": "{{LIFE_MOTION}}",
   "slides": [  // 3–4 сообщения от «Сам решу», каждое — одна мысль, до 12 слов, 1–2 главных слова в *звёздочках*
-    {{"text": "сообщение", "scene": "{{LIFE_HINT}}; a DIFFERENT family and apartment than the other slides", "motion": "{{LIFE_MOTION}}"}}
+    {{"text": "сообщение"}}
   ],
   "end": "{END_HINT}",
   "caption": "подпись"
@@ -104,11 +105,12 @@ SCHEMAS = {
 Цепочка: узнавание в диалоге → «с вами всё нормально» → один конкретный ход на сегодня → неожиданный вывод.
 О ребёнке не пиши «он» или «она» — пиши «ребёнок». Мама в диалоге тоже не называет ребёнка по полу.
 Тон — светлый и тёплый, с лёгким юмором: мама улыбается, узнавая себя. Не пиши «страшно», «тревожно», «паника»,
-«кошмар» и не нагнетай — сразу переводи в «это нормально» и интерес. Сцены в кадрах — светлые, дневные, с улыбками.
+«кошмар» и не нагнетай — сразу переводи в «это нормально» и интерес. Кадр — дневной и живой, эмоция естественная и
+подходит к сюжету (задумалась, улыбнулась сообщению, немного устала), без дежурной улыбки «в камеру».
 Мама в диалоге не использует глаголы с родом («придумал», «решила») — только нейтральные формы
 («Ну что, есть идеи, кем быть?», «Как дела с выбором?»).
-Кадры — РАЗНЫЕ семьи, чтобы себя узнало больше мам: чередуй девочек и мальчиков, разные квартиры и комнаты
-(кухня, детская, прихожая, гостиная, машина у школы), разные мамы; иногда в кадре папа.""".replace("{LIFE_HINT}", LIFE_HINT).replace("{LIFE_MOTION}", LIFE_MOTION),
+Кадр в ролике один — первый, под диалогом; дальше сообщения идут поверх него. От ролика к ролику чередуй героев и
+комнаты (девочка или мальчик, кухня, детская, гостиная, прихожая; иногда папа), чтобы себя узнало больше мам.""".replace("{LIFE_HINT}", LIFE_HINT).replace("{LIFE_MOTION}", LIFE_MOTION),
     "reel_text": f"""Reels-нарезка 12–18 секунд: Сам и Надо в выразительных позах + крупная фраза на каждом кадре.
 {{
   "hook": "первая фраза на экране, 4–9 слов: мама узнаёт свою ситуацию за секунду",
@@ -217,7 +219,7 @@ def _validate(fmt: str, data: dict) -> dict:
         sl = data.get("slides") or []
         if len(dl) != 2 or [m.get("who") for m in dl] != ["mom", "sam"] or not all(m.get("text") for m in dl):
             raise ValueError("диалог должен быть: mom, затем sam")
-        if not (2 <= len(sl) <= 5) or not data.get("first_scene") or any(not x.get("text") or not x.get("scene") for x in sl):
+        if not (2 <= len(sl) <= 5) or not data.get("first_scene") or any(not x.get("text") for x in sl):
             raise ValueError("неполная переписка")
         return data
     if fmt == "reel_text":
@@ -358,3 +360,35 @@ def critique(script: dict, pictures: list) -> dict:
     res = _extract_json(out)
     res["score"] = int(res.get("score") or 0)
     return res
+
+
+PHOTO_CHECK = """Ты — придирчивый фоторедактор. Перед тобой картинка, нарисованная нейросетью для поста. Она должна выглядеть
+как настоящее фото с телефона. Найди ЛЮБОЙ брак. Критичный брак:
+- лишние или недостающие руки, ноги, пальцы; руки, сросшиеся с предметами; странные кисти;
+- человек внутри мебели, между сиденьями, висит в воздухе, сидит мимо стула; тела сливаются;
+- искажённое или «пластиковое» лицо; лицо подростка видно спереди;
+- комната собрана из разных кусков: потолок, стены, окна, перспектива не сходятся;
+- натянутая улыбка «в камеру» без причины или эмоция не подходит к сцене: {scene};
+- надписи, буквы, логотипы; старый советский интерьер или разруха.
+Ответь только JSON: {{"score": 1–10 (насколько похоже на настоящее фото без брака), "critical": ["найденный критичный брак"], "minor": ["мелочи"]}}"""
+
+
+def check_photo(img: bytes, scene: str) -> dict:
+    """Проверка кадра на брак нейросети. ok — можно использовать."""
+    import base64
+    mime = "image/png" if img[:4] == b"\x89PNG" else "image/jpeg"
+    model = os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
+    try:
+        data = google.generate(model, {
+            "contents": [{"role": "user", "parts": [
+                {"text": PHOTO_CHECK.format(scene=scene[:400])},
+                {"inlineData": {"mimeType": mime, "data": base64.b64encode(img).decode()}}]}],
+            "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"},
+        }, timeout=180)
+        out = "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"] if not p.get("thought"))
+        res = _extract_json(out)
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "score": 0, "problems": [f"проверка не ответила: {e}"[:200]]}
+    crit = [c for c in (res.get("critical") or []) if c]
+    score = int(res.get("score") or 0)
+    return {"ok": not crit and score >= 8, "score": score, "problems": crit + (res.get("minor") or [])[:2]}

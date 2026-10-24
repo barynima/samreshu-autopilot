@@ -338,6 +338,7 @@ def slide_overlay(text: str, big: bool = False) -> bytes:
 
 def end_card(text: str) -> bytes:
     """Финальная карточка-крючок: обещание пользы в описании и стрелка вниз, к описанию."""
+    text = text.replace("*", "")
     img = Image.new("RGB", (RW, RH), CORAL)
     draw = ImageDraw.Draw(img)
     font, lines, size = _fit_paragraphs(draw, text, RW - 200, 92, 54, 6)

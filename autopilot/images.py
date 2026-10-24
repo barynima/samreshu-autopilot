@@ -81,22 +81,22 @@ def still_life(scene: str) -> bytes:
     return _call([{"text": prompt}], "9:16")
 
 
-LIFE_STYLE = ("Candid smartphone photo taken by a mom at home: realistic, real emotions. MOOD IS BRIGHT AND WARM: "
-              "sunny daytime, lots of daylight, warm saturated colors with cheerful accents (coral, mustard, green plants, "
-              "colorful books and posters), light airy rooms. People mostly smile, laugh, are curious or gently surprised; "
-              "even a tense moment looks light, with a touch of humor. NO night scenes, no darkness, no grey overcast light, "
-              "no sad or worried faces, no gloomy blue-grey palette. "
+LIFE_STYLE = ("Candid smartphone photo taken at home in daylight, realistic like a real photo from a family phone, not an ad. "
+              "COMPOSITION MUST BE SIMPLE: one or two people at most, medium shot, a clear readable pose, nothing tricky — "
+              "no cars, no crowds, no mirrors, no people partly hidden behind furniture, no overlapping bodies. "
+              "ANATOMY MUST BE PERFECT: every person has exactly two arms and two hands with five fingers; hands are relaxed "
+              "or simply holding one object (phone, mug, notebook); people sit firmly on a chair or sofa, stand on the floor. "
+              "One continuous room with consistent walls, ceiling and perspective. "
+              "EMOTIONS ARE NATURAL AND FIT THE SCENE: calm, thinking, a bit tired, focused, amused by a message, a small "
+              "warm smile — never a fixed toothy smile at nothing, never posing for the camera, people look at what they do. "
+              "Light: soft natural daylight, warm and fresh, not gloomy. "
               "Setting: a modern, recently renovated apartment of a middle-class family in a Russian city in 2026 — "
-              "new-build flat, light painted walls, laminate floor, contemporary kitchen with built-in appliances and a "
-              "light countertop, neat modern furniture (IKEA/Hoff style), indoor plants, tidy but lived-in. "
-              "NOT shabby, NOT old Soviet: no peeling wallpaper, no carpets on walls, no old furniture, no clutter or dirt; "
-              "NOT luxury either. People look well-groomed in casual modern clothes; the mom is an attractive "
-              "well-kept woman in her early 40s. Teenagers (14–15, girls or boys as the scene says) dress like real Russian teens in 2026: oversized "
-              "hoodie or zip-hoodie in a trendy color (sage, beige, black, washed lilac) or with a small graphic, baggy "
-              "wide-leg jeans or cargo pants, chunky sneakers, wireless over-ear headphones or earbuds, modern smartphone; "
-              "styled hair (fluffy, curtain bangs), hood usually down. Teenagers never show their face: back view, "
-              "turned away, hair or headphones covering it, or out of frame. A teen room may be a bit messy "
-              "(unmade bed, clothes on a chair) — that is real life — but the room itself is modern. No text, no letters, no logos, no watermarks.")
+              "light painted walls, laminate floor, contemporary kitchen with built-in appliances, neat modern furniture "
+              "(IKEA/Hoff style), indoor plants, tidy but lived-in; not shabby, not old Soviet, not luxury. "
+              "The mom is a well-kept woman in her early 40s in casual modern clothes. Teenagers (14–15, girl or boy as the "
+              "scene says) dress like Russian teens in 2026: oversized hoodie in a trendy color, wide-leg jeans or cargo "
+              "pants, chunky sneakers, headphones; teenagers never show their face: back view, turned away or hair/headphones "
+              "covering it. No text, no letters, no logos, no watermarks.")
 
 
 def life(scene: str, aspect: str = "9:16", prev: bytes = None) -> bytes:
@@ -113,3 +113,23 @@ def life(scene: str, aspect: str = "9:16", prev: bytes = None) -> bytes:
               f"{LIFE_STYLE}")
     parts.append({"text": prompt})
     return _call(parts, aspect)
+
+
+def life_checked(scene: str, aspect: str = "9:16", tries: int = 3):
+    """Кадр «из жизни» с проверкой: рисуем до tries вариантов, строгий проверяющий ищет брак (лишние руки, люди
+    внутри мебели, чужой потолок, натянутые улыбки). Возвращает (картинка, отчёт) лучшего варианта
+    или (None, отчёт), если брак во всех."""
+    from . import text
+    best, best_rep = None, None
+    for _ in range(tries):
+        try:
+            img = life(scene, aspect)
+        except Exception as e:  # noqa: BLE001
+            best_rep = best_rep or {"ok": False, "score": 0, "problems": [str(e)[:200]]}
+            continue
+        rep = text.check_photo(img, scene)
+        if rep["ok"]:
+            return img, rep
+        if not best_rep or rep["score"] > best_rep.get("score", 0):
+            best, best_rep = img, rep
+    return None, best_rep
