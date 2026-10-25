@@ -2,7 +2,7 @@
   "id": "ne-lenivyy",
   "format": "reel_chat",
   "hook": "Опять за компьютером? Уроки сделаны? — Мам, у нас рейд.",
-  "caption": "Посмотрите на игру не как на проблему, а как на данные. В ней уже есть ответы.\n\n▫️ Организует команду? Возможно, это про менеджмент.\n▫️ Часами строит идеальную базу? Это инженерный склад ума.\n▫️ Продумывает тактику наперёд? Это про стратегию.\n\nНормально, если увлечение кажется вам «бесполезным». Главное — не обесценивать то, что важно для ребёнка, а проявить интерес. Это и есть первый шаг, чтобы помочь самому ребёнку найти опору в своих же увлечениях.\n\nВаш ход сегодня — вместо вопроса про уроки спросить: «А что у вас за рейд? Сложно было?». Без оценок, просто с любопытством.\n\nА ваш во что играет? Или, может, смотрит стримы?\n\nОтправьте мужу, чтобы посмотреть на увлечения ребёнка с одной точки зрения.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс #подросткииигры",
+  "caption": "Вот 3 вопроса, которые можно задать себе (не ребёнку!), наблюдая за игрой:\n\n1. Что ребёнок делает в игре: создаёт миры или побеждает в битвах?\n2. Как играет: один, с командой или ведёт всех за собой?\n3. О чём спорит с другими: о правилах или о том, как поделить добычу?\n\nКогда дверь в комнату закрыта, а на все вопросы ответ «потом», легко начать переживать. Но то, что кажется вам побегом от реальности, для ребёнка — целый мир, где он пробует себя. И это нормально.\n\nПопробуйте один вечер не спрашивать про уроки, а просто посмотреть на экран. Увидеть в увлечении ребёнка данные, а не проблему. Это не значит, что нужно полюбить игры. Это значит — найти опору для разговора.\n\nА во что играет ваш ребёнок? Строит города или сражается с монстрами?\n\nОтправьте мужу — иногда папы лучше понимают язык рейдов и квестов.\n\n#самрешу #огэ2028 #огэ2027 #9класс #8класс #профориентациядляподростков",
   "script": {
     "dialog": [
       {
@@ -14,37 +14,29 @@
         "text": "Мам, у нас *рейд*."
       }
     ],
-    "first_scene": "A person in an oversized hoodie sits in a gaming chair, back to the camera, wearing large headphones. The room is tidy and modern, lit by the warm glow of a computer monitor and sunlight from a window. POV from the mom standing in the doorway.",
-    "first_motion": "The person's shoulders shrug slightly and their hand moves the mouse quickly across the desk.",
+    "first_scene": "A person in an oversized black hoodie and large headphones sits at a computer desk, seen from behind, intensely focused on a game on the monitor. The room is a modern teen's bedroom with shelves and posters. The scene is shot from the doorway, creating a sense of a parent looking in. Natural daylight from a window. The person's face is not visible.",
+    "first_motion": "The person at the desk leans forward suddenly and clicks the mouse rapidly, reacting to something happening on the screen.",
     "slides": [
       {
-        "text": "Это не лень. Это *поиск* решений в команде.",
-        "scene": "A modern kitchen with bright morning light. A woman in her early 40s smiles while looking at a phone, a coffee cup in her hand. A person's back is partially visible at the kitchen table, also looking at a screen.",
-        "motion": "Steam gently rises from the coffee cup as the woman gives a light, amused laugh."
+        "text": "Это не просто «стрелялка». Это целый *мир*."
       },
       {
-        "text": "Во что играет, что строит, с кем спорит в чате?",
-        "scene": "Over-the-shoulder shot of a person sitting on a cozy sofa, holding a game controller. The TV screen is out of focus in the background. The living room is bright and modern, with plants and books on shelves. A different family and apartment.",
-        "motion": "The person's thumbs move energetically over the controller's joysticks and buttons."
+        "text": "Там есть команда, стратегия и умение *договариваться*."
       },
       {
-        "text": "Это подсказки о *ребёнке*. Не о будущем в киберспорте.",
-        "scene": "View from the passenger seat of a car. A woman in her 40s is driving, glancing with a warm smile towards the passenger seat, where a person in a hoodie is looking out the window, headphones on. Sunlight streams into the car. A different family.",
-        "motion": "The scenery outside the passenger window moves by as the person slightly nods their head to a beat."
+        "text": "Интересы ребёнка уже там: что строит, что *защищает*."
       },
       {
-        "text": "Ребёнок *организует* команду или что-то *создаёт*?",
-        "scene": "Close-up shot of two hands carefully assembling a complex PC component, like a graphics card into a motherboard. The hands are focused, the background is a slightly messy but well-lit desk with tools and parts. No faces are visible.",
-        "motion": "The hands gently press the component into place, and a small click is heard as it connects."
+        "text": "Это готовые *подсказки* для выбора предметов на ОГЭ."
       }
     ],
-    "end": "Как понять, что скрыто в игре? — в описании",
-    "caption": "Посмотрите на игру не как на проблему, а как на данные. В ней уже есть ответы.\n\n▫️ Организует команду? Возможно, это про менеджмент.\n▫️ Часами строит идеальную базу? Это инженерный склад ума.\n▫️ Продумывает тактику наперёд? Это про стратегию.\n\nНормально, если увлечение кажется вам «бесполезным». Главное — не обесценивать то, что важно для ребёнка, а проявить интерес. Это и есть первый шаг, чтобы помочь самому ребёнку найти опору в своих же увлечениях.\n\nВаш ход сегодня — вместо вопроса про уроки спросить: «А что у вас за рейд? Сложно было?». Без оценок, просто с любопытством.\n\nА ваш во что играет? Или, может, смотрит стримы?\n\nОтправьте мужу, чтобы посмотреть на увлечения ребёнка с одной точки зрения.\n\n#самрешу #профориентация #огэ2027 #огэ2028 #9класс #8класс #подросткииигры",
+    "end": "3 вопроса об игре, которые всё объяснят — в описании",
+    "caption": "Вот 3 вопроса, которые можно задать себе (не ребёнку!), наблюдая за игрой:\n\n1. Что ребёнок делает в игре: создаёт миры или побеждает в битвах?\n2. Как играет: один, с командой или ведёт всех за собой?\n3. О чём спорит с другими: о правилах или о том, как поделить добычу?\n\nКогда дверь в комнату закрыта, а на все вопросы ответ «потом», легко начать переживать. Но то, что кажется вам побегом от реальности, для ребёнка — целый мир, где он пробует себя. И это нормально.\n\nПопробуйте один вечер не спрашивать про уроки, а просто посмотреть на экран. Увидеть в увлечении ребёнка данные, а не проблему. Это не значит, что нужно полюбить игры. Это значит — найти опору для разговора.\n\nА во что играет ваш ребёнок? Строит города или сражается с монстрами?\n\nОтправьте мужу — иногда папы лучше понимают язык рейдов и квестов.\n\n#самрешу #огэ2028 #огэ2027 #9класс #8класс #профориентациядляподростков",
     "hook": "Опять за компьютером? Уроки сделаны? — Мам, у нас рейд."
   },
   "warnings": [],
-  "base": "posts/ne-lenivyy/202610241842",
-  "end": "Как понять, что скрыто в игре? — в описании",
+  "base": "posts/ne-lenivyy/202610251512",
+  "end": "3 вопроса об игре, которые всё объяснят — в описании",
   "dialog": [
     {
       "who": "mom",
@@ -58,51 +50,36 @@
   "slides": [
     {
       "text": "",
-      "scene": "A person in an oversized hoodie sits in a gaming chair, back to the camera, wearing large headphones. The room is tidy and modern, lit by the warm glow of a computer monitor and sunlight from a window. POV from the mom standing in the doorway.",
-      "motion": "The person's shoulders shrug slightly and their hand moves the mouse quickly across the desk.",
-      "image": "posts/ne-lenivyy/202610241842_slide1.jpg",
-      "clip": "posts/ne-lenivyy/202610241842_clip1.mp4"
+      "scene": "A person in an oversized black hoodie and large headphones sits at a computer desk, seen from behind, intensely focused on a game on the monitor. The room is a modern teen's bedroom with shelves and posters. The scene is shot from the doorway, creating a sense of a parent looking in. Natural daylight from a window. The person's face is not visible.",
+      "motion": "The person at the desk leans forward suddenly and clicks the mouse rapidly, reacting to something happening on the screen.",
+      "image": "posts/ne-lenivyy/202610251512_slide1.jpg"
     },
     {
-      "text": "Это не лень. Это *поиск* решений в команде.",
-      "scene": "A modern kitchen with bright morning light. A woman in her early 40s smiles while looking at a phone, a coffee cup in her hand. A person's back is partially visible at the kitchen table, also looking at a screen.",
-      "motion": "Steam gently rises from the coffee cup as the woman gives a light, amused laugh.",
-      "image": "posts/ne-lenivyy/202610241842_slide2.jpg",
-      "clip": "posts/ne-lenivyy/202610241842_clip2.mp4"
+      "text": "Это не просто «стрелялка». Это целый *мир*.",
+      "image": "posts/ne-lenivyy/202610251512_slide2.jpg"
     },
     {
-      "text": "Во что играет, что строит, с кем спорит в чате?",
-      "scene": "Over-the-shoulder shot of a person sitting on a cozy sofa, holding a game controller. The TV screen is out of focus in the background. The living room is bright and modern, with plants and books on shelves. A different family and apartment.",
-      "motion": "The person's thumbs move energetically over the controller's joysticks and buttons.",
-      "image": "posts/ne-lenivyy/202610241842_slide3.jpg",
-      "clip": "posts/ne-lenivyy/202610241842_clip3.mp4"
+      "text": "Там есть команда, стратегия и умение *договариваться*.",
+      "image": "posts/ne-lenivyy/202610251512_slide2.jpg"
     },
     {
-      "text": "Это подсказки о *ребёнке*. Не о будущем в киберспорте.",
-      "scene": "View from the passenger seat of a car. A woman in her 40s is driving, glancing with a warm smile towards the passenger seat, where a person in a hoodie is looking out the window, headphones on. Sunlight streams into the car. A different family.",
-      "motion": "The scenery outside the passenger window moves by as the person slightly nods their head to a beat.",
-      "image": "posts/ne-lenivyy/202610241842_slide4.jpg",
-      "clip": "posts/ne-lenivyy/202610241842_clip4.mp4"
+      "text": "Интересы ребёнка уже там: что строит, что *защищает*.",
+      "image": "posts/ne-lenivyy/202610251512_slide2.jpg"
     },
     {
-      "text": "Ребёнок *организует* команду или что-то *создаёт*?",
-      "scene": "Close-up shot of two hands carefully assembling a complex PC component, like a graphics card into a motherboard. The hands are focused, the background is a slightly messy but well-lit desk with tools and parts. No faces are visible.",
-      "motion": "The hands gently press the component into place, and a small click is heard as it connects.",
-      "image": "posts/ne-lenivyy/202610241842_slide5.jpg",
-      "clip": "posts/ne-lenivyy/202610241842_clip5.mp4"
+      "text": "Это готовые *подсказки* для выбора предметов на ОГЭ.",
+      "image": "posts/ne-lenivyy/202610251512_slide2.jpg"
     }
   ],
-  "cover": "posts/ne-lenivyy/202610241842_cover.jpg",
-  "video": "posts/ne-lenivyy/202610241842_reel.mp4",
+  "cover": "posts/ne-lenivyy/202610251512_cover.jpg",
+  "video": "posts/ne-lenivyy/202610251512_reel.mp4",
   "stage": "ready",
   "review": {
     "score": 9,
-    "verdict": "Отличный пост, который бьёт точно в боль мамы и даёт неожиданное решение. Почти эталон.",
+    "verdict": "Отличный пост, который превращает родительскую боль в инструмент. Почти эталон, но можно сделать одно обещание чуть мягче.",
     "fixes": [
-      "В первом кадре рука с телефоном выглядит как наложенный слой и отвлекает. Лучше использовать чистый POV-кадр, чтобы не рушить эффект присутствия.",
-      "В подписи можно сделать примеры ещё более „сохраняемыми“, оформив их как короткие связки: „Организует команду → задатки менеджера“, „Часами строит базу → инженерный склад ума“.",
-      "Текст на слайде «Это не лень. Это поиск...» хороший, но конструкция «Это не X, это Y» на грани с запрещённым канцеляритом «это не про..., это про...». Использовать с осторожностью."
+      "В финальном слайде заменить сильное обещание «которые всё объяснят» на более мягкое и реалистичное, например, «которые дадут подсказки» или «которые помогут понять ребёнка»."
     ]
   },
-  "attempt": 2
+  "attempt": 1
 }
