@@ -198,7 +198,8 @@ def build_post(item: dict, feedback: str = "") -> dict:
         for i, sl in enumerate([first] + script["slides"]):
             job["slides"].append({**sl, "image": first_rel if i == 0 else rest_rel})
         cover = f"{base}_cover.jpg"
-        (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"]))
+        # обложка: переписка ниже верхнего края — в сетке профиля Instagram показывает середину 3:4 (y 240–1680)
+        (ROOT / cover).write_bytes(render.chat_cover((ROOT / job["slides"][0]["image"]).read_bytes(), job["dialog"], top=400))
         job["cover"] = cover
         assemble(job)
         return job
@@ -913,7 +914,7 @@ def handle(state, up):
             telegram.send_text(cid, "Пересобираю ролик из готовых кадров и клипов, пара минут…")
             job["cover"] = f"{job['base']}_cover.jpg"
             first = (ROOT / (job["shots"][0]["frame"] if job.get("shots") else job["slides"][0]["image"])).read_bytes()
-            (ROOT / job["cover"]).write_bytes(render.chat_cover(first, job["dialog"]) if job.get("dialog")
+            (ROOT / job["cover"]).write_bytes(render.chat_cover(first, job["dialog"], top=400) if job.get("dialog")
                                               else render.reel_cover(first, job["hook"]))
             assemble(job)
             send_draft(state, job)

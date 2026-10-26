@@ -501,7 +501,7 @@ def chat_overlay(messages: list, typing: str = None, top: int = 230) -> bytes:
     return out.getvalue()
 
 
-def chat_cover(image_bytes: bytes, messages: list, size=(RW, RH)) -> bytes:
+def chat_cover(image_bytes: bytes, messages: list, size=(RW, RH), top: int = None) -> bytes:
     """Обложка (Reels 9:16 или карусель 4:5): кадр + переписка."""
     w, h = size
     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
@@ -509,7 +509,7 @@ def chat_cover(image_bytes: bytes, messages: list, size=(RW, RH)) -> bytes:
     img = img.resize((round(img.width * sc), round(img.height * sc)), Image.LANCZOS)
     l, t = (img.width - w) // 2, (img.height - h) // 2
     base = img.crop((l, t, l + w, t + h)).convert("RGBA")
-    over = Image.open(io.BytesIO(chat_overlay(messages, top=230 if h == RH else 70)))
+    over = Image.open(io.BytesIO(chat_overlay(messages, top=top or (230 if h == RH else 70))))
     if (w, h) != (RW, RH):
         over = over.crop((0, 0, w, h))
     base.alpha_composite(over)
