@@ -133,3 +133,8 @@ def life_checked(scene: str, aspect: str = "9:16", tries: int = 3):
         if not best_rep or rep["score"] > best_rep.get("score", 0):
             best, best_rep = img, rep
     return None, best_rep
+
+
+def without_people(scene: str) -> str:
+    return ("The same everyday place as in this description, but WITHOUT any people, hands or faces — only the room and "
+            f"the objects that tell the story (headphones on the desk, a mug, an open laptop, a school backpack): {scene}")

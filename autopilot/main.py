@@ -169,7 +169,8 @@ def build_post(item: dict, feedback: str = "") -> dict:
         rel = f"{base}_reel.mp4"
         music = (os.environ.get("MUSIC") or "on").lower() != "off"
         res = kinetic.render(script, photo, script.get("kicker") or item.get("rubric", ""), ROOT / rel, with_music=music)
-        job["video"], job["warnings"] = rel, res["warnings"]
+        job["video"] = rel
+        job["warnings"] = (job.get("warnings") or []) + res["warnings"]
         job["cover"] = f"{base}_cover.jpg"
         (ROOT / job["cover"]).write_bytes(res["cover"])
         job["pics"] = []
@@ -186,10 +187,12 @@ def build_post(item: dict, feedback: str = "") -> dict:
         job["slides"] = []
         # Один проверенный кадр на весь ролик: каждый лишний кадр нейросети — новый шанс на брак (три руки и т.п.)
         photo, rep = images.life_checked(script["first_scene"], "9:16")
-        if photo is None:
-            job["warnings"].append("Кадр из жизни не прошёл проверку на брак ("
-                                   + "; ".join((rep or {}).get("problems", [])[:2]) + ") — ролик на фоне мессенджера.")
-            photo = render._chat_wallpaper()
+        if photo is None:  # люди не получились без брака — та же обстановка без людей
+            problems = "; ".join((rep or {}).get("problems", [])[:3])
+            photo, rep2 = images.life_checked(images.without_people(script["first_scene"]), "9:16", tries=2)
+            job["warnings"].append(f"Кадр с людьми не прошёл проверку на брак ({problems}) — "
+                                   + ("взяла кадр той же обстановки без людей." if photo else "ролик на фоне мессенджера."))
+            photo = photo or render._chat_wallpaper()
         first_rel = f"{base}_slide1.jpg"
         (ROOT / first_rel).write_bytes(_to_jpg(photo))
         rest_rel = f"{base}_slide2.jpg"
@@ -361,7 +364,8 @@ def assemble(job):
                    "clip": (ROOT / sl["clip"]) if sl.get("clip") else None} for sl in job["slides"]]
         slides[0]["dialog"] = job["dialog"]
         rel = f"{job['base']}_reel.mp4"
-        job["warnings"] = video.assemble_chat(slides, job.get("end", ""), ROOT / rel, with_music=music)
+        job["warnings"] = [w for w in (job.get("warnings") or []) if "Veo" not in w and "музык" not in w] + \
+            video.assemble_chat(slides, job.get("end", ""), ROOT / rel, with_music=music)
         job["video"] = rel
         job["stage"] = "ready"
         save_job(job)
