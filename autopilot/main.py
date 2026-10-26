@@ -846,6 +846,23 @@ def handle(state, up):
         else:
             telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
             _prepare(state)
+    elif body.startswith("/profile"):
+        try:
+            pr = instagram.profile()
+            media = instagram.my_media()
+            bio = pr.get("biography") or "— пусто —"
+            telegram.send_text(cid, "Профиль сейчас:\n"
+                               f"Ник: @{pr.get('username')}\nИмя: {pr.get('name') or '— пусто —'}\n"
+                               f"Шапка ({len(pr.get('biography') or '')} знаков):\n{bio}\n"
+                               f"Ссылка: {pr.get('website') or '— нет —'}\n"
+                               f"Публикаций: {pr.get('media_count')}, подписчиков: {pr.get('followers_count')}\n\n"
+                               "Последние посты:\n" + "\n".join(
+                                   f"{m['date']} · {m['type']} · {(m['caption'] or '').splitlines()[0][:50] if m['caption'] else ''}"
+                                   for m in media[-12:]))
+            if pr.get("profile_picture_url"):
+                telegram.send_photo(cid, requests.get(pr["profile_picture_url"], timeout=60).content, "Аватар сейчас")
+        except Exception as e:  # noqa: BLE001
+            telegram.send_text(cid, f"⚠️ Не получилось прочитать профиль: {e}"[:1500])
     elif body.startswith("/vk_test"):
         try:
             m = next(m for m in reversed(instagram.my_media()) if m["type"] == "VIDEO")

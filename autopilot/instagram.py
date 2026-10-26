@@ -103,3 +103,8 @@ def publish_story(image_url: str) -> str:
     container = _post(f"{user_id}/media", media_type="STORIES", image_url=image_url)["id"]
     _wait(container)
     return _post(f"{user_id}/media_publish", creation_id=container)["id"]
+
+
+def profile() -> dict:
+    """Что сейчас в профиле: имя, ник, шапка, ссылка, число публикаций и подписчиков."""
+    return _get("me", fields="username,name,biography,website,followers_count,media_count,profile_picture_url")
