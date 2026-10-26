@@ -1,5 +1,5 @@
 {
-  "offset": 320005940,
+  "offset": 320005941,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -7,16 +7,18 @@
     "pov-ne-znayu",
     "voprosy-za-uzhinom",
     "pov-mam-ya-podumayu",
-    "ne-test"
+    "ne-test",
+    "ne-lenivyy"
   ],
-  "pending": "ne-lenivyy",
+  "pending": null,
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
     "https://www.instagram.com/reel/DeuKPudjIa1/",
     "https://www.instagram.com/p/DewdMgRlowM/",
     "https://www.instagram.com/reel/DezoY3-jaqL/",
-    "https://www.instagram.com/reel/De19wBslYbW/"
+    "https://www.instagram.com/reel/De19wBslYbW/",
+    "https://www.instagram.com/reel/De9wE-4Ff3v/"
   ],
   "stories_ready": {
     "kto-ya": {
