@@ -606,7 +606,8 @@ def cmd_stories(state, only: str = ""):
     import io
     cid = chat(state)
     all_h = yaml.safe_load(HIGHLIGHTS.read_text(encoding="utf-8"))["highlights"]
-    data = [h for h in all_h if h["id"] == only] if only else all_h
+    want = only.replace(",", " ").split()
+    data = [h for w in want for h in all_h if h["id"] == w] if want else all_h  # в том порядке, как просили
     if only and not data:
         if cid:
             telegram.send_text(cid, "Нет такого хайлайта. Есть: " + ", ".join(h["id"] for h in all_h))
