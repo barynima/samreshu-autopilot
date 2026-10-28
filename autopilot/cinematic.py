@@ -71,6 +71,20 @@ def _wrap(tokens, font, max_w):
     return lines
 
 
+def scrim(pos="top") -> Image.Image:
+    """Мягкое затемнение под надпись, чтобы белый текст читался на любом кадре."""
+    g = Image.new("L", (1, H), 0)
+    for y in range(H):
+        if pos == "top":
+            k = 1 - min(1, max(0, (y - 120) / 900))
+        else:
+            k = max(0, 1 - abs(y - H * 0.42) / 520)
+        g.putpixel((0, y), int(150 * k ** 1.2))
+    layer = Image.new("RGBA", (W, H), (10, 8, 14, 255))
+    layer.putalpha(g.resize((W, H)))
+    return layer
+
+
 def text_layer(block) -> Image.Image:
     """Прозрачный слой 1080×1920 с одной надписью (стили из сценария SYNTX)."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -118,7 +132,9 @@ def text_layer(block) -> Image.Image:
         y += 10
     shadow = shadow.filter(ImageFilter.GaussianBlur(8))
     shadow.alpha_composite(img)
-    return shadow
+    out = scrim(pos)
+    out.alpha_composite(shadow)
+    return out
 
 
 # ---------- звуковые эффекты (синтез, без внешних файлов) ----------
@@ -197,7 +213,8 @@ def _shot_image(shot, refs: dict, allow_face=True):
         if rep["ok"]:
             return img, rep
         if not best[1] or rep["score"] > best[1].get("score", 0):
-            best = (img if rep["score"] >= 6 and not any("рук" in p or "пальц" in p for p in rep["problems"]) else None, rep)
+            bad = any(w in p.lower() for p in rep["problems"] for w in ("рук", "пальц", "букв", "надпис", "текст"))
+            best = (img if rep["score"] >= 6 and not bad else None, rep)
     return best
 
 
@@ -221,10 +238,10 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
     for i, shot in enumerate(script["shots"], 1):
         img, rep = _shot_image(shot, refs)
         if img is None:
-            warnings.append(f"Кадр {i} не прошёл проверку ({'; '.join((rep or {}).get('problems', [])[:2])}) — "
-                            "взяла опорную локацию.")
             img = next((refs[r] for r in reversed(shot.get("refs") or []) if refs.get(r)), None) \
-                or render._chat_wallpaper()
+                or (frames[-1] if frames else None) or next(iter(refs.values()), None) or render._chat_wallpaper()
+            warnings.append(f"Кадр {i} не прошёл проверку ({'; '.join((rep or {}).get('problems', [])[:2])}) — "
+                            "поставила запасной кадр.")
         frames.append(_jpg(img))
     # обложка
     ci = max(0, min(len(frames) - 1, int(script.get("cover_shot", 1)) - 1))
@@ -244,10 +261,11 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
             Image.open(io.BytesIO(frame)).save(pic)
             clip = None
             if veo:
+                vsec = 4 if dur <= 4 else 6 if dur <= 6 else 8  # Veo умеет только 4, 6 и 8 секунд
                 try:
-                    data = video.veo_clip(frame, f"{shot.get('motion', '')} {CINE_MOTION}", max(4, math.ceil(dur)),
-                                          style=video.LIFE_VIDEO)
-                    if not video.clip_problem(data, frame, max(4, math.ceil(dur))):
+                    data = video.veo_clip(frame, f"{shot.get('motion', '')} {CINE_MOTION}", vsec,
+                                          style=video.LIFE_VIDEO, models=video.VEO_FAST)
+                    if not video.clip_problem(data, frame, vsec):
                         clip = tmp / f"c{i}.mp4"
                         clip.write_bytes(data)
                 except Exception as e:  # noqa: BLE001

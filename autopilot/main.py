@@ -168,7 +168,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
         job["hook"] = job["hook"].replace("*", "")
         rel = f"{base}_reel.mp4"
         music = (os.environ.get("MUSIC") or "on").lower() != "off"
-        veo = (os.environ.get("CINE_VEO") or "off").lower() == "on"
+        veo = (os.environ.get("CINE_VEO") or "on").lower() == "on"  # без движения кино-ролик превращается в слайд-шоу
         res = cinematic.render_reel(script, ROOT / rel, with_music=music, veo=veo)
         job["video"] = rel
         job["warnings"] = (job.get("warnings") or []) + res["warnings"]

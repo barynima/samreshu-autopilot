@@ -40,6 +40,7 @@ def duration(path: Path) -> float:
 
 # ---------- Veo ----------
 
+VEO_FAST = ["veo-3.1-fast-generate-001", "veo-3.1-fast-generate-preview", "veo-3.1-lite-generate-001"]
 VEO_MODELS = ["veo-3.1-lite-generate-001", "veo-3.1-lite-generate-preview",
               "veo-3.1-fast-generate-001", "veo-3.1-fast-generate-preview"]
 
@@ -100,12 +101,12 @@ def clip_problem(clip: bytes, source: bytes, seconds: float):
     return None
 
 
-def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6, style: str = TOY_VIDEO) -> bytes:
+def veo_clip(image_bytes: bytes, motion: str, seconds: int = 6, style: str = TOY_VIDEO, models: list = None) -> bytes:
     image_bytes = _veo_input(image_bytes)
     creds = google._credentials()
     project = os.environ.get("GOOGLE_PROJECT_ID") or creds.project_id
     loc = google.LOCATION
-    models = [os.environ["VEO_MODEL"]] if os.environ.get("VEO_MODEL") else VEO_MODELS
+    models = models or ([os.environ["VEO_MODEL"]] if os.environ.get("VEO_MODEL") else VEO_MODELS)
     prompt = f"{motion} {style}"
     body = {
         "instances": [{"prompt": prompt,
