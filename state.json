@@ -1,5 +1,5 @@
 {
-  "offset": 320005949,
+  "offset": 320005951,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -11,9 +11,10 @@
     "ne-lenivyy",
     "manifest",
     "kak-rabotaet",
-    "vosmoy-klass"
+    "vosmoy-klass",
+    "pov-chat"
   ],
-  "pending": "pov-chat",
+  "pending": null,
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
@@ -24,7 +25,8 @@
     "https://www.instagram.com/reel/De9wE-4Ff3v/",
     "https://www.instagram.com/p/De9xjf2lkSx/",
     "https://www.instagram.com/p/De97aeXmQee/",
-    "https://www.instagram.com/p/De_uq7tETkn/"
+    "https://www.instagram.com/p/De_uq7tETkn/",
+    "https://www.instagram.com/reel/DfCyu6ECWNA/"
   ],
   "stories_ready": {
     "kto-ya": {
