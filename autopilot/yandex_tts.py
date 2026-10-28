@@ -59,7 +59,7 @@ def _request(text: str, voice: str, role: str, model: str, speed: float, spec: d
         msg = json.loads(line)
         if "error" in msg:
             raise RuntimeError(f"Яндекс {voice}/{role}: {str(msg['error'])[:200]}")
-        chunk = (msg.get("result") or msg).get("audioChunk", {}).get("data")
+        chunk = ((msg.get("result") or msg).get("audioChunk") or {}).get("data")
         if chunk:
             audio += base64.b64decode(chunk)
     if not audio:

@@ -1083,10 +1083,14 @@ def cmd_voices(state):
         return
     phrase = os.environ.get("VOICE_SAMPLE_TEXT") or (
         "Ну что, какие предметы ОГЭ берёшь? Это не глупость. С друзьями подростки решают смелее — так устроен возраст.")
-    telegram.send_text(chat(state), "🎙 Пробник голосов мамы от Яндекса. Послушайте и напишите сюда или Claude номер, "
-                                    "который звучит живее всего.")
+    only = {int(x) for x in (os.environ.get("VOICE_SAMPLE_ONLY") or "").replace(" ", "").split(",") if x.isdigit()}
+    if not only:
+        telegram.send_text(chat(state), "🎙 Пробник голосов мамы от Яндекса. Послушайте и напишите сюда или Claude номер, "
+                                        "который звучит живее всего.")
     errors = []
     for n, (model, voice, role) in enumerate(yandex_tts.SAMPLES, 1):
+        if only and n not in only:
+            continue
         try:
             telegram.send_voice(chat(state), yandex_tts.sample_ogg(phrase, model, voice, role),
                                 caption=f"{n}. {voice} · {role}" + (" · livetts" if model != "general" else ""))

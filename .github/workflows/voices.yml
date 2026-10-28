@@ -2,6 +2,11 @@ name: Пробник голосов мамы (Яндекс)
 
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Номера голосов через запятую (пусто — все)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -45,6 +50,7 @@ jobs:
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
           VIDEO_MODE: ${{ vars.VIDEO_MODE }}
           VOICES: ${{ vars.VOICES }}
+          VOICE_SAMPLE_ONLY: ${{ inputs.only }}
           YANDEX_TTS_KEY: ${{ secrets.YANDEX_TTS_KEY }}
           YANDEX_TTS_VOICE: ${{ vars.YANDEX_TTS_VOICE }}
           YANDEX_TTS_ROLE: ${{ vars.YANDEX_TTS_ROLE }}
