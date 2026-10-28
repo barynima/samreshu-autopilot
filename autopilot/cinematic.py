@@ -51,20 +51,34 @@ def _split_accent(t):
     out = []
     for i, part in enumerate(re.split(r"\*", t)):
         for w in part.split(" "):
-            if w:
+            if not w:
+                continue
+            if out and w[0] in ",.!?:;»)…" and not part.startswith(" "):
+                out.append(("\x00" + w, i % 2 == 1))  # прилепить к предыдущему слову без пробела
+            else:
                 out.append((w, i % 2 == 1))
-    return out
+    merged = []
+    for w, a in out:
+        if w.startswith("\x00") and merged:
+            merged.append((w[1:], a, True))
+        else:
+            merged.append((w, a, False))
+    return merged
 
 
 def _wrap(tokens, font, max_w):
     lines, cur, cw = [], [], 0
     sp = font.getlength(" ")
-    for w, a in tokens:
+    for w, a, glue in tokens:
         ww = font.getlength(w)
+        if glue and cur:  # знак препинания — к предыдущему слову, без пробела
+            cur.append((w, a, ww, True))
+            cw += ww
+            continue
         if cur and cw + sp + ww > max_w:
             lines.append(cur)
             cur, cw = [], 0
-        cur.append((w, a, ww))
+        cur.append((w, a, ww, False))
         cw += (sp if len(cur) > 1 else 0) + ww
     if cur:
         lines.append(cur)
@@ -122,12 +136,15 @@ def text_layer(block) -> Image.Image:
     for f, lines, size in rendered:
         sp = f.getlength(" ")
         for line in lines:
-            lw = sum(t[2] for t in line) + sp * (len(line) - 1)
+            gaps = sum(1 for k, t in enumerate(line) if k and not t[3])
+            lw = sum(t[2] for t in line) + sp * gaps
             x = (W - lw) / 2
-            for w, a, ww in line:
+            for k, (w, a, ww, glue) in enumerate(line):
+                if k and not glue:
+                    x += sp
                 sd.text((x + 2, y + 4), w, font=f, fill=(0, 0, 0, 150))
                 d.text((x, y), w, font=f, fill=ACCENT + (255,) if a else (255, 255, 255, 255))
-                x += ww + sp
+                x += ww
             y += round(size * 1.18)
         y += 10
     shadow = shadow.filter(ImageFilter.GaussianBlur(8))
