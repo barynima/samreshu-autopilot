@@ -1,2 +1,1 @@
-8. sofia/casual: 'NoneType' object has no attribute 'get'
-9. vera/casual: 'NoneType' object has no attribute 'get'
+ok
