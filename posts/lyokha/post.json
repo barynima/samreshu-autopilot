@@ -1,0 +1,85 @@
+{
+  "id": "lyokha",
+  "format": "reel_chat",
+  "hook": "Сынок, какие предметы на ОГЭ выбрал? — Общагу. Лёха тоже взял.",
+  "caption": "Главный вопрос здесь не «почему Лёха?», а «а тебе самому что из предметов интереснее всего? Не для ОГЭ, а просто для себя».\n\nВыбор «за компанию» — это нормально. Даже научно. Психологи заметили: рядом с друзьями подростки принимают более смелые и рискованные решения, чем в одиночку (исследование Гарднер и Стейнберг, 2005).\n\nВаш сын не «плывёт по течению», а ищет опору в друзьях. И вместо того чтобы ругать, можно дать ему другую опору — интерес. Иногда за «как Лёха» скрывается простое «мам, я не знаю, как выбрать».\n\nА ваш тоже выбирает «за компанию»?\n\nОтправьте подруге, у которой тоже девятиклассник.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпредметов #подросткииродители",
+  "script": {
+    "dialog": [
+      {
+        "who": "mom",
+        "text": "Сынок, какие предметы на ОГЭ выбрал?"
+      },
+      {
+        "who": "sam",
+        "text": "Общагу. *Лёха* тоже взял."
+      }
+    ],
+    "first_scene": "photo prompt in ENGLISH for a candid smartphone photo: a modern, middle-class Russian apartment kitchen. A woman in her early 40s sits at the kitchen table, looking at her phone with a thoughtful, slightly amused expression. Daylight from a window illuminates the scene, creating a warm, relatable atmosphere.",
+    "first_motion": "video prompt in ENGLISH, 1 sentence: The woman gives a small, knowing shake of her head and a wry smile as if reacting to the message on her phone, which she is holding.",
+    "slides": [
+      {
+        "text": "Выбрать предмет *за компанию* — знакомо?"
+      },
+      {
+        "text": "Это не глупость. Это почти *научный факт*."
+      },
+      {
+        "text": "Рядом с друзьями подростки принимают более *рискованные* решения."
+      },
+      {
+        "text": "И это нормально. Важнее, что *спросить* в ответ."
+      }
+    ],
+    "end": "Что спросить вместо «почему» — в описании",
+    "caption": "Главный вопрос здесь не «почему Лёха?», а «а тебе самому что из предметов интереснее всего? Не для ОГЭ, а просто для себя».\n\nВыбор «за компанию» — это нормально. Даже научно. Психологи заметили: рядом с друзьями подростки принимают более смелые и рискованные решения, чем в одиночку (исследование Гарднер и Стейнберг, 2005).\n\nВаш сын не «плывёт по течению», а ищет опору в друзьях. И вместо того чтобы ругать, можно дать ему другую опору — интерес. Иногда за «как Лёха» скрывается простое «мам, я не знаю, как выбрать».\n\nА ваш тоже выбирает «за компанию»?\n\nОтправьте подруге, у которой тоже девятиклассник.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпредметов #подросткииродители",
+    "hook": "Сынок, какие предметы на ОГЭ выбрал? — Общагу. Лёха тоже взял."
+  },
+  "warnings": [],
+  "base": "posts/lyokha/202610281624",
+  "end": "Что спросить вместо «почему» — в описании",
+  "dialog": [
+    {
+      "who": "mom",
+      "text": "Сынок, какие предметы на ОГЭ выбрал?"
+    },
+    {
+      "who": "sam",
+      "text": "Общагу. *Лёха* тоже взял."
+    }
+  ],
+  "slides": [
+    {
+      "text": "",
+      "scene": "photo prompt in ENGLISH for a candid smartphone photo: a modern, middle-class Russian apartment kitchen. A woman in her early 40s sits at the kitchen table, looking at her phone with a thoughtful, slightly amused expression. Daylight from a window illuminates the scene, creating a warm, relatable atmosphere.",
+      "motion": "video prompt in ENGLISH, 1 sentence: The woman gives a small, knowing shake of her head and a wry smile as if reacting to the message on her phone, which she is holding.",
+      "image": "posts/lyokha/202610281624_slide1.jpg"
+    },
+    {
+      "text": "Выбрать предмет *за компанию* — знакомо?",
+      "image": "posts/lyokha/202610281624_slide2.jpg"
+    },
+    {
+      "text": "Это не глупость. Это почти *научный факт*.",
+      "image": "posts/lyokha/202610281624_slide2.jpg"
+    },
+    {
+      "text": "Рядом с друзьями подростки принимают более *рискованные* решения.",
+      "image": "posts/lyokha/202610281624_slide2.jpg"
+    },
+    {
+      "text": "И это нормально. Важнее, что *спросить* в ответ.",
+      "image": "posts/lyokha/202610281624_slide2.jpg"
+    }
+  ],
+  "cover": "posts/lyokha/202610281624_cover.jpg",
+  "video": "posts/lyokha/202610281624_reel.mp4",
+  "stage": "ready",
+  "review": {
+    "score": 9,
+    "verdict": "Отличная работа: узнаваемая ситуация, полезный совет и научное обоснование, которое хочется сохранить.",
+    "fixes": [
+      "На слайдах с текстом можно попробовать не просто размытый фон, а лёгкий зум на лицо мамы, чтобы подчеркнуть её реакцию."
+    ]
+  },
+  "attempt": 1
+}
