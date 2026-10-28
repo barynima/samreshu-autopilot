@@ -4,9 +4,15 @@
  "asked": [],
  "error": "",
  "debug": {
-  "at": "2026-10-28T16:52:09",
+  "at": "2026-10-28T16:58:47",
   "me": "17841422211361392",
   "conversations": 0,
-  "raw": "{\"data\": []}"
+  "raw": "{\"data\": []}",
+  "folders": {
+   "pending": 0,
+   "other": 0,
+   "requests": 0,
+   "general": 0
+  }
  }
 }
