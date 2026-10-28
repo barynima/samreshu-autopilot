@@ -1,84 +1,276 @@
 {
   "id": "lyokha",
-  "format": "reel_chat",
-  "hook": "Сынок, какие предметы на ОГЭ выбрал? — Общагу. Лёха тоже взял.",
-  "caption": "Главный вопрос здесь не «почему Лёха?», а «а тебе самому что из предметов интереснее всего? Не для ОГЭ, а просто для себя».\n\nВыбор «за компанию» — это нормально. Даже научно. Психологи заметили: рядом с друзьями подростки принимают более смелые и рискованные решения, чем в одиночку (исследование Гарднер и Стейнберг, 2005).\n\nВаш сын не «плывёт по течению», а ищет опору в друзьях. И вместо того чтобы ругать, можно дать ему другую опору — интерес. Иногда за «как Лёха» скрывается простое «мам, я не знаю, как выбрать».\n\nА ваш тоже выбирает «за компанию»?\n\nОтправьте подруге, у которой тоже девятиклассник.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпредметов #подросткииродители",
+  "format": "reel_story",
+  "hook": "Сын выбрал предмет для ОГЭ. Аргумент: «Там Лёха»",
+  "caption": "Вот он, вопрос, который меняет всё: не «Почему как Лёха?», а «Поняла. А тебе самому что из этого списка интереснее?»\n\nЗнакомо? Это не легкомыслие. Исследования подтверждают: в присутствии друзей мозг подростка работает иначе и склонен к более рискованным решениям. Выбор предмета «за компанию» — одно из них. Это нормально, это просто такой возраст.\n\nВаш ход на сегодня: вместо допроса — проявить интерес. Без оценки, без лекций о будущем. Просто спросите, что ему самому кажется любопытным. Не для ОГЭ, а просто так. Ответ может стать началом совсем другого разговора.\n\nА у вашего ребёнка есть свой «Лёха», который влияет на решения?\n\nОтправьте подруге, если узнали её сына.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии #подросткииродители",
   "script": {
-    "dialog": [
+    "hook": "Сын выбрал предмет для ОГЭ. Аргумент: «Там Лёха»",
+    "cast": [
       {
-        "who": "mom",
-        "text": "Сынок, какие предметы на ОГЭ выбрал?"
+        "id": "mom",
+        "prompt": "EN photorealistic portrait: woman 41, modern well-groomed, looking slightly exasperated but loving, hair in a claw clip, oversized beige knit sweater, in a modern kitchen with light wood cabinets"
       },
       {
-        "who": "sam",
-        "text": "Общагу. *Лёха* тоже взял."
+        "id": "teen",
+        "prompt": "EN portrait of a 15-year-old teen boy: brown hair, trendy oversized grey hoodie, face is not clearly visible; he is in a modern apartment"
+      },
+      {
+        "id": "place",
+        "prompt": "EN Modern kitchen with light wood cabinets, white countertops, a coffee machine in the background, warm evening light"
       }
     ],
-    "first_scene": "photo prompt in ENGLISH for a candid smartphone photo: a modern, middle-class Russian apartment kitchen. A woman in her early 40s sits at the kitchen table, looking at her phone with a thoughtful, slightly amused expression. Daylight from a window illuminates the scene, creating a warm, relatable atmosphere.",
-    "first_motion": "video prompt in ENGLISH, 1 sentence: The woman gives a small, knowing shake of her head and a wry smile as if reacting to the message on her phone, which she is holding.",
-    "slides": [
+    "shots": [
       {
-        "text": "Выбрать предмет *за компанию* — знакомо?"
+        "sec": 2.5,
+        "refs": [
+          "mom",
+          "place"
+        ],
+        "visual": "EN Medium shot: mom sits at a kitchen island, holding a mug. She looks towards her son, who has his back to her at the open fridge.",
+        "motion": "EN Slow zoom in on mom's face, her expression is expectant.",
+        "texts": [
+          {
+            "pos": "chat",
+            "messages": [
+              {
+                "who": "mom",
+                "text": "Сын, ты решил, какие предметы на ОГЭ берёшь?"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.5,
+          "text": "Я спросила, какие предметы он выбрал на ОГЭ...",
+          "voice": "mom"
+        },
+        "sfx": [
+          {
+            "at": 2.0,
+            "type": "send"
+          }
+        ]
       },
       {
-        "text": "Это не глупость. Это почти *научный факт*."
+        "sec": 2.0,
+        "refs": [
+          "teen",
+          "place"
+        ],
+        "visual": "EN Shot from behind the son. He's at the open fridge, grabs a bottle of water and shrugs without turning around.",
+        "motion": "EN Slight natural movement of a handheld camera.",
+        "texts": [
+          {
+            "pos": "chat",
+            "messages": [
+              {
+                "who": "sam",
+                "text": "Общагу. Лёха тоже взял."
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.2,
+          "text": "Общагу. Лёха тоже взял.",
+          "voice": "teen"
+        }
       },
       {
-        "text": "Рядом с друзьями подростки принимают более *рискованные* решения."
+        "sec": 2.5,
+        "refs": [
+          "mom"
+        ],
+        "visual": "EN Close-up on mom's face. She blinks slowly, a flicker of a tired, knowing smile crosses her lips. She takes a sip of tea.",
+        "motion": "EN Static shot.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 2.0,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Аргумент, который",
+                "w": "regular"
+              },
+              {
+                "t": "нечем *крыть*",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.8,
+          "text": "А, ну раз Лёха...",
+          "voice": "mom"
+        }
       },
       {
-        "text": "И это нормально. Важнее, что *спросить* в ответ."
+        "sec": 3.0,
+        "refs": [
+          "teen"
+        ],
+        "visual": "EN POV from behind the son and his friend 'Лёха' (a similar-looking teen in a hoodie) walking down a school hallway. They walk in sync.",
+        "motion": "EN Slow motion. A subtle visual effect connects them, like they are a single unit.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 2.5,
+            "pos": "center",
+            "lines": [
+              {
+                "t": "Что видит он:",
+                "w": "regular"
+              },
+              {
+                "t": "не выбор, а *команда*",
+                "w": "bold"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sec": 4.0,
+        "refs": [],
+        "visual": "EN The same shot of the two boys walking in slow-motion, seen from behind. The background is a typical modern school interior.",
+        "motion": "EN Continued slow motion.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 3.5,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "В присутствии друзей подростки принимают",
+                "w": "regular"
+              },
+              {
+                "t": "заметно *более рискованные* решения.",
+                "w": "bold"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sec": 3.0,
+        "refs": [],
+        "visual": "EN Macro shot of a phone screen. Mom's fingers type a message: «И почему именно как Лёха?!». The text is highlighted and deleted.",
+        "motion": "EN The cursor blinks, then a quick backspace animation erases the text.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 2.5,
+            "pos": "center",
+            "lines": [
+              {
+                "t": "Это не легкомыслие.",
+                "w": "regular"
+              },
+              {
+                "t": "Это просто *возраст*.",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "sfx": [
+          {
+            "at": 0.2,
+            "type": "tick"
+          },
+          {
+            "at": 2.2,
+            "type": "thud"
+          }
+        ]
+      },
+      {
+        "sec": 4.0,
+        "refs": [
+          "teen"
+        ],
+        "visual": "EN A new message is typed calmly on the phone: «Поняла. А тебе самому что из предметов интереснее?». Focus pulls from the phone to the son in the background, who now sits at the table and looks up thoughtfully.",
+        "motion": "EN Slow focus pull from foreground to background.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 3.5,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Один вопрос,",
+                "w": "regular"
+              },
+              {
+                "t": "который меняет *разговор*",
+                "w": "bold"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "mom",
+          "place"
+        ],
+        "visual": "EN Same setup as the first shot. Mom at the kitchen island, now with a small, hopeful smile. She puts her phone down next to her mug.",
+        "motion": "EN Slow zoom out, the atmosphere is calmer.",
+        "texts": [
+          {
+            "at": 0.5,
+            "to": 2.5,
+            "pos": "center",
+            "lines": [
+              {
+                "t": "А у вашего какой «Лёха»?",
+                "w": "bold"
+              }
+            ]
+          }
+        ]
       }
     ],
-    "end": "Что спросить вместо «почему» — в описании",
-    "caption": "Главный вопрос здесь не «почему Лёха?», а «а тебе самому что из предметов интереснее всего? Не для ОГЭ, а просто для себя».\n\nВыбор «за компанию» — это нормально. Даже научно. Психологи заметили: рядом с друзьями подростки принимают более смелые и рискованные решения, чем в одиночку (исследование Гарднер и Стейнберг, 2005).\n\nВаш сын не «плывёт по течению», а ищет опору в друзьях. И вместо того чтобы ругать, можно дать ему другую опору — интерес. Иногда за «как Лёха» скрывается простое «мам, я не знаю, как выбрать».\n\nА ваш тоже выбирает «за компанию»?\n\nОтправьте подруге, у которой тоже девятиклассник.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпредметов #подросткииродители",
-    "hook": "Сынок, какие предметы на ОГЭ выбрал? — Общагу. Лёха тоже взял."
+    "cover_shot": 7,
+    "cover_lines": [
+      {
+        "t": "Выбрал предмет,",
+        "w": "bold"
+      },
+      {
+        "t": "*потому что друг*? Это нормально",
+        "w": "bold"
+      }
+    ],
+    "music": "EN: light, quirky pizzicato string track that becomes a warmer, gentle piano melody in the second half",
+    "caption": "Вот он, вопрос, который меняет всё: не «Почему как Лёха?», а «Поняла. А тебе самому что из этого списка интереснее?»\n\nЗнакомо? Это не легкомыслие. Исследования подтверждают: в присутствии друзей мозг подростка работает иначе и склонен к более рискованным решениям. Выбор предмета «за компанию» — одно из них. Это нормально, это просто такой возраст.\n\nВаш ход на сегодня: вместо допроса — проявить интерес. Без оценки, без лекций о будущем. Просто спросите, что ему самому кажется любопытным. Не для ОГЭ, а просто так. Ответ может стать началом совсем другого разговора.\n\nА у вашего ребёнка есть свой «Лёха», который влияет на решения?\n\nОтправьте подруге, если узнали её сына.\n\n#самрешу #огэ2027 #огэ2028 #9класс #8класс #выборпрофессии #подросткииродители"
   },
-  "warnings": [],
-  "base": "posts/lyokha/202610281624",
-  "end": "Что спросить вместо «почему» — в описании",
-  "dialog": [
-    {
-      "who": "mom",
-      "text": "Сынок, какие предметы на ОГЭ выбрал?"
-    },
-    {
-      "who": "sam",
-      "text": "Общагу. *Лёха* тоже взял."
-    }
+  "warnings": [
+    "Кадр 6 не прошёл проверку (Нечитаемые, выдуманные буквы на клавиатуре телефона.; Бессмысленный набор букв в поле для ввода текста.) — взяла опорную локацию."
   ],
-  "slides": [
-    {
-      "text": "",
-      "scene": "photo prompt in ENGLISH for a candid smartphone photo: a modern, middle-class Russian apartment kitchen. A woman in her early 40s sits at the kitchen table, looking at her phone with a thoughtful, slightly amused expression. Daylight from a window illuminates the scene, creating a warm, relatable atmosphere.",
-      "motion": "video prompt in ENGLISH, 1 sentence: The woman gives a small, knowing shake of her head and a wry smile as if reacting to the message on her phone, which she is holding.",
-      "image": "posts/lyokha/202610281624_slide1.jpg"
-    },
-    {
-      "text": "Выбрать предмет *за компанию* — знакомо?",
-      "image": "posts/lyokha/202610281624_slide2.jpg"
-    },
-    {
-      "text": "Это не глупость. Это почти *научный факт*.",
-      "image": "posts/lyokha/202610281624_slide2.jpg"
-    },
-    {
-      "text": "Рядом с друзьями подростки принимают более *рискованные* решения.",
-      "image": "posts/lyokha/202610281624_slide2.jpg"
-    },
-    {
-      "text": "И это нормально. Важнее, что *спросить* в ответ.",
-      "image": "posts/lyokha/202610281624_slide2.jpg"
-    }
+  "base": "posts/lyokha/202610281638",
+  "end": "",
+  "video": "posts/lyokha/202610281638_reel.mp4",
+  "cover": "posts/lyokha/202610281638_cover.jpg",
+  "pics": [
+    "posts/lyokha/202610281638_k1.jpg",
+    "posts/lyokha/202610281638_k2.jpg",
+    "posts/lyokha/202610281638_k3.jpg",
+    "posts/lyokha/202610281638_k4.jpg"
   ],
-  "cover": "posts/lyokha/202610281624_cover.jpg",
-  "video": "posts/lyokha/202610281624_reel.mp4",
   "stage": "ready",
   "review": {
-    "score": 9,
-    "verdict": "Отличная работа: узнаваемая ситуация, полезный совет и научное обоснование, которое хочется сохранить.",
+    "score": 6,
+    "verdict": "Идея — огонь, но арт-директор в отпуске.",
     "fixes": [
-      "На слайдах с текстом можно попробовать не просто размытый фон, а лёгкий зум на лицо мамы, чтобы подчеркнуть её реакцию."
+      "Во всех кадрах и на обложке лицо подростка должно быть невидимым или неразличимым. Это железное правило. Заменить все изображения, где видно лицо, на съёмку со спины, через плечо, в капюшоне с тенью.",
+      "Сценарий отличный, но нарушена связка ролик-описание. Последний кадр должен обещать пользу в описании, а не просто задавать вопрос. Например: «Как превратить „аргумент Лёхи“ в нормальный разговор? Ответ — в описании». Сейчас ролик не мотивирует читать подпись.",
+      "Первая строка описания сразу даёт пользу — это отлично. Но в конце текста дублируется вопрос с последнего кадра («А у вашего ребёнка есть свой „Лёха“?»). Убрать этот дубль, оставить только призыв к действию.",
+      "В сценарии есть несоответствие: промпт для подростка — «face is not clearly visible», а предоставленные картинки и выбор обложки (cover_shot: 7) прямо это нарушают. Следить за соответствием ТЗ и результата."
     ]
   },
   "attempt": 1
