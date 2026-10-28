@@ -1,9 +1,9 @@
-1. masha/friendly: Яндекс masha/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc
-2. masha/good: Яндекс masha/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = P
-3. dasha/friendly: Яндекс dasha/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc
-4. dasha/good: Яндекс dasha/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = P
-5. lera/friendly: Яндекс lera/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc 
-6. marina/friendly: Яндекс marina/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied des
-7. jane/good: Яндекс jane/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Pe
-8. sofia/casual: Яндекс sofia/casual: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc =
-9. vera/casual: Яндекс vera/casual: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = 
+1. masha/friendly: Яндекс masha/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+2. masha/good: Яндекс masha/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+3. dasha/friendly: Яндекс dasha/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+4. dasha/good: Яндекс dasha/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+5. lera/friendly: Яндекс lera/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+6. marina/friendly: Яндекс marina/friendly: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+7. jane/good: Яндекс jane/good: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+8. sofia/casual: Яндекс sofia/casual: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
+9. vera/casual: Яндекс vera/casual: HTTP 403 {"error":{"grpcCode":7,"httpCode":403,"message":"rpc error: code = PermissionDenied desc = Permission denied","httpStatus":"Forbidden","details":[]}}
