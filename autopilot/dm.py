@@ -47,8 +47,18 @@ def check(notify_chat=None) -> dict:
         return stats
     try:
         me = instagram._get("me", fields="user_id")["user_id"]
-        convs = instagram._get("me/conversations", platform="instagram",
-                               fields="participants,messages.limit(10){id,message,from,created_time}")
+        fields = "participants,messages.limit(10){id,message,from,created_time}"
+        convs = instagram._get("me/conversations", platform="instagram", fields=fields)
+        # первые сообщения от новых людей лежат в «Запросах» — пробуем и эти папки
+        probe = {}
+        for folder in ("pending", "other", "requests", "general"):
+            try:
+                extra = instagram._get("me/conversations", platform="instagram", fields=fields, folder=folder)
+                probe[folder] = len(extra.get("data", []))
+                known = {c.get("id") for c in convs.get("data", [])}
+                convs.setdefault("data", []).extend(c for c in extra.get("data", []) if c.get("id") not in known)
+            except Exception as e:  # noqa: BLE001
+                probe[folder] = str(e)[:80]
     except Exception as e:  # noqa: BLE001
         err = str(e)[:300]
         if notify_chat and st.get("error") != err:
@@ -61,7 +71,7 @@ def check(notify_chat=None) -> dict:
     st["error"] = ""
     st["debug"] = {"at": datetime.datetime.utcnow().isoformat(timespec="seconds"), "me": me,
                    "conversations": len(convs.get("data", [])),
-                   "raw": json.dumps(convs, ensure_ascii=False)[:600]}
+                   "raw": json.dumps(convs, ensure_ascii=False)[:600], "folders": probe}
     today = datetime.date.today()
     until = datetime.date.fromisoformat(str(promo.get("until"))) if promo.get("until") else None
     for conv in convs.get("data", []):
