@@ -84,6 +84,11 @@ def send_document(chat_id, data: bytes, filename: str, caption: str = ""):
                 files={"document": (filename, data)})
 
 
+def send_voice(chat_id, data: bytes, caption: str = ""):
+    return _api("sendVoice", data={"chat_id": chat_id, "caption": caption[:1000]},
+                files={"voice": ("voice.ogg", data, "audio/ogg")})
+
+
 def download(file_id: str) -> bytes:
     info = _api("getFile", json={"file_id": file_id})
     r = requests.get(f"https://api.telegram.org/file/bot{os.environ['TG_BOT_TOKEN']}/{info['file_path']}",

@@ -45,5 +45,10 @@ jobs:
           AUTO_PUBLISH: ${{ vars.AUTO_PUBLISH }}
           VIDEO_MODE: ${{ vars.VIDEO_MODE }}
           VOICES: ${{ vars.VOICES }}
+          YANDEX_TTS_KEY: ${{ secrets.YANDEX_TTS_KEY }}
+          YANDEX_TTS_VOICE: ${{ vars.YANDEX_TTS_VOICE }}
+          YANDEX_TTS_ROLE: ${{ vars.YANDEX_TTS_ROLE }}
+          YANDEX_TTS_MODEL: ${{ vars.YANDEX_TTS_MODEL }}
+          YANDEX_TTS_SPEED: ${{ vars.YANDEX_TTS_SPEED }}
           MUSIC: ${{ vars.MUSIC }}
           VEO_MODEL: ${{ vars.VEO_MODEL }}

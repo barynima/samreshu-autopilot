@@ -21,7 +21,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from . import images, render, text, video
+from . import images, render, text, video, yandex_tts
 
 W, H = 1080, 1920
 FPS = 30
@@ -205,6 +205,17 @@ def _tts(line: str, voices: list, rate=0.95) -> bytes:
     raise RuntimeError(f"Голос не синтезировался ({last})")
 
 
+def _voice(line: str, teen: bool, warnings: list) -> bytes:
+    """Подросток — Google (его голос устраивает). Мама — Яндекс, если есть ключ; при сбое — Google."""
+    if not teen and yandex_tts.enabled():
+        try:
+            return yandex_tts.synth(line)
+        except Exception as e:  # noqa: BLE001
+            if not any("Яндекс" in w for w in warnings):
+                warnings.append(f"Голос мамы от Google: {str(e)[:150]}")
+    return _tts(line, TEEN if teen else NARRATOR, rate=1.0 if teen else 0.92)
+
+
 # ---------- кадры ----------
 
 def _shot_image(shot, refs: dict, allow_face=True):
@@ -300,7 +311,7 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
                 try:
                     wav = tmp / f"vo{i}.wav"
                     teen = vo.get("voice") == "teen"
-                    wav.write_bytes(_tts(vo["text"], TEEN if teen else NARRATOR, rate=1.0 if teen else 0.92))
+                    wav.write_bytes(_voice(vo["text"], teen, warnings))
                     audio.append((t0 + float(vo.get("at", 0.2)), wav, 1.6 if not teen else 1.2, teen))
                 except Exception as e:  # noqa: BLE001
                     if not any("закадрового" in w for w in warnings):

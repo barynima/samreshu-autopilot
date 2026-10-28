@@ -1073,12 +1073,35 @@ def update_github_secret(repo, pat, name, value):
     r.raise_for_status()
 
 
+def cmd_voices(state):
+    """Пробник голосов мамы от Яндекса: присылает в Telegram одну и ту же фразу разными голосами."""
+    from . import yandex_tts
+    if not chat(state):
+        raise RuntimeError("Не знаю чат: напишите боту любое сообщение и запустите снова")
+    if not yandex_tts.enabled():
+        telegram.send_text(chat(state), "Нет ключа Яндекса: добавьте секрет YANDEX_TTS_KEY в настройках репозитория.")
+        return
+    phrase = os.environ.get("VOICE_SAMPLE_TEXT") or (
+        "Ну что, какие предметы ОГЭ берёшь? Это не глупость. С друзьями подростки решают смелее — так устроен возраст.")
+    telegram.send_text(chat(state), "🎙 Пробник голосов мамы от Яндекса. Послушайте и напишите сюда или Claude номер, "
+                                    "который звучит живее всего.")
+    errors = []
+    for n, (model, voice, role) in enumerate(yandex_tts.SAMPLES, 1):
+        try:
+            telegram.send_voice(chat(state), yandex_tts.sample_ogg(phrase, model, voice, role),
+                                caption=f"{n}. {voice} · {role}" + (" · livetts" if model != "general" else ""))
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{n}. {voice}/{role}: {str(e)[:120]}")
+    if errors:
+        telegram.send_text(chat(state), "Не получились:\n" + "\n".join(errors))
+
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "poll"
     state = load_state()
     try:
         {"prepare": cmd_prepare, "poll": cmd_poll, "refs": cmd_refs, "refresh": cmd_refresh,
-         "stories": cmd_stories}[cmd](state)
+         "stories": cmd_stories, "voices": cmd_voices}[cmd](state)
     except Exception as e:
         if chat(state):
             try:
