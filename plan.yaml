@@ -156,7 +156,7 @@ posts:
 
   - id: lyokha
     date: 2026-10-29
-    format: reel_chat
+    format: reel_story
     rubric: Знакомо?
     level: 1
     type: охват
@@ -210,7 +210,7 @@ posts:
 
   - id: khoroshaya-mama
     date: 2026-11-01
-    format: reel_chat
+    format: reel_story
     rubric: Знакомо?
     level: 1
     type: охват
@@ -266,7 +266,7 @@ posts:
 
   - id: perevodchik
     date: 2026-11-05
-    format: reel_chat
+    format: reel_story
     rubric: Перевод с подросткового
     level: 1
     type: охват
@@ -335,7 +335,7 @@ posts:
 
   - id: test-lesnik
     date: 2026-11-10
-    format: reel_chat
+    format: reel_story
     rubric: Знакомо?
     level: 1-2
     type: охват
@@ -364,7 +364,7 @@ posts:
 
   - id: muzh-armiya
     date: 2026-11-12
-    format: reel_chat
+    format: reel_story
     rubric: Шум вокруг
     level: 1-2
     type: охват
@@ -447,7 +447,7 @@ posts:
 
   - id: roditelskiy-chat
     date: 2026-11-18
-    format: reel_chat
+    format: reel_story
     rubric: Родительский чат
     level: 1
     type: охват
@@ -486,7 +486,7 @@ posts:
 
   - id: chetyre-uvlecheniya
     date: 2026-11-21
-    format: reel_chat
+    format: reel_story
     rubric: Хобби → направление
     level: 1-2
     type: охват
@@ -526,7 +526,7 @@ posts:
 
   - id: plecho-k-plechu
     date: 2026-11-24
-    format: reel_chat
+    format: reel_story
     rubric: Как разговаривать
     level: 2
     type: охват
@@ -540,7 +540,7 @@ posts:
 
   - id: kak-ustroen
     date: 2026-11-25
-    format: reel_chat
+    format: reel_story
     rubric: Как это работает
     level: "4"
     type: продажа
