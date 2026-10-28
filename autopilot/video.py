@@ -225,7 +225,8 @@ def _end_part(tmp: Path, text: str, out: Path, dur: float = 3.2):
     _still(card, empty, dur, out, zoom=False)
 
 
-def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
+def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool, music_volume: float = 0.9,
+            music_prompt: str = None) -> list:
     warnings = []
     lst = tmp / "list.txt"
     lst.write_text("".join(f"file '{p}'\n" for p in parts))
@@ -240,7 +241,7 @@ def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
     elif with_music:
         try:
             track = tmp / "music.wav"
-            track.write_bytes(music())
+            track.write_bytes(music(music_prompt) if music_prompt else music())
         except Exception as e:
             track = None
             warnings.append(f"Ролик без музыки: {e}")
@@ -253,7 +254,7 @@ def _finish(parts: list, tmp: Path, out_path: Path, with_music: bool) -> list:
         except Exception:
             pass
         fc = (f"[1:a]atrim=start={start:.2f},asetpts=PTS-STARTPTS,aloop=loop=-1:size=2000000000,atrim=duration={d:.2f},"
-              f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume=0.9[m];"
+              f"afade=t=in:d=0.6,afade=t=out:st={max(0, d - 1.8):.2f}:d=1.8,volume={music_volume}[m];"
               f"[0:a][m]amix=inputs=2:duration=first:normalize=0[a]")
         _run(["-i", str(joined), "-i", str(track), "-filter_complex", fc, "-map", "0:v", "-map", "[a]",
               "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(out_path)])

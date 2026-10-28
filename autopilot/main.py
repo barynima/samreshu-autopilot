@@ -18,7 +18,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import images, instagram, kinetic, planner, render, stories, storage, telegram, text, video, vposter
+from . import cinematic, images, instagram, kinetic, planner, render, stories, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -111,8 +111,10 @@ def save_job(job: dict):
 
 FORMAT_NAMES = {"reel_scene": "Reels «Сценка»", "reel_pov": "Reels POV", "reel_confess": "Reels «Надо признаётся»",
                 "carousel": "Карусель", "reel_text": "Текстовый Reels",
-                "reel_chat": "Reels-переписка", "reel_kinetic": "Reels «Кинетический текст»"}
-FMT_SHORT = {"reel_chat": "ролик-переписка", "reel_kinetic": "ролик с цифрами", "carousel": "карусель"}
+                "reel_chat": "Reels-переписка", "reel_kinetic": "Reels «Кинетический текст»",
+                "reel_story": "Reels «Кино»"}
+FMT_SHORT = {"reel_chat": "ролик-переписка", "reel_kinetic": "ролик с цифрами", "carousel": "карусель",
+             "reel_story": "кино-ролик"}
 FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodies visible, both clearly visible "
                 "and not overlapping; the top quarter of the frame is a plain empty wall (space for captions)")
 
@@ -121,7 +123,10 @@ FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodie
 
 def build_post(item: dict, feedback: str = "") -> dict:
     fmt = item.get("format", "reel_scene")
-    script = text.write_post(item, feedback)
+    if item.get("script") and not feedback:  # готовый сценарий (например, от Марины из SYNTX)
+        script = json.loads((ROOT / item["script"]).read_text(encoding="utf-8"))
+    else:
+        script = text.write_post(item, feedback)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
     base = f"posts/{item['id']}/{stamp}"
     (POSTS / item["id"]).mkdir(parents=True, exist_ok=True)
@@ -158,6 +163,25 @@ def build_post(item: dict, feedback: str = "") -> dict:
 
     job["end"] = script.get("end", "")
     job["base"] = base
+
+    if fmt == "reel_story":
+        job["hook"] = job["hook"].replace("*", "")
+        rel = f"{base}_reel.mp4"
+        music = (os.environ.get("MUSIC") or "on").lower() != "off"
+        veo = (os.environ.get("CINE_VEO") or "off").lower() == "on"
+        res = cinematic.render_reel(script, ROOT / rel, with_music=music, veo=veo)
+        job["video"] = rel
+        job["warnings"] = (job.get("warnings") or []) + res["warnings"]
+        job["cover"] = f"{base}_cover.jpg"
+        (ROOT / job["cover"]).write_bytes(res["cover"])
+        job["pics"] = []
+        for i, pic in enumerate(res["pictures"], 1):
+            prel = f"{base}_k{i}.jpg"
+            (ROOT / prel).write_bytes(pic)
+            job["pics"].append(prel)
+        job["stage"] = "ready"
+        save_job(job)
+        return job
 
     if fmt == "reel_kinetic":
         job["hook"] = job["hook"].replace("*", "")
@@ -314,7 +338,9 @@ def build_checked(item: dict, feedback: str = "") -> dict:
     """Собирает пост и прогоняет через строгого критика; ниже MIN_SCORE — переделывает (до MAX_TRIES раз)."""
     best = None
     notes = feedback
-    for attempt in range(MAX_TRIES):
+    # кино-ролик дорогой (десятки кадров), а готовый сценарий не переписываем — один заход, критик только оценивает
+    tries = 1 if item.get("format") == "reel_story" or item.get("script") else MAX_TRIES
+    for attempt in range(tries):
         job = build_post(item, notes)
         try:
             review = text.critique(job["script"], _pictures(job))
@@ -912,7 +938,7 @@ def handle(state, up):
             telegram.send_text(cid, "Сейчас нечего править.")
     elif body.startswith("/rebuild"):
         pid = state.get("pending")
-        if not pid or not (POSTS / pid / "post.json").exists() or load_job(pid)["format"] == "carousel":
+        if not pid or not (POSTS / pid / "post.json").exists() or load_job(pid)["format"] in ("carousel", "reel_story", "reel_kinetic"):
             telegram.send_text(cid, "Сейчас нечего пересобирать.")
         else:
             job = load_job(pid)
