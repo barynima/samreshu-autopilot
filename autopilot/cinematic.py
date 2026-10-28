@@ -321,6 +321,21 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
                 wav.write_bytes(_sfx(s.get("type", "click")))
                 audio.append((t0 + float(s.get("at", 0)), wav, 0.8, False))
             t0 += dur
+        # голоса не должны наезжать друг на друга: если реплика начинается раньше, чем кончилась предыдущая, сдвигаем
+        voices = sorted([a for a in audio if a[2] >= 1.2], key=lambda a: a[0])
+        last_end = 0.0
+        for k, (st, wav, vol, muffled) in enumerate(voices):
+            try:
+                with wave.open(str(wav)) as wv:
+                    length = wv.getnframes() / wv.getframerate()
+            except Exception:  # noqa: BLE001
+                length = 2.0
+            if st < last_end + 0.15:
+                audio[audio.index(voices[k])] = (last_end + 0.15, wav, vol, muffled)
+                st = last_end + 0.15
+            last_end = st + length
+        if last_end > t0:
+            warnings.append("Закадр длиннее ролика: последнюю реплику может обрезать — сократите текст.")
         base = tmp / "base.mp4"
         warnings += video._finish(parts, tmp, base, with_music, music_volume=0.32 if audio else 0.9,
                                   music_prompt=script.get("music"))
