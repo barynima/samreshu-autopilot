@@ -59,6 +59,9 @@ def check(notify_chat=None) -> dict:
         _save(st)
         return stats
     st["error"] = ""
+    st["debug"] = {"at": datetime.datetime.utcnow().isoformat(timespec="seconds"), "me": me,
+                   "conversations": len(convs.get("data", [])),
+                   "raw": json.dumps(convs, ensure_ascii=False)[:600]}
     today = datetime.date.today()
     until = datetime.date.fromisoformat(str(promo.get("until"))) if promo.get("until") else None
     for conv in convs.get("data", []):
