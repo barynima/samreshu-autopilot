@@ -1,399 +1,257 @@
 {
   "id": "lyokha",
   "format": "reel_story",
-  "hook": "«Какие предметы ОГЭ берёшь?» — «Общагу. Лёха тоже взял»",
-  "caption": "Как спросить про предметы ОГЭ, чтобы ребёнок ответил честно, а не «как Лёха»:\n\n1. Не «почему?», а «а тебе самому что интереснее?» — «почему» звучит как проверка.\n2. Спрашивайте про уроки, а не про экзамены: «на каком предмете время летит быстрее?»\n3. Не спорьте с первым ответом. «Как Лёха» — это не глупость: с друзьями подростки правда решают смелее, чем в одиночку (Гарднер и Стейнберг, 2005). Просто дайте второй вопрос.\n\nЗаявление с предметами ОГЭ — до 1 марта, время спокойно поговорить ещё есть.\n\nУ вашего тоже есть свой Лёха? 👇\n\n#самрешу #профориентация #огэ2027 #9класс #подросток",
+  "hook": "Он выбрал обществознание. Потому что «там Лёха».",
+  "caption": "«Выберу как Лёха» — это не про безволие. Это про безопасность. Когда не знаешь, как правильно, проще сделать как друг — так не будешь один, если что-то пойдёт не так. И это нормально: исследования показывают, что в компании друзей мозг подростка работает иначе, и потребность быть частью «стаи» — огромная.\n\nЧто делать маме? Точно не говорить «у тебя своей головы нет?». Попробуйте сегодня вечером вместо этого спросить: «Слушай, я поняла про Лёху. А если бы все предметы были одинаково лёгкими, что бы ты сам выбрал? Просто для себя, мне интересно».\n\nТакой вопрос открывает дверь к настоящему разговору. А превратить этот первый «интерес» в 2–3 понятных направления и список предметов для ОГЭ помогает наш чат с ИИ. Без давления и оценок. Ссылка в профиле.\n\nА ваш по какому принципу выбирает: «где легче» или «где друзья»?\n\nОтправьте подруге, у которой та же история.\n\n#самрешу #огэ2028 #огэ2027 #9класс #8класс #выборпрофессии #подросткииродители",
   "script": {
-    "hook": "«Какие предметы ОГЭ берёшь?» — «Общагу. Лёха тоже взял»",
+    "hook": "Он выбрал обществознание. Потому что «там Лёха».",
     "cast": [
       {
         "id": "mom",
-        "prompt": "Photorealistic portrait of a woman, 42 years old, modern and well-groomed, warm ironic eyes, dark brown bob haircut, sage green oversized knit sweater, small gold hoops, in a bright modern kitchen-living room"
+        "prompt": "EN photorealistic shot: a woman in her early 40s, kind but tired face, wearing a cozy beige oversized sweater, in a modern bright kitchen. She looks thoughtful."
       },
       {
         "id": "teen",
-        "prompt": "Photorealistic portrait of a 15-year-old boy, curly light brown hair, black oversized hoodie, white wireless earbuds, relaxed deadpan expression, in a modern apartment"
+        "prompt": "EN photorealistic shot of a 15-year-old boy, profile or back of the head, not full face. He wears a trendy oversized black hoodie and wide jeans."
       },
       {
-        "id": "friend",
-        "prompt": "Photorealistic portrait of a 15-year-old boy, short dark hair, red oversized hoodie, grey cap worn backwards, friendly grin, in a modern school corridor"
+        "id": "sneakers",
+        "prompt": "EN photorealistic detail shot: two pairs of identical, massive, trendy sneakers (e.g., white with black details) on the feet of two teenagers walking on a polished floor."
       },
       {
         "id": "kitchen",
-        "prompt": "Bright modern open-plan kitchen in a new apartment: matte white and light oak cabinets, a kitchen island with two bar stools, a tall fridge, pendant lamps, plants, large window with daylight, evening warm light"
+        "prompt": "EN photorealistic interior: a bright, modern kitchen with minimalist white and wood cabinets and a clean countertop. Warm morning light."
       },
       {
-        "id": "school",
-        "prompt": "Modern bright school corridor in a new Russian school building: light walls, colourful lockers, large windows, light floor, wide and clean, daylight, no text, no signs"
+        "id": "teen_room",
+        "prompt": "EN photorealistic interior: a modern teenager's room, cozy, slightly messy, with a desk, a gaming chair, and posters on the wall."
+      },
+      {
+        "id": "corridor",
+        "prompt": "EN photorealistic interior: a bright, clean school corridor with a polished floor and lockers on the side. Daylight from windows."
       }
     ],
     "shots": [
       {
-        "sec": 2.2,
+        "sec": 2.5,
         "refs": [
           "mom",
           "kitchen"
         ],
-        "visual": "Medium shot: the mother sits at the kitchen island with an open laptop turned away from the camera, a mug of tea next to it, she looks up over the laptop toward the fridge with a hopeful half-smile",
-        "motion": "She closes the laptop halfway and turns her head toward the fridge. Slow push-in.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 2.2,
-            "pos": "top",
-            "lines": [
-              {
-                "t": "«Какие предметы ОГЭ",
-                "w": "regular"
-              },
-              {
-                "t": "*берёшь*?»",
-                "w": "bold",
-                "size": 86
-              }
-            ]
-          }
-        ],
-        "vo": {
-          "at": 0.2,
-          "text": "Ну что, какие предметы ОГЭ берёшь?",
-          "voice": "mom"
-        }
-      },
-      {
-        "sec": 1.8,
-        "refs": [
-          "teen",
-          "kitchen"
-        ],
-        "visual": "Medium shot: the teen boy in black hoodie stands at the open fridge, holding a yogurt, turns his head over his shoulder with a calm deadpan face",
-        "motion": "He closes the fridge with his elbow and shrugs.",
+        "visual": "EN Medium shot. Mom is in the kitchen, leaning against the counter, holding a cup. She looks thoughtfully into the distance, just after a conversation.",
+        "motion": "EN Slow dolly zoom in on the mom's face.",
         "texts": [
           {
             "at": 0.2,
-            "to": 1.8,
-            "pos": "center",
-            "lines": [
-              {
-                "t": "«Общагу»",
-                "w": "bold",
-                "size": 80
-              }
-            ]
-          }
-        ],
-        "vo": {
-          "at": 0.4,
-          "text": "Общагу.",
-          "voice": "teen"
-        }
-      },
-      {
-        "sec": 1.4,
-        "refs": [
-          "mom",
-          "kitchen"
-        ],
-        "visual": "Close-up of the mother at the kitchen island, one eyebrow raised, lips pressed in a suspicious smile",
-        "motion": "She slowly leans her chin on her hand.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 1.4,
+            "to": 2.5,
             "pos": "top",
             "lines": [
               {
-                "t": "«А почему?»",
+                "t": "Он выбрал обществознание.",
+                "w": "regular"
+              },
+              {
+                "t": "Потому что *«там Лёха»*",
                 "w": "bold"
               }
             ]
           }
         ],
         "vo": {
-          "at": 0.2,
-          "text": "А почему?",
-          "voice": "mom"
+          "at": 0.5,
+          "text": "Спросила, какие предметы будет сдавать на ОГЭ.",
+          "voice": "mom_9"
         }
       },
       {
-        "sec": 1.8,
+        "sec": 2.0,
         "refs": [
           "teen",
-          "kitchen"
+          "teen_room"
         ],
-        "visual": "Close-up of the teen boy eating yogurt with a spoon, completely calm, looking at the mother as if the answer is obvious",
-        "motion": "He takes a spoonful and raises his eyebrows.",
-        "texts": [
-          {
-            "at": 0.2,
-            "to": 1.8,
-            "pos": "center",
-            "lines": [
-              {
-                "t": "«Лёха тоже взял»",
-                "w": "bold",
-                "size": 76
-              }
-            ]
-          }
-        ],
+        "visual": "EN Over-the-shoulder shot of the son in his room. He shrugs, barely looking up from his phone.",
+        "motion": "EN Handheld slight shake.",
         "vo": {
-          "at": 0.2,
-          "text": "Лёха тоже взял.",
+          "at": 0.3,
+          "text": "Общагу. Лёха тоже взял.",
           "voice": "teen"
         },
         "sfx": [
           {
-            "at": 1.3,
-            "type": "thud"
+            "at": 1.5,
+            "type": "send"
           }
         ]
       },
       {
-        "sec": 1.1,
+        "sec": 1.5,
         "refs": [
-          "school"
+          "sneakers",
+          "corridor"
         ],
-        "visual": "Top-down shot on a light school corridor floor: two pairs of identical white chunky sneakers standing side by side, toes perfectly aligned, nothing else",
-        "motion": "Static, the sneakers tap once in sync.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 1.1,
-            "pos": "counter",
-            "lines": [
-              {
-                "t": "Кроссовки — как у Лёхи"
-              }
-            ]
-          }
-        ],
+        "visual": "EN Low angle shot. Two pairs of identical trendy sneakers walk perfectly in sync down a school corridor.",
+        "motion": "EN Tracking shot, following the feet.",
         "sfx": [
           {
-            "at": 0,
-            "type": "click"
+            "at": 0.2,
+            "type": "tick"
+          },
+          {
+            "at": 0.8,
+            "type": "tick"
           }
         ]
       },
       {
-        "sec": 1.1,
-        "refs": [
-          "school"
-        ],
-        "visual": "Two identical black backpacks with the same keychain hanging side by side on hooks near colourful lockers in the bright school corridor, nobody in frame",
-        "motion": "The keychains swing slightly in sync.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 1.1,
-            "pos": "counter",
-            "lines": [
-              {
-                "t": "Рюкзак — как у Лёхи"
-              }
-            ]
-          }
-        ],
-        "sfx": [
-          {
-            "at": 0,
-            "type": "click"
-          }
-        ]
-      },
-      {
-        "sec": 1.2,
+        "sec": 1.5,
         "refs": [
           "teen",
-          "friend",
-          "school"
+          "corridor"
         ],
-        "visual": "Wide shot from behind: the teen in black hoodie and his friend in red hoodie and backwards cap walk down the bright school corridor shoulder to shoulder, perfectly in step",
-        "motion": "They walk away from the camera in perfect sync.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 1.2,
-            "pos": "counter",
-            "lines": [
-              {
-                "t": "ОГЭ — как у Лёхи?"
-              }
-            ]
-          }
-        ],
-        "sfx": [
-          {
-            "at": 0,
-            "type": "click"
-          }
-        ]
+        "visual": "EN Shot from behind. Two teenagers with identical black backpacks and hoodies walk away down the corridor.",
+        "motion": "EN Static shot."
       },
       {
-        "sec": 3.6,
-        "refs": [
-          "teen",
-          "friend",
-          "school"
-        ],
-        "visual": "Medium shot in the bright school corridor: the two boys lean on the lockers and laugh at something on one phone held with its back to the camera",
-        "motion": "They laugh and nudge each other. Very slow push-in.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 3.6,
-            "pos": "top",
-            "lines": [
-              {
-                "t": "С друзьями подростки решают",
-                "w": "regular"
-              },
-              {
-                "t": "*смелее*, чем в одиночку",
-                "w": "bold"
-              },
-              {
-                "t": "Гарднер и Стейнберг, 2005",
-                "w": "regular",
-                "size": 40
-              }
-            ]
-          }
-        ],
-        "vo": {
-          "at": 0.3,
-          "text": "Это не глупость — так устроен возраст.",
-          "voice": "mom"
-        }
-      },
-      {
-        "sec": 3.4,
-        "refs": [
-          "mom",
-          "teen",
-          "kitchen"
-        ],
-        "visual": "Medium two-shot at the kitchen island: the mother and the teen sit side by side on bar stools, the laptop between them turned away from the camera, she asks something softly, he thinks, looking up",
-        "motion": "He scratches his head and starts smiling.",
-        "texts": [
-          {
-            "at": 0,
-            "to": 3.4,
-            "pos": "top",
-            "lines": [
-              {
-                "t": "Вместо «почему»:",
-                "w": "regular"
-              },
-              {
-                "t": "«А тебе самому *что интереснее*?»",
-                "w": "bold"
-              }
-            ]
-          }
-        ],
-        "vo": {
-          "at": 0.3,
-          "text": "А тебе самому что интереснее?",
-          "voice": "mom"
-        }
-      },
-      {
-        "sec": 2.6,
-        "refs": [
-          "mom",
-          "teen",
-          "kitchen"
-        ],
-        "visual": "Close-up of the teen boy at the kitchen island, a slightly embarrassed but proud smile, looking at his mother",
-        "motion": "He shrugs and smiles wider.",
+        "sec": 3.5,
+        "refs": [],
+        "visual": "EN Clean, warm gray background.",
+        "motion": "EN Text appears sequentially.",
         "texts": [
           {
             "at": 0.2,
-            "to": 2.6,
+            "to": 3.5,
             "pos": "center",
             "lines": [
               {
-                "t": "«Вообще-то…",
+                "t": "Это не он глупый.",
                 "w": "regular"
               },
               {
-                "t": "*информатика*»",
-                "w": "bold",
-                "size": 84
+                "t": "Это его мозг *так устроен*",
+                "w": "bold"
               }
             ]
           }
         ],
         "vo": {
-          "at": 0.3,
-          "text": "Ну… вообще-то информатика.",
-          "voice": "teen"
+          "at": 1.0,
+          "text": "Оказывается, в присутствии друзей подростки принимают решения иначе, чем в одиночку. Это не каприз, а особенность возраста.",
+          "voice": "mom_9"
         }
       },
       {
-        "sec": 2.8,
+        "sec": 4.0,
         "refs": [
           "teen",
-          "kitchen"
+          "teen_room"
         ],
-        "visual": "Medium shot: the teen boy at the open fridge again, holding a yogurt, the same composition as earlier, warm evening light",
-        "motion": "He closes the fridge and walks out of frame. Static camera.",
+        "visual": "EN The son is alone at his desk, fully absorbed in drawing something in a sketchbook. He's focused and calm. No phone in sight.",
+        "motion": "EN Very slow, subtle pan across the desk, showing his focused expression in profile.",
+        "vo": {
+          "at": 0.5,
+          "text": "И я поняла: «выбрать как друг» — это не про Лёху. Это про страх ошибиться в одиночку.",
+          "voice": "mom_9"
+        }
+      },
+      {
+        "sec": 3.5,
+        "refs": [
+          "mom"
+        ],
+        "visual": "EN Close-up on the mom's hands holding a smartphone. She is typing a message. Her expression is calm, not angry.",
+        "motion": "EN Static shot.",
         "texts": [
           {
-            "at": 0,
-            "to": 2.8,
-            "pos": "top",
-            "lines": [
+            "at": 0.5,
+            "to": 3.5,
+            "pos": "chat",
+            "messages": [
               {
-                "t": "У вашего тоже есть *свой Лёха*?",
-                "w": "bold"
+                "who": "sam",
+                "text": "Общагу. Лёха тоже."
               },
               {
-                "t": "Как спросить, чтобы ответил — в описании",
-                "w": "regular",
-                "size": 46
+                "who": "mom",
+                "text": "Ок. А тебе самому что интереснее, без Лёхи?)"
               }
             ]
+          }
+        ],
+        "vo": {
+          "at": 0.8,
+          "text": "Поэтому вместо спора я просто спросила по-другому.",
+          "voice": "mom_9"
+        }
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "teen",
+          "teen_room"
+        ],
+        "visual": "EN The son looks at his phone. A small, thoughtful smile appears on his face. He looks up from the screen, thinking.",
+        "motion": "EN Gentle focus pull to his eyes.",
+        "sfx": [
+          {
+            "at": 0.5,
+            "type": "notification"
+          }
+        ]
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "sneakers",
+          "corridor"
+        ],
+        "visual": "EN The two pairs of identical sneakers from before reach a fork in the corridor. They hesitate for a moment, then one pair turns left, and the other turns right.",
+        "motion": "EN Static top-down shot.",
+        "sfx": [
+          {
+            "at": 1.8,
+            "type": "thud"
           }
         ]
       }
     ],
-    "cover_shot": 4,
+    "cover_shot": 9,
     "cover_lines": [
       {
-        "t": "«Общагу.",
-        "w": "bold",
-        "size": 96
+        "t": "Выбор «за компанию» —",
+        "w": "bold"
       },
       {
-        "t": "*Лёха тоже взял*»",
-        "w": "bold",
-        "size": 88
+        "t": "это *не навсегда*",
+        "w": "bold"
       }
     ],
-    "music": "light playful acoustic instrumental, pizzicato strings and soft marimba, comedic timing, warm and friendly, 100 bpm, no vocals",
-    "caption": "Как спросить про предметы ОГЭ, чтобы ребёнок ответил честно, а не «как Лёха»:\n\n1. Не «почему?», а «а тебе самому что интереснее?» — «почему» звучит как проверка.\n2. Спрашивайте про уроки, а не про экзамены: «на каком предмете время летит быстрее?»\n3. Не спорьте с первым ответом. «Как Лёха» — это не глупость: с друзьями подростки правда решают смелее, чем в одиночку (Гарднер и Стейнберг, 2005). Просто дайте второй вопрос.\n\nЗаявление с предметами ОГЭ — до 1 марта, время спокойно поговорить ещё есть.\n\nУ вашего тоже есть свой Лёха? 👇\n\n#самрешу #профориентация #огэ2027 #9класс #подросток"
+    "music": "EN: light, slightly quirky indie pop track without vocals, becomes calmer and more thoughtful in the second half.",
+    "caption": "«Выберу как Лёха» — это не про безволие. Это про безопасность. Когда не знаешь, как правильно, проще сделать как друг — так не будешь один, если что-то пойдёт не так. И это нормально: исследования показывают, что в компании друзей мозг подростка работает иначе, и потребность быть частью «стаи» — огромная.\n\nЧто делать маме? Точно не говорить «у тебя своей головы нет?». Попробуйте сегодня вечером вместо этого спросить: «Слушай, я поняла про Лёху. А если бы все предметы были одинаково лёгкими, что бы ты сам выбрал? Просто для себя, мне интересно».\n\nТакой вопрос открывает дверь к настоящему разговору. А превратить этот первый «интерес» в 2–3 понятных направления и список предметов для ОГЭ помогает наш чат с ИИ. Без давления и оценок. Ссылка в профиле.\n\nА ваш по какому принципу выбирает: «где легче» или «где друзья»?\n\nОтправьте подруге, у которой та же история.\n\n#самрешу #огэ2028 #огэ2027 #9класс #8класс #выборпрофессии #подросткииродители"
   },
-  "warnings": [],
-  "base": "posts/lyokha/202610281912",
+  "warnings": [
+    "Кадр 2 не прошёл проверку (Надпись на плакате 'Minecraft' искажена и написана с ошибками.; Название группы 'BOLTVANT' на плакате вымышленное.) — поставила запасной кадр.",
+    "Кадр 6 не прошёл проверку (Надписи на плакатах и книгах: выдуманное название группы 'BOLTVANT' и нечитаемый текст на книге на столе.; Искаженные лица людей на плакатах на стене.) — поставила запасной кадр.",
+    "Кадр 8 не прошёл проверку (Надпись 'BOLTVANT' на постере — бессмысленный набор букв.; Лица людей на постерах слегка искажены.) — поставила запасной кадр.",
+    "Закадр длиннее ролика: последнюю реплику может обрезать — сократите текст."
+  ],
+  "base": "posts/lyokha/202610281948",
   "end": "",
-  "video": "posts/lyokha/202610281912_reel.mp4",
-  "cover": "posts/lyokha/202610281912_cover.jpg",
+  "video": "posts/lyokha/202610281948_reel.mp4",
+  "cover": "posts/lyokha/202610281948_cover.jpg",
   "pics": [
-    "posts/lyokha/202610281912_k1.jpg",
-    "posts/lyokha/202610281912_k2.jpg",
-    "posts/lyokha/202610281912_k3.jpg",
-    "posts/lyokha/202610281912_k4.jpg"
+    "posts/lyokha/202610281948_k1.jpg",
+    "posts/lyokha/202610281948_k2.jpg",
+    "posts/lyokha/202610281948_k3.jpg"
   ],
   "stage": "ready",
   "review": {
-    "score": 8,
-    "verdict": "Отличный сценарий и текст, но визуал не дотягивает: обложка слабая, а один кадр слишком тёмный.",
+    "score": 6,
+    "verdict": "Отличный сценарий и текст, но картинки всё портят и тянут пост на дно.",
     "fixes": [
-      "Заменить обложку. Текущая (мама спиной) не цепляет. Нужен крупный план с живой эмоцией — например, удивлённое лицо мамы или спокойное лицо подростка, как в 4-м шоте сценария.",
-      "Переснять или осветлить кадр с подростком у холодильника. Он слишком тёмный и выбивается из общего светлого настроения ролика, создавая тревожность.",
-      "Усилить призыв на последнем кадре ролика. Вместо вопроса «У вашего тоже есть свой Лёха?» сделать прямой переход к пользе: «Как спросить, чтобы услышать *честный ответ* — в описании»."
+      "Заменить все предоставленные фото. Они слишком тёмные, тревожные, сняты вечером, что нарушает правило о светлой и тёплой атмосфере. Мама уже в тревоге, мы должны её успокаивать, а не нагнетать полумраком.",
+      "Убрать фото семьи с маленькими детьми. Оно не имеет никакого отношения к истории про 15-летнего подростка и его маму, это грубая ошибка.",
+      "Визуал должен соответствовать истории. В ролике про «Лёху» должны быть два парня-подростка. На обложке и в кадре с кедами сейчас парень и девушка (судя по ногам), что сбивает с толку.",
+      "Текст диктора в пятом кадре («Оказывается, в присутствии друзей...») звучит как лекция из Википедии. Переписать его от первого лица, голосом мамы, которая только что сделала открытие. Например: «Я полезла читать и поняла: дело не в Лёхе. Просто мозг подростка так устроен, что рядом с другом он принимает решения совсем иначе»."
     ]
   },
   "attempt": 1
