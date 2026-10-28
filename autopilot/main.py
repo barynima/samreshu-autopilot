@@ -1093,7 +1093,11 @@ def cmd_voices(state):
         except Exception as e:  # noqa: BLE001
             errors.append(f"{n}. {voice}/{role}: {str(e)[:120]}")
     if errors:
+        print("\n".join(errors))
+        (ROOT / "voices_report.txt").write_text("\n".join(errors), encoding="utf-8")
         telegram.send_text(chat(state), "Не получились:\n" + "\n".join(errors))
+    else:
+        (ROOT / "voices_report.txt").write_text("ok", encoding="utf-8")
 
 
 def main():
