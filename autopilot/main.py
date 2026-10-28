@@ -1091,7 +1091,7 @@ def cmd_voices(state):
             telegram.send_voice(chat(state), yandex_tts.sample_ogg(phrase, model, voice, role),
                                 caption=f"{n}. {voice} · {role}" + (" · livetts" if model != "general" else ""))
         except Exception as e:  # noqa: BLE001
-            errors.append(f"{n}. {voice}/{role}: {str(e)[:120]}")
+            errors.append(f"{n}. {voice}/{role}: {str(e)[:600]}")
     if errors:
         print("\n".join(errors))
         (ROOT / "voices_report.txt").write_text("\n".join(errors), encoding="utf-8")

@@ -50,7 +50,7 @@ def _request(text: str, voice: str, role: str, model: str, speed: float, spec: d
     r = requests.post(URL, headers={"Authorization": f"Api-Key {_env('YANDEX_TTS_KEY')}"},
                       data=json.dumps(body).encode(), timeout=90)
     if r.status_code != 200:
-        raise RuntimeError(f"Яндекс {voice}/{role}: HTTP {r.status_code} {r.text[:200]}")
+        raise RuntimeError(f"Яндекс {voice}/{role}: HTTP {r.status_code} {r.text[:600]}")
     audio = b""
     for line in r.text.splitlines():  # ответ — несколько JSON подряд, в каждом кусок звука
         line = line.strip()
