@@ -1,5 +1,5 @@
 {
-  "offset": 320005973,
+  "offset": 320005974,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -106,7 +106,7 @@
   },
   "generation": {
     "post_id": "predmety-oge",
-    "status": "failed",
+    "status": "running",
     "phase": "Сценарий",
     "family": {
       "child": "дочь",
@@ -115,7 +115,6 @@
       "interest": "music",
       "home": "a small practical family kitchen with school bags nearby"
     },
-    "started_at": "2026-10-29T22:47:10.274707+00:00",
-    "error": "Object of type date is not JSON serializable"
+    "started_at": "2026-10-29T22:53:27.296359+00:00"
   }
 }
