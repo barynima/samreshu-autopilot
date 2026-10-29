@@ -19,7 +19,7 @@ from pathlib import Path
 import requests
 import yaml
 
-from . import cinematic, images, instagram, kinetic, planner, render, stories, storage, telegram, text, video, vposter
+from . import cinematic, images, instagram, kinetic, planner, production, render, stories, storage, telegram, text, video, vposter
 from .characters import REF_PROMPTS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -124,10 +124,38 @@ FRAME_LAYOUT = ("characters in the lower two thirds of the frame with full bodie
 
 def build_post(item: dict, feedback: str = "") -> dict:
     fmt = item.get("format", "reel_scene")
-    if item.get("script") and not feedback:  # готовый сценарий (например, от Марины из SYNTX)
+    cache = POSTS / item["id"] / "generation" / production.fingerprint({"item": item, "feedback": feedback})[:20]
+    cache.mkdir(parents=True, exist_ok=True)
+    script_path = cache / "script.json"
+    production.progress("Сценарий и раскадровка")
+    if script_path.exists():
+        script = json.loads(script_path.read_text(encoding="utf-8"))
+    elif item.get("script") and fmt == "reel_story":
+        original = json.loads((ROOT / item["script"]).read_text(encoding="utf-8"))
+        script = text.adapt_story(original, item, feedback)
+    elif item.get("script") and not feedback:
         script = json.loads((ROOT / item["script"]).read_text(encoding="utf-8"))
     else:
         script = text.write_post(item, feedback)
+    script = text._validate(fmt, script)
+    script_path.write_text(json.dumps(script, ensure_ascii=False, indent=2), encoding="utf-8")
+    if fmt == "reel_story":
+        approval_path = cache / "storyboard-review.json"
+        if not approval_path.exists():
+            production.progress("Проверка сценария до генерации кадров")
+            family = item.get("family") or production.cast_for(item)
+            try:
+                report = text.check_storyboard(script, family)
+            except ValueError as exc:
+                production.progress("Исправление раскадровки до генерации кадров")
+                script = text.adapt_story(script, {**item, "family": family}, str(exc) + "\n" + feedback)
+                script_path.write_text(json.dumps(script, ensure_ascii=False, indent=2), encoding="utf-8")
+                try:
+                    report = text.check_storyboard(script, family)
+                except ValueError:
+                    script_path.replace(cache / "rejected-script.json")
+                    raise
+            approval_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
     base = f"posts/{item['id']}/{stamp}"
     (POSTS / item["id"]).mkdir(parents=True, exist_ok=True)
@@ -136,6 +164,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
     job = {"id": item["id"], "format": fmt, "hook": script["hook"], "caption": script["caption"],
            "script": script, "warnings": []}
     job["base"] = base
+    job["family"] = item.get("family")
 
     if fmt == "carousel":
         job["hook"] = job["hook"].replace("*", "")
@@ -170,9 +199,12 @@ def build_post(item: dict, feedback: str = "") -> dict:
         rel = f"{base}_reel.mp4"
         music = (os.environ.get("MUSIC") or "on").lower() != "off"
         veo = (os.environ.get("CINE_VEO") or "on").lower() == "on"  # без движения кино-ролик превращается в слайд-шоу
-        res = cinematic.render_reel(script, ROOT / rel, with_music=music, veo=veo)
+        res = cinematic.render_reel(script, ROOT / rel, with_music=music, veo=veo,
+                                    cache_dir=cache / production.fingerprint(script)[:20],
+                                    family=item.get("family"))
         job["video"] = rel
         job["warnings"] = (job.get("warnings") or []) + res["warnings"]
+        job["timeline"] = res.get("timeline", [])
         job["cover"] = f"{base}_cover.jpg"
         (ROOT / job["cover"]).write_bytes(res["cover"])
         job["pics"] = []
@@ -279,7 +311,7 @@ def _pictures(job) -> list:
     if job.get("cover"):
         pics.append((ROOT / job["cover"]).read_bytes())
     if job["format"] == "carousel":
-        pics += [(ROOT / f).read_bytes() for f in job["files"][:4]]
+        pics += [(ROOT / f).read_bytes() for f in job["files"]]
     elif job.get("pics"):
         pics += [(ROOT / f).read_bytes() for f in job["pics"][:5]]
     elif job.get("slides"):
@@ -344,13 +376,17 @@ def build_checked(item: dict, feedback: str = "") -> dict:
     for attempt in range(tries):
         job = build_post(item, notes)
         try:
-            review = text.critique(job["script"], _pictures(job))
+            production.progress("Редактор проверяет готовый материал")
+            review = (text.critique_video(job["script"], ROOT / job["video"], job.get("timeline"))
+                      if job["format"] == "reel_story" else text.critique(job["script"], _pictures(job)))
         except Exception as e:
             job["review"] = {"score": 0, "verdict": f"критик не ответил: {e}"[:300], "fixes": []}
+            job["quality_status"] = "blocked"
             save_job(job)
             return job
         job["review"] = review
         job["attempt"] = attempt + 1
+        job["quality_status"] = "passed" if review["score"] >= MIN_SCORE and not review.get("critical") else "blocked"
         save_job(job)
         print(f"Критик: {review['score']}/10 — {review.get('verdict')}")
         if not best or review["score"] > best["review"]["score"]:
@@ -359,7 +395,7 @@ def build_checked(item: dict, feedback: str = "") -> dict:
             best = job
         else:
             _drop_files(job)
-        if review["score"] >= MIN_SCORE:
+        if job["quality_status"] == "passed":
             if job["format"] == "reel_chat":
                 animate_chat(job)
             return job
@@ -560,17 +596,21 @@ def send_draft(state, job):
         telegram.send_text(cid, msg[:3900])
     for w in job.get("warnings") or []:
         telegram.send_text(cid, f"ℹ️ {w}"[:3900])
-    buttons = [[
-        {"text": "✅ Публиковать в Instagram", "callback_data": f"pub:{pid}"},
-        {"text": "🔁 Переделать", "callback_data": f"redo:{pid}"},
-    ]]
+    buttons = [[{"text": "🔁 Переделать", "callback_data": f"redo:{pid}"}]]
+    if job.get("quality_status") != "blocked":
+        buttons[0].insert(0, {"text": "✅ Публиковать в Instagram", "callback_data": f"pub:{pid}"})
+    else:
+        telegram.send_text(cid, "⚠️ Диагностический черновик: проверка качества не пройдена. "
+                           "Публикация заблокирована. Можно внести правки или выбрать другую версию.")
     if rv and rv.get("fixes"):
         buttons.append([{"text": "🛠 Внести правки критика", "callback_data": f"fix:{pid}"}])
     buttons.append([{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}])
     buttons.append([{"text": "📚 Выбрать другую версию", "callback_data": f"versions:{pid}"}])
-    message = telegram.send_text(cid, "Одобрить показанные текст и медиа для Instagram? "
+    prompt = ("Материал требует исправления. Выберите правки или сохранённую версию."
+              if job.get("quality_status") == "blocked" else "Одобрить показанные текст и медиа для Instagram? "
                                  "После нажатия бот опубликует их, когда обработает кнопку.\n"
-                                 "Правки — кнопка «Переделать». Без одобрения публикации не будет.", buttons)
+                                 "Правки — кнопка «Переделать». Без одобрения публикации не будет.")
+    message = telegram.send_text(cid, prompt, buttons)
     state["draft_review"] = {"post_id": pid, "message_id": message["message_id"],
                              "fingerprint": draft_fingerprint(job), "version": version}
     save_state(state)
@@ -605,6 +645,7 @@ def publish(state, post_id, review_message_id=None):
     review = state.get("draft_review") or {}
     if (post_id in state.get("done", []) or state.get("pending") != post_id
             or job.get("stage") != "ready"
+            or job.get("quality_status") == "blocked"
             or review_message_id is None or review.get("message_id") != review_message_id
             or review.get("post_id") != post_id or state.get("awaiting_feedback")
             or review.get("fingerprint") != draft_fingerprint(job)):
@@ -669,6 +710,51 @@ def top_up_plan(state, force=False):
                        + "\n\nЧто-то не нравится — напишите мне в Claude, поправлю.")
 
 
+def run_generation(state, item, feedback=""):
+    import threading
+    previous_child = state.get("last_child")
+    if not previous_child:
+        plans = {p["id"]: p for p in load_plan()}
+        previous_child = next((plans[p].get("child") for p in reversed(state.get("done", []))
+                               if p in plans and plans[p].get("child")), None)
+    prior = state.get("generation") or {}
+    family = (prior.get("family") if prior.get("post_id") == item["id"] else None) or production.cast_for(item, previous_child, prior.get("family"))
+    item = {**item, "child": family["child"], "family": family}
+    state["generation"] = {"post_id": item["id"], "status": "running", "phase": "Сценарий",
+                           "family": family, "started_at": datetime.now(timezone.utc).isoformat()}
+    save_state(state)
+    git_sync(f"Начата подготовка {item['id']}")
+    last_notice = [0.0]
+    last_checkpoint = [time.monotonic()]
+    lock = threading.Lock()
+    def notify(phase):
+        with lock:
+            state["generation"].update(phase=phase, updated_at=datetime.now(timezone.utc).isoformat())
+            save_state(state)
+            if time.monotonic() - last_checkpoint[0] >= 180 and not phase.startswith("Работа продолжается"):
+                git_sync(f"Промежуточные этапы {item['id']}")
+                last_checkpoint[0] = time.monotonic()
+            if time.monotonic() - last_notice[0] >= 90:
+                try:
+                    telegram.send_text(chat(state), f"🎬 {phase}", timeout=15)
+                except Exception:
+                    print("Не удалось отправить прогресс в Telegram", flush=True)
+                last_notice[0] = time.monotonic()
+    try:
+        with production.session(notify, seconds=int(os.environ.get("GENERATION_TIMEOUT_SECONDS") or 2700)):
+            job = build_checked(item, feedback)
+    except Exception as exc:
+        state["generation"].update(status="failed", error=str(exc)[:700])
+        save_state(state)
+        git_sync(f"Сохранены этапы {item['id']} после ошибки")
+        raise RuntimeError(f"Подготовка остановлена: {exc}. Готовые этапы сохранены. "
+                           "Повторите /post (или «Переделать» для правки текущего поста).") from exc
+    state["generation"].update(status="completed", phase="Готово к просмотру")
+    state["last_child"] = family["child"]
+    save_state(state)
+    return job
+
+
 def _prepare(state):
     if not chat(state):
         print("Чат с ботом ещё не найден: напишите боту в Telegram любое сообщение.")
@@ -681,7 +767,7 @@ def _prepare(state):
     if not item:
         telegram.send_text(chat(state), "Контент-план закончился, а дописать его не получилось. Напишите /plan — попробую ещё раз.")
         return
-    job = build_checked(item)
+    job = run_generation(state, item)
     state["pending"] = item["id"]
     send_draft(state, job)
 
@@ -1004,7 +1090,8 @@ def handle(state, up):
         if state.get("pending"):
             telegram.send_text(cid, "Сначала решите судьбу предыдущего поста 👆")
         else:
-            telegram.send_text(cid, "Готовлю пост, это займёт 2–4 минуты…")
+            telegram.send_text(cid, "Готовлю пост. Мини-фильм может занять 10–40 минут: "
+                                    "буду присылать этапы работы. Без одобрения ничего не опубликую.")
             _prepare(state)
     elif body.startswith("/profile"):
         try:
@@ -1163,7 +1250,8 @@ def vk_import(state, confirm):
 
 
 def regenerate(state, ep_id, feedback):
-    telegram.send_text(chat(state), "Переделываю и показываю строгому критику, это займёт 5–15 минут…")
+    telegram.send_text(chat(state), "Переделываю выбранный пост. Для мини-фильма может потребоваться 10–40 минут; "
+                                    "буду сообщать этапы. Предыдущая версия сохранена.")
     try:
         old = load_job(ep_id)
     except Exception:  # noqa: BLE001
@@ -1171,7 +1259,7 @@ def regenerate(state, ep_id, feedback):
     if old:
         archive_draft(old)
         git_sync(f"Сохранена предыдущая версия {ep_id}")
-    job = build_checked(post_by_id(ep_id), feedback)
+    job = run_generation(state, post_by_id(ep_id), feedback)
     state["awaiting_feedback"] = None
     send_draft(state, job)
 
@@ -1253,4 +1341,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
