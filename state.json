@@ -1,5 +1,5 @@
 {
-  "offset": 320005967,
+  "offset": 320005969,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -15,7 +15,7 @@
     "pov-chat"
   ],
   "pending": "lyokha",
-  "awaiting_feedback": "lyokha",
+  "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
     "https://www.instagram.com/reel/DeuKPudjIa1/",
@@ -95,5 +95,11 @@
       ],
       "at": 1793028919.409045
     }
+  },
+  "draft_review": {
+    "post_id": "lyokha",
+    "message_id": 641,
+    "fingerprint": "62d3e7cbad5dd3bf9ab550d6b78be0e313352f030264a8afe2d4f23515cdcb9b",
+    "version": "20261029215540327470"
   }
 }
