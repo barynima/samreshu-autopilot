@@ -7,6 +7,7 @@ import tempfile
 import time
 import unittest
 import wave
+from datetime import date
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -62,6 +63,17 @@ class ProductionTests(unittest.TestCase):
         self.assertEqual(cinematic._cached(self.root, "shot.jpg", make), b"valid stage")
         self.assertEqual(cinematic._cached(self.root, "shot.jpg", make), b"valid stage")
         make.assert_called_once()
+
+    def test_yaml_date_has_same_fingerprint_as_iso_string(self):
+        self.assertEqual(production.fingerprint({"item": {"date": date(2026, 10, 30)}}),
+                         production.fingerprint({"item": {"date": "2026-10-30"}}))
+
+    def test_all_real_plan_items_can_be_fingerprinted(self):
+        posts = main.load_plan()
+        self.assertTrue(any(isinstance(p.get("date"), date) for p in posts))
+        for item in posts:
+            with self.subTest(post=item["id"]):
+                self.assertEqual(len(production.fingerprint({"item": item, "feedback": ""})), 64)
 
     def test_failed_stage_is_not_cached(self):
         make = Mock(side_effect=RuntimeError("bad frame"))
