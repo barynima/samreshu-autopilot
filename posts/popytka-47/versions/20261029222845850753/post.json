@@ -1,0 +1,487 @@
+{
+  "id": "popytka-47",
+  "format": "reel_story",
+  "hook": "Я спросила сына, кем он хочет быть. В 47-й раз",
+  "caption": "«Не знаю» на любой вопрос о будущем — это редко «мне всё равно». Чаще это «боюсь ответить не так и увидеть, что ты расстроишься».\n\nНе знать в 14–15 лет, кем быть, — нормальная стадия взросления, а не диагноз. Проблемой это становится, когда давим: чем чаще вопрос «ну кем ты будешь?», тем крепче закрывается дверь.\n\nЧто можно сделать сегодня вместо 48-й попытки: спросить не про профессию, а про день. «Что сегодня было интересно, хоть немного?» Без оценок и без «а дальше?».\n\nА у вас какая попытка? Напишите номер в комментариях 👇\n\n#самрешу #профориентация #огэ2027 #9класс #подросток",
+  "script": {
+    "hook": "Я спросила сына, кем он хочет быть. В 47-й раз",
+    "cast": [
+      {
+        "id": "mom",
+        "prompt": "Photorealistic portrait of a woman, 41 years old, modern and well-groomed but tired kind eyes, natural makeup, dark blond hair in a claw clip, oversized beige knit sweater, minimalist gold earrings, smartwatch on wrist, standing in a modern apartment hallway with a built-in wardrobe and mirror, recessed ceiling spotlights, warm light, shallow depth of field, realistic skin texture"
+      },
+      {
+        "id": "teen",
+        "prompt": "Photorealistic portrait of a 14-year-old boy, messy dark hair, oversized dark green hoodie, black wireless gaming headset around his neck, guarded expression, sitting in a gaming chair in a modern teenage bedroom, ultrawide monitor glow, soft purple and blue LED strip, light Scandinavian furniture, realistic skin"
+      },
+      {
+        "id": "door",
+        "prompt": "Front view of a closed modern interior door in a new apartment: light bleached oak eco-veneer with one long vertical frosted glass insert, matte black lever handle, slim flat casing, smooth white wall, light oak laminate floor, warm white recessed ceiling spotlights, clean minimalist hallway"
+      },
+      {
+        "id": "room",
+        "prompt": "Modern teenage bedroom in a new apartment: white walls, light oak laminate floor, gaming desk with ultrawide monitor and mechanical keyboard, ergonomic gaming chair, soft purple-blue LED strip behind the desk, minimalist bed with grey bedding, warm desk lamp, evening"
+      }
+    ],
+    "shots": [
+      {
+        "sec": 2.0,
+        "refs": [
+          "mom",
+          "door"
+        ],
+        "visual": "Extreme close-up of a woman's hand with neat nude manicure and a smartwatch, clenched into a fist, knuckles frozen one centimeter from the light oak eco-veneer interior door, beige knit sweater sleeve visible, warm light from hallway spotlights, soft cold blue light leaking through the frosted glass insert, shallow depth of field, tension",
+        "motion": "The hand hesitates, then slowly knocks once. Very slow push-in.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 2,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Я спросила сына, кем он хочет быть.",
+                "w": "regular"
+              },
+              {
+                "t": "В *47-й* раз",
+                "w": "bold",
+                "size": 88
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.2,
+          "text": "Я спросила сына, кем он хочет быть. В сорок седьмой раз.",
+          "voice": "mom"
+        },
+        "sfx": [
+          {
+            "at": 0.3,
+            "type": "tick"
+          },
+          {
+            "at": 0.8,
+            "type": "tick"
+          },
+          {
+            "at": 1.3,
+            "type": "tick"
+          },
+          {
+            "at": 1.8,
+            "type": "knock"
+          }
+        ]
+      },
+      {
+        "sec": 2.0,
+        "refs": [
+          "door"
+        ],
+        "visual": "Close-up of a smooth white painted wall right next to the slim casing of the light oak interior door: old childhood pencil height marks as short horizontal lines, and next to them many fresh pencil tally marks grouped in fives, hand-drawn, warm light from recessed spotlights, macro detail of graphite on matte paint",
+        "motion": "Slow vertical tilt down from the height marks to the tally marks.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 2,
+            "pos": "center",
+            "lines": [
+              {
+                "t": "«Не знаю»",
+                "w": "regular"
+              }
+            ]
+          },
+          {
+            "at": 1.4,
+            "to": 2,
+            "pos": "counter",
+            "lines": [
+              {
+                "t": "Попытка №47"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 1.0,
+          "text": "Не знаю.",
+          "voice": "teen"
+        },
+        "sfx": [
+          {
+            "at": 1.4,
+            "type": "click"
+          }
+        ]
+      },
+      {
+        "sec": 1.0,
+        "refs": [
+          "mom",
+          "teen"
+        ],
+        "visual": "Modern open-plan kitchen-living room, matte light grey cabinets, black pendant lamps over a light wood dining table; the mother in beige sweater leaning forward asking something with a hopeful face, the teenage son in green hoodie with the hood up looking down at his plate, medium side shot",
+        "motion": "Mother gestures gently, son slowly shrugs. Static camera.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 1,
+            "pos": "counter",
+            "lines": [
+              {
+                "t": "№12 — за ужином"
+              }
+            ]
+          }
+        ],
+        "sfx": [
+          {
+            "at": 0,
+            "type": "click"
+          }
+        ]
+      },
+      {
+        "sec": 1.0,
+        "refs": [
+          "mom",
+          "teen"
+        ],
+        "visual": "Modern apartment entrance hall with built-in wardrobe and mirror; the son in green hoodie and wireless headphones tying chunky sneakers on a low bench, not looking up; the mother standing nearby holding his backpack, talking; medium shot",
+        "motion": "Son keeps tying his laces, mother waits. Static camera.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 1,
+            "pos": "counter",
+            "lines": [
+              {
+                "t": "№29 — пока обувался"
+              }
+            ]
+          }
+        ],
+        "sfx": [
+          {
+            "at": 0,
+            "type": "click"
+          }
+        ]
+      },
+      {
+        "sec": 1.0,
+        "refs": [
+          "mom"
+        ],
+        "visual": "Close-up of a woman's hands with nude manicure holding a modern smartphone, sitting on a light grey sofa in a modern living room in the evening, screen glowing but completely blank, thumb hovering above it, soft warm LED light in the background out of focus",
+        "motion": "Thumb hovers, then lowers the phone slowly.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 1,
+            "pos": "counter",
+            "lines": [
+              {
+                "t": "№41 — в мессенджере"
+              }
+            ]
+          },
+          {
+            "at": 0.15,
+            "to": 1,
+            "pos": "chat",
+            "messages": [
+              {
+                "who": "mom",
+                "text": "Ты подумал, какие предметы сдавать?"
+              },
+              {
+                "who": "sam",
+                "text": "хз"
+              }
+            ]
+          }
+        ],
+        "sfx": [
+          {
+            "at": 0.2,
+            "type": "send"
+          }
+        ]
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "teen",
+          "door",
+          "room"
+        ],
+        "visual": "The teenage boy in dark green hoodie sitting on the light oak laminate floor of his modern bedroom, his back against the closed light oak door, the frosted glass insert glowing with warm hallway light behind his head, knees pulled to chest, headset around his neck, listening, eyes on the floor, gaming desk with glowing monitor out of focus in the foreground, wide shot",
+        "motion": "Slow dolly-in toward the boy; he breathes out heavily.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 3,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "А теперь —",
+                "w": "regular"
+              },
+              {
+                "t": "с той стороны двери",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.3,
+          "text": "Я думала, ему просто всё равно.",
+          "voice": "mom"
+        }
+      },
+      {
+        "sec": 4.0,
+        "refs": [
+          "teen",
+          "room"
+        ],
+        "visual": "Close-up of the 14-year-old boy, anxious eyes looking slightly down, fingers twisting the drawstring of his dark green hoodie near his chin, headset around his neck, soft purple-blue monitor light on one side of his face and warm desk lamp light on the other, very shallow depth of field",
+        "motion": "He keeps twisting the string, glances toward the door, then back down. Very slow push-in.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 2,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "«Не знаю» — это не",
+                "w": "bold"
+              },
+              {
+                "t": "«мне всё равно»",
+                "w": "bold"
+              }
+            ]
+          },
+          {
+            "at": 2,
+            "to": 4,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Это «боюсь ответить не так —",
+                "w": "bold"
+              },
+              {
+                "t": "*и ты расстроишься*»",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.3,
+          "text": "А он боялся. Ответить не так — и увидеть, что я расстроилась.",
+          "voice": "mom"
+        }
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "door"
+        ],
+        "visual": "Front view from the hallway of the closed light oak interior door with the frosted glass insert dark, five heavy matte black sliding bolts and a black chain lock mounted on the door, ceiling spotlights dimmed, cool blue light, surreal and oppressive but clean modern hallway, centered symmetrical composition",
+        "motion": "Static camera, slight slow zoom in.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 3,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Чем чаще вопрос —",
+                "w": "bold"
+              },
+              {
+                "t": "тем крепче дверь",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "sfx": [
+          {
+            "at": 0.5,
+            "type": "bolt"
+          },
+          {
+            "at": 1.2,
+            "type": "bolt"
+          },
+          {
+            "at": 1.9,
+            "type": "bolt"
+          },
+          {
+            "at": 2.6,
+            "type": "bolt"
+          }
+        ]
+      },
+      {
+        "sec": 6.0,
+        "refs": [
+          "mom",
+          "teen",
+          "door"
+        ],
+        "visual": "Top-down cutaway view from directly above: the closed light oak door seen edge-on divides the frame vertically in the center; left side: warm-lit modern hallway, the mother in beige sweater sitting on the floor with her back against the door, head tilted back, eyes closed; right side: soft blue-lit modern teen bedroom, the son in dark green hoodie sitting on the floor with his back against the same door, mirror pose; symmetrical composition, emotional",
+        "motion": "Very slow pull-up; both breathe and slightly turn their heads toward the door.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 3,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Психологи:",
+                "w": "regular"
+              },
+              {
+                "t": "это *нормальная стадия* взросления, а не диагноз",
+                "w": "bold"
+              }
+            ]
+          },
+          {
+            "at": 3,
+            "to": 6,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Давить — значит",
+                "w": "bold"
+              },
+              {
+                "t": "закрыть дверь *ещё крепче*",
+                "w": "bold"
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.5,
+          "text": "Оказалось, это нормально. Не нормально — давить.",
+          "voice": "mom"
+        }
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "mom",
+          "door"
+        ],
+        "visual": "Low angle floor-level shot on light oak laminate: a woman's hand with nude manicure and a smartwatch placing a steaming matte ceramic mug of tea on the floor next to the closed light oak door, bottom of the door visible, soft blue light through the frosted glass above, warm hallway glow, steam rising, intimate and hopeful",
+        "motion": "The hand places the mug and withdraws; the door opens a few centimeters, a strip of light falls on the mug.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 3,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Попытки №48 не будет.",
+                "w": "regular"
+              },
+              {
+                "t": "Будет *другой разговор*",
+                "w": "bold",
+                "size": 80
+              }
+            ]
+          }
+        ],
+        "vo": {
+          "at": 0.3,
+          "text": "Так что сорок восьмой попытки не будет.",
+          "voice": "mom"
+        },
+        "sfx": [
+          {
+            "at": 0.4,
+            "type": "thud"
+          }
+        ]
+      },
+      {
+        "sec": 3.0,
+        "refs": [
+          "door"
+        ],
+        "visual": "Front view from the hallway of the same light oak interior door, now slightly ajar, warm hallway light and soft blue room light mixing in the gap, a matte ceramic mug of tea with steam on the floor at the threshold, calm hopeful atmosphere, centered composition with empty space in the upper third",
+        "motion": "Very slow push-in toward the door gap; steam drifts.",
+        "texts": [
+          {
+            "at": 0,
+            "to": 3,
+            "pos": "top",
+            "lines": [
+              {
+                "t": "Какая у вас попытка?",
+                "w": "bold"
+              },
+              {
+                "t": "*Напишите номер*",
+                "w": "bold"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "cover_shot": 9,
+    "cover_lines": [
+      {
+        "t": "«Не знаю» —",
+        "w": "bold",
+        "size": 92
+      },
+      {
+        "t": "это не *«мне всё равно»*",
+        "w": "bold",
+        "size": 80
+      }
+    ],
+    "music": "minimal emotional piano with soft ambient pads, slow tempo 70 bpm, intimate in the first part, gently becomes warmer and more hopeful near the end, no drums, no vocals, cinematic",
+    "caption": "«Не знаю» на любой вопрос о будущем — это редко «мне всё равно». Чаще это «боюсь ответить не так и увидеть, что ты расстроишься».\n\nНе знать в 14–15 лет, кем быть, — нормальная стадия взросления, а не диагноз. Проблемой это становится, когда давим: чем чаще вопрос «ну кем ты будешь?», тем крепче закрывается дверь.\n\nЧто можно сделать сегодня вместо 48-й попытки: спросить не про профессию, а про день. «Что сегодня было интересно, хоть немного?» Без оценок и без «а дальше?».\n\nА у вас какая попытка? Напишите номер в комментариях 👇\n\n#самрешу #профориентация #огэ2027 #9класс #подросток"
+  },
+  "warnings": [
+    "Кадр 8 не прошёл проверку (На межкомнатной двери установлено неправдоподобное количество замков (несколько задвижек и цепочка), которые расположены хаотично и выглядят нефункционально.; Точечные светильники на потолке создают слишком идеальные круглые пятна света.) — поставила запасной кадр."
+  ],
+  "base": "posts/popytka-47/20261029222845850753_restored",
+  "end": "",
+  "video": "posts/popytka-47/versions/20261029222845850753/20261029215828225405_reel.mp4",
+  "cover": "posts/popytka-47/versions/20261029222845850753/20261029215828225405_cover.jpg",
+  "pics": [
+    "posts/popytka-47/versions/20261029222845850753/20261029215828225405_k1.jpg",
+    "posts/popytka-47/versions/20261029222845850753/20261029215828225405_k2.jpg",
+    "posts/popytka-47/versions/20261029222845850753/20261029215828225405_k3.jpg",
+    "posts/popytka-47/versions/20261029222845850753/20261029215828225405_k4.jpg"
+  ],
+  "stage": "ready",
+  "review": {
+    "score": 10,
+    "verdict": "Это эталон: сильная эмоция, неожиданный поворот и конкретная польза. Публикуем без изменений.",
+    "fixes": [
+      "В подписи можно усилить тезис про «нормальную стадию», добавив источник из правил: «(это нормальная стадия поиска себя по теории психолога Джеймса Марсиа)»."
+    ]
+  },
+  "attempt": 1,
+  "archived_version": "20261029222845850753",
+  "source_fingerprint": "f5e7cdee34cd7b1a5cfd11368958f3d7876d98efd47b5fee93a4134b52582d28",
+  "snapshot_fingerprint": "22b69d1efa54451cd84fadd65e09c76594353e2d6eedc3f990dd881281eb813b"
+}
