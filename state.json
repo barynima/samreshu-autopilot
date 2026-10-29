@@ -1,5 +1,5 @@
 {
-  "offset": 320005971,
+  "offset": 320005972,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -13,9 +13,10 @@
     "kak-rabotaet",
     "vosmoy-klass",
     "pov-chat",
-    "lyokha"
+    "lyokha",
+    "popytka-47"
   ],
-  "pending": "popytka-47",
+  "pending": null,
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
