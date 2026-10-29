@@ -106,7 +106,7 @@
   },
   "generation": {
     "post_id": "predmety-oge",
-    "status": "running",
+    "status": "failed",
     "phase": "Сценарий",
     "family": {
       "child": "дочь",
@@ -115,6 +115,7 @@
       "interest": "music",
       "home": "a small practical family kitchen with school bags nearby"
     },
-    "started_at": "2026-10-29T22:47:10.274707+00:00"
+    "started_at": "2026-10-29T22:47:10.274707+00:00",
+    "error": "Object of type date is not JSON serializable"
   }
 }
