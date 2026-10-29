@@ -16,7 +16,7 @@
     "lyokha",
     "popytka-47"
   ],
-  "pending": null,
+  "pending": "predmety-oge",
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
@@ -98,16 +98,10 @@
       "at": 1793028919.409045
     }
   },
-  "draft_review": {
-    "post_id": "popytka-47",
-    "message_id": 649,
-    "fingerprint": "f5e7cdee34cd7b1a5cfd11368958f3d7876d98efd47b5fee93a4134b52582d28",
-    "version": "20261029222845850753"
-  },
   "generation": {
     "post_id": "predmety-oge",
-    "status": "running",
-    "phase": "Сценарий",
+    "status": "completed",
+    "phase": "Готово к просмотру",
     "family": {
       "child": "дочь",
       "mom": "a 36-year-old mom with short dark curly hair, denim jacket and comfortable sneakers",
@@ -115,6 +109,14 @@
       "interest": "music",
       "home": "a small practical family kitchen with school bags nearby"
     },
-    "started_at": "2026-10-29T22:53:27.296359+00:00"
+    "started_at": "2026-10-29T22:53:27.296359+00:00",
+    "updated_at": "2026-10-29T22:56:28.561247+00:00"
+  },
+  "last_child": "дочь",
+  "draft_review": {
+    "post_id": "predmety-oge",
+    "message_id": 660,
+    "fingerprint": "4fae873c1ad1f008f055659f7c98afd06fe2b88438b1c4936a303df621d42630",
+    "version": "20261029225637686892"
   }
 }
