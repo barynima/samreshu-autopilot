@@ -5,6 +5,7 @@ import json
 import signal
 import threading
 import time
+from datetime import date, datetime
 
 _callback = None
 _phase = "Подготовка сценария"
@@ -57,7 +58,11 @@ def session(callback, seconds=2700, heartbeat_seconds=180):
 
 
 def fingerprint(value):
-    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    def encode(item):
+        if isinstance(item, (date, datetime)):
+            return item.isoformat()
+        raise TypeError(f"Unsupported fingerprint value: {type(item).__name__}")
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, default=encode).encode()).hexdigest()
 
 
 def cast_for(item, last_child=None, previous_family=None):
