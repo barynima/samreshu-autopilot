@@ -38,6 +38,14 @@ CINE_STYLE = ("Photorealistic still from a modern Russian-language family drama 
 CINE_MOTION = "Realistic motion, no morphing, stable faces, no text appearing, static or very slow camera."
 
 
+def motion_instruction(shot):
+    instruction = f"{shot.get('motion', '')} {CINE_MOTION}"
+    if "door" in (shot.get("visual", "") + " " + shot.get("motion", "")).lower():
+        instruction += (" The door's hinge edge stays fixed to the frame. Only the opposite handle edge moves. "
+                        "Preserve hinge side, handle position, rigid door geometry and physical opening direction.")
+    return instruction
+
+
 def _f(size, w="ExtraBold"):
     name = {"regular": "SemiBold", "bold": "ExtraBold", "black": "Black"}.get(w, w)
     return ImageFont.truetype(str(FONTS / f"Nunito-{name}.ttf"), size)
@@ -340,14 +348,16 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False, cache_
             if veo:
                 vsec = 4 if dur <= 4 else 6 if dur <= 6 else 8  # Veo умеет только 4, 6 и 8 секунд
                 def animate():
-                    data = video.veo_clip(frame, f"{shot.get('motion', '')} {CINE_MOTION}", vsec,
+                    data = video.veo_clip(frame, motion_instruction(shot), vsec,
                                           style=video.LIFE_VIDEO, models=video.VEO_FAST)
                     problem = video.clip_problem(data, frame, vsec)
                     if problem:
                         raise RuntimeError(f"Движение кадра {i + 1} не прошло проверку: {problem}")
+                    production.progress(f"Физика движения сцены {i + 1}/{len(frames)}")
+                    text.check_motion(data, frame, shot)
                     return data
                 clip = tmp / f"c{i}.mp4"
-                clip.write_bytes(_cached(cache_dir, f"motion-{i}.mp4", animate))
+                clip.write_bytes(_cached(cache_dir, f"motion-checked-{i}.mp4", animate))
             layers = []
             for j, b in enumerate(shot.get("texts") or []):
                 png = tmp / f"t{i}_{j}.png"
