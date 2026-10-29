@@ -445,6 +445,35 @@ def critique(script: dict, pictures: list) -> dict:
     return res
 
 
+def check_motion(data, source, shot):
+    """Reject impossible physical actions in generated clips before montage."""
+    import base64
+    if len(data) > 12_000_000:
+        raise RuntimeError("Клип слишком велик для проверки движения")
+    prompt = ("Сравни исходный кадр и ВЕСЬ созданный по нему клип. Проверь выполнение действия и физику: "
+              "дверь вращается вокруг неподвижного края с петлями, а край с ручкой движется; "
+              "петли не переезжают на другую сторону, дверь не отрывается и не проходит сквозь стену. "
+              "Проверь контакт рук с предметами, направление движения, устойчивость мебели, лица и одежду. "
+              "Не оценивай только начальный кадр. Указывай таймкод дефекта.\nЗадание: "
+              + json.dumps(shot, ensure_ascii=False)
+              + '\nОтвет JSON {"critical":["таймкод: физическая ошибка"],"verdict":"..."}. '
+              "Если реальную механику ключевого действия нельзя установить, укажи это как critical.")
+    result = google.generate(os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro", {
+        "contents": [{"role": "user", "parts": [{"text": prompt},
+            {"text": "Исходный кадр:"},
+            {"inlineData": {"mimeType": "image/jpeg", "data": base64.b64encode(source).decode()}},
+            {"text": "Проверяемый клип:"},
+            {"inlineData": {"mimeType": "video/mp4", "data": base64.b64encode(data).decode()}}]}],
+        "generationConfig": {"temperature": .1, "responseMimeType": "application/json"}}, timeout=240)
+    raw = "".join(p.get("text", "") for p in result["candidates"][0]["content"]["parts"] if not p.get("thought"))
+    review = _extract_json(raw)
+    if not isinstance(review.get("critical"), list):
+        raise ValueError("Нет результата проверки механики движения")
+    if review["critical"]:
+        raise ValueError("Брак движения: " + "; ".join(map(str, review["critical"])))
+    return review
+
+
 def critique_video(script, path, timeline=None):
     """Review the complete rendered video WITH audio, not a selection of source images."""
     import base64
@@ -461,6 +490,8 @@ def critique_video(script, path, timeline=None):
               "Проверь сюжет, возраст/пол и непрерывность внешности героев, соответствие каждого кадра действию, "
               "артефакты движения, читаемость надписей, незавершённые или обрезанные реплики, совпадение речи со сценой, "
               "громкость музыки относительно голоса и понятность первого/последнего кадра. "
+              "Проверь физику: двери вращаются вокруг петель, ручка на противоположном движущемся краю; "
+              "предметы не проходят сквозь тела и стены, руки сохраняют контакт с предметами. "
               "Эмоции могут меняться по сюжету; не требуй улыбок во всех сценах. "
               "Новая семья в каждом фильме допустима. Не оценивай как кадры, которых не видел или не слышал. "
               "Дефекты указывай с таймкодом. Не обещай охваты. Не называй ИИ объективным профдиагностом.\n"
