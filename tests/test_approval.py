@@ -34,6 +34,7 @@ class ApprovalTests(unittest.TestCase):
                        save_state=Mock(), git_sync=Mock(), public_url=lambda f: "https://media/" + f,
                        chat=lambda s: s["chat_id"], load_job=lambda _: self.job, cleanup_media=Mock(),
                        top_up_plan=Mock(), next_post=lambda s: self.job, build_checked=lambda i: self.job,
+                       run_generation=lambda s, i: self.job,
                        vposter=Mock())
         tree = ast.parse(SOURCE.read_text())
         names = {"draft_fingerprint", "archive_draft", "restore_version", "show_versions", "send_draft", "publish", "_prepare", "handle"}
@@ -89,6 +90,15 @@ class ApprovalTests(unittest.TestCase):
     def test_feedback_blocks_publication(self):
         message = self.show()
         self.state["awaiting_feedback"] = "episode"
+        with self.assertRaises(RuntimeError):
+            self.publish(message)
+        self.ig.publish_carousel.assert_not_called()
+
+    def test_quality_block_removes_approval_button_and_prevents_publish(self):
+        self.job["quality_status"] = "blocked"
+        message = self.show()
+        buttons = self.tg.send_text.call_args.args[2]
+        self.assertFalse(any(b.get("callback_data", "").startswith("pub:") for row in buttons for b in row))
         with self.assertRaises(RuntimeError):
             self.publish(message)
         self.ig.publish_carousel.assert_not_called()
@@ -169,3 +179,4 @@ class ApprovalTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

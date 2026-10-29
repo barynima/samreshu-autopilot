@@ -5,9 +5,9 @@ import os
 import requests
 
 
-def _api(method: str, **kwargs):
+def _api(method: str, timeout=120, **kwargs):
     r = requests.post(
-        f"https://api.telegram.org/bot{os.environ['TG_BOT_TOKEN']}/{method}", timeout=120, **kwargs
+        f"https://api.telegram.org/bot{os.environ['TG_BOT_TOKEN']}/{method}", timeout=timeout, **kwargs
     )
     data = r.json()
     if not data.get("ok"):
@@ -25,11 +25,11 @@ def updates(offset: int, wait: int = 0):
     return data["result"]
 
 
-def send_text(chat_id, text, buttons=None):
+def send_text(chat_id, text, buttons=None, timeout=120):
     payload = {"chat_id": chat_id, "text": text}
     if buttons:
         payload["reply_markup"] = {"inline_keyboard": buttons}
-    return _api("sendMessage", json=payload)
+    return _api("sendMessage", json=payload, timeout=timeout)
 
 
 def send_album(chat_id, files: list[bytes], caption: str = ""):
@@ -95,3 +95,4 @@ def download(file_id: str) -> bytes:
                      timeout=180)
     r.raise_for_status()
     return r.content
+

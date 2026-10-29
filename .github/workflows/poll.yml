@@ -28,7 +28,7 @@ jobs:
           git config user.name "samreshu-autopilot"
           git config user.email "autopilot@users.noreply.github.com"
       - name: Run
-        run: python -m autopilot.main poll
+        run: python -u -m autopilot.main poll
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ vars.TG_CHAT_ID }}

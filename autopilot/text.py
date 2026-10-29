@@ -7,7 +7,7 @@ from pathlib import Path
 
 import requests
 
-from . import google
+from . import google, production
 
 RULES = (Path(__file__).resolve().parent.parent / "strategy" / "rules.md").read_text(encoding="utf-8")
 
@@ -124,19 +124,19 @@ SCHEMAS = {
 Каждый кадр должен останавливать палец: яркая эмоция персонажа, понятная без слов, визуальная шутка или метафора
 (Надо раздувается от новости, Сам с кольцевой лампой в роли блогера, Надо прячется за подушкой).
 Не пустые интерьеры и не «уютные натюрморты». Пол ребёнка — как в задании (сын или дочь); если не указан — пиши «ребёнок». Глаголы с родом — только в согласии с этим.""",
-    "reel_story": """Reels «Кино» 24–30 секунд: короткая драма по кадрам, как сериал. Уровень — как образец ниже.
-Драматургия: крючок-сцена за 2 секунды → узнавание (быстрый монтаж 2–3 «попыток») → ПОВОРОТ: показываем
-ту же ситуацию глазами ребёнка → визуальная МЕТАФОРА (дверь крепнет, стена из «надо», и т. п.) → факт из списка
-правил как поворот → маленький тёплый шаг вместо давления → финальный кадр рифмуется с первым (ролик зацикливается)
-и задаёт маме вопрос. 7–11 кадров, у каждого точная длительность (1–6 с), сумма 20–30 с. Для юмора — темп быстрее
+    "reel_story": """Reels «Кино» 20–35 секунд: короткая законченная история с конфликтом и поворотом.
+Драматургия: конкретное действие за первые 2 секунды → узнаваемая ситуация → неожиданный поворот →
+маленький понятный шаг или вывод. Не вставляй научный факт и метафору насильно. Герои и место — из семейного брифа.
+Финал завершает мысль; зацикливание и вопрос читателю допустимы, если подходят истории.
+6–10 кадров, у каждого точная длительность (1–6 с). Для юмора — темп быстрее
 (кадры по 1–2 с, ритм склеек, смешной поворот). Переписку мамы и ребёнка показывай в кадре (pos chat) — мамы узнают её.
 Каждый кадр — новый план: общий, средний, крупный, деталь; не повторяй одну и ту же картинку.
 {
   "hook": "крючок первого кадра, до 9 слов",
   "cast": [  // 3–5 опорных изображений: мама, ребёнок (сын или дочь, как в задании), 1–3 места или предмета-символа
-    {"id": "mom", "prompt": "EN photorealistic portrait: woman 41, modern well-groomed, tired kind eyes, hair in a claw clip, oversized beige knit sweater, smartwatch, in a modern apartment"},
-    {"id": "teen", "prompt": "EN portrait of the 14-year-old teen: hair, trendy oversized hoodie colour, wireless headset; modern teen room"},
-    {"id": "place", "prompt": "EN modern location/object that recurs: e.g. light oak eco-veneer interior door with frosted glass insert in a white hallway"}
+    {"id": "mom", "prompt": "EN portrait of the mom from THIS episode's family brief: face, age, hairstyle, exact clothes"},
+    {"id": "teen", "prompt": "EN portrait of the 14–15-year-old daughter or son EXACTLY as specified in the family brief, exact clothes and hairstyle"},
+    {"id": "place", "prompt": "EN recurring location matching this story, ordinary recognizable surroundings"}
   ],
   "shots": [
     {"sec": 2.0, "refs": ["mom", "place"], "visual": "EN кадр: крупность, кто/что, действие, свет — один ясный, цепляющий образ, простая поза",
@@ -154,24 +154,16 @@ pos: top — надпись в верхней трети (1–2 строки, д
 в углу («Попытка №47»); chat — пузыри переписки: {"pos": "chat", "messages": [{"who": "mom", "text": "…"}, {"who": "sam", "text": "хз"}]}.
 voice: mom — закадр мамы; teen — одна-две реплики ребёнка («Не знаю»), звучат глухо, будто из-за двери.
 sfx: tick, knock, click, bolt, send, thud. Закадр всего 12–16 секунд речи. Надписи не дублируют закадр слово в слово.
-Кадры: современная квартира в новом доме, тёплый белый и мягкий синий свет, кинематографично, но не мрачно; без советских
-интерьеров. Простые позы, без сложных действий руками; в одном кадре максимум два человека.
+Кадры: обычные разные квартиры и другие узнаваемые места из семейного брифа. Свет позволяет видеть действие.
+Естественные эмоции по сюжету. Простые позы, без сложных действий руками; в одном кадре максимум два человека.
 ЖЁСТКО: у КАЖДОГО кадра непустой refs; каждое место, где идёт действие (кухня, коридор школы, комната), — отдельный
 элемент cast, иначе нейросеть нарисует другое место. НИКАКОГО читаемого текста в кадре: экран телефона или ноутбука —
 со спины или пустой светящийся, переписку накладывай поверх через pos chat; без вывесок, тетрадей с надписями, бланков.
 Юмор — через предметы и повтор (одинаковые кроссовки, одинаковые рюкзаки), а не через сложные сцены.
 Нужен ПОВОРОТ в конце: ребёнок неожиданно сам говорит, что ему интересно, или мама меняет вопрос — и это работает.
 
-ОБРАЗЕЦ («Попытка №47», 29 с): 1) 2 с — макро: кулак мамы застыл в сантиметре от двери, из щели синий свет;
-«Я спросила сына, кем он хочет быть. / В 47-й раз»; стук на 1,8 с. 2) 2 с — у двери на стене детские отметки роста и
-рядом свежие «палочки», как счёт дней; «Не знаю» голосом из-за двери; счётчик «Попытка №47». 3–5) по 1 с — ужин, машина,
-мессенджер; счётчики «№12 — за ужином», «№29 — в машине», «№41 — в мессенджере», в мессенджере пузыри «Ты подумал, какие
-предметы?» → «хз». 6) 3 с — поворот: сын сидит на полу спиной к той же двери и слушает; «А теперь — с той стороны двери».
-7) 4 с — крупно: крутит шнурок худи; «„Не знаю“ — это не „мне всё равно“» → «Это „боюсь ответить не так — *и ты
-расстроишься*“». 8) 3 с — метафора: на двери появляются засовы; «Чем чаще вопрос — тем крепче дверь»; щелчки засовов.
-9) 6 с — вид сверху: мама и сын сидят спиной к одной двери с двух сторон; факт про нормальную стадию взросления.
-10) 3 с — мама ставит у двери кружку чая; «Попытки №48 не будет. / Будет другой разговор». 11) 3 с — дверь приоткрыта,
-кружка у порога (рифма с кадром 1); «Какая у вас попытка? / *Напишите номер*».""",
+Не повторяй один сюжет про дверь, кружку или 47 вопросов. В разных фильмах меняй мам, сыновей и дочерей,
+характеры, интересы, место действия и тип конфликта. Внутри фильма используй согласованные cast/refs.""",
     "reel_kinetic": f"""Reels «Кинетический текст» 15–22 секунды: крупный текст оживает на экране — цифра считается, миф
 зачёркивается, пункты появляются по одному. Кадр из жизни только на первом слайде.
 {{
@@ -207,11 +199,11 @@ sfx: tick, knock, click, bolt, send, thud. Закадр всего 12–16 се�
 Если в правилах нет подходящей цифры — не используй тип number.""",
 }
 
-CAPTION_RULE = """Подпись (caption): до 800 знаков. ПЕРВАЯ строка сразу выполняет обещание финальной карточки ролика
-(то самое, ради чего мама открыла описание: список вопросов, шаг на вечер, разбор), дальше по цепочке «с вами всё
-нормально → один ход на сегодня → мягкое приглашение». Ролик НЕ раскрывает эту пользу полностью — только обещает. В конце вопрос, на который маме легко ответить про своего ребёнка, затем
-призыв из задания, затем 3–5 хештегов (#самрешу #профориентация #огэ2027 #9класс и т.п.; нынешние 9-классники сдают ОГЭ в 2027 году).
-Без цены и без слова «купить»."""
+CAPTION_RULE = """Подпись (caption): ориентир до 800 знаков. Дополняет завершённую мысль ролика конкретным примером
+или полезным шагом. Если в ролике обещана информация в описании, сразу дай её; если обещания нет — не выдумывай его.
+Не повторяй в каждом посте одну цепочку «вы не одна → совет → сохраните». Вопрос и призыв — только по смыслу.
+Не называй ИИ объективным профдиагностом, не обещай гарантированное согласие подростка или выбор профессии.
+Без выдуманных отзывов, цены и слова «купить»."""
 
 
 def _system(fmt: str) -> str:
@@ -241,10 +233,15 @@ def _validate(fmt: str, data: dict) -> dict:
         shots = data.get("shots") or []
         if not data.get("hook") or not (6 <= len(shots) <= 12) or not data.get("cast"):
             raise ValueError("неполный кино-ролик")
+        ids = [c.get("id") for c in data["cast"]]
+        if not all(ids) or len(ids) != len(set(ids)) or not all(c.get("prompt") for c in data["cast"]):
+            raise ValueError("cast: нужны уникальные id и описания героев/локаций")
         for sh in shots:
             if not sh.get("visual") or not sh.get("sec"):
                 raise ValueError("кадр без описания или длительности")
             sh["sec"] = max(1.0, min(6.0, float(sh["sec"])))
+            if not sh.get("refs") or any(r not in ids for r in sh["refs"]):
+                raise ValueError("у каждого кадра должны быть существующие refs героев и места действия")
         return data
     if fmt == "reel_kinetic":
         sl = data.get("slides") or []
@@ -342,12 +339,40 @@ def _task(post: dict) -> str:
             + ("\nПост от лица Марины (см. «Голос основательницы»), только правдивые факты о ней." if post.get("voice") == "founder" else ""))
 
 
+def adapt_story(original, post, feedback=""):
+    prompt = (_task(post) + "\n" + production.family_instruction(post.get("family") or production.cast_for(post))
+              + "\nАдаптируй сценарий под эту семью. Сохрани конфликт и поворот. Согласуй пол, возраст, "
+              "cast и refs во всех сценах. Убери сложные кадры, оставь 6–10 ясных планов. "
+              "Для каждого места отдельный cast.\n" + json.dumps(original, ensure_ascii=False)
+              + "\nПравки владельца: " + feedback)
+    return _validate("reel_story", _extract_json(_ask(_system("reel_story"), prompt)))
+
+
+def check_storyboard(script, family):
+    prompt = ("Проверь сценарий ДО генерации картинок. Есть ли ясный конфликт, поворот и завершение; "
+              "каждый ли кадр нужен истории и выполним; согласованы ли refs, возраст, пол, одежда и локации; "
+              "не обещаны ли диагностическая точность ИИ, гарантированный выбор профессии или доступ мамы к переписке. "
+              "Одна семья внутри фильма, разные семьи между фильмами. Не требуй улыбок в каждой сцене. "
+              "Нельзя подменять действие общим красивым интерьером. Максимум два человека в кадре.\n"
+              + production.family_instruction(family) + "\n" + json.dumps(script, ensure_ascii=False)
+              + '\nВерни JSON {"critical": ["существенный дефект"], "fixes": ["исправление"]}. '
+              "Не отмечай вкусовые мелочи как critical, но несогласованный возраст/пол или невыполнимые сцены критичны.")
+    result = _extract_json(_ask("Ты редактор раскадровки мини-фильма для мам подростков.", prompt, temperature=.1))
+    if not isinstance(result.get("critical"), list):
+        raise ValueError("Не получен результат проверки раскадровки")
+    if result["critical"]:
+        raise ValueError("Раскадровка не прошла проверку: " + "; ".join(map(str, result["critical"])))
+    return result
+
+
 def write_post(post: dict, feedback: str = "") -> dict:
     fmt = post["format"]
     from datetime import date
     system = (f"Сегодня {date.today():%d.%m.%Y}. Нынешние 9-классники сдают ОГЭ в 2027 году, 8-классники — в 2028.\n"
               + _system(fmt))
     user = _task(post)
+    if fmt == "reel_story":
+        user += "\n" + production.family_instruction(post.get("family") or production.cast_for(post))
     if feedback:
         user += f"\n\nПрошлый вариант не понравился. Комментарий автора: {feedback}"
     last_err = None
@@ -403,7 +428,7 @@ def critique(script: dict, pictures: list) -> dict:
     """Оценка готового поста: текст + картинки (jpeg/png bytes). Возвращает score, verdict, fixes."""
     import base64
     parts = [{"text": "Сценарий и подпись поста:\n" + json.dumps(script, ensure_ascii=False)}]
-    for pic in pictures[:6]:
+    for pic in pictures:
         mime = "image/png" if pic[:4] == b"\x89PNG" else "image/jpeg"
         parts.append({"inlineData": {"mimeType": mime, "data": base64.b64encode(pic).decode()}})
     model = os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
@@ -420,6 +445,72 @@ def critique(script: dict, pictures: list) -> dict:
     return res
 
 
+def check_motion(data, source, shot):
+    """Reject impossible physical actions in generated clips before montage."""
+    import base64
+    if len(data) > 12_000_000:
+        raise RuntimeError("Клип слишком велик для проверки движения")
+    prompt = ("Сравни исходный кадр и ВЕСЬ созданный по нему клип. Проверь выполнение действия и физику: "
+              "дверь вращается вокруг неподвижного края с петлями, а край с ручкой движется; "
+              "петли не переезжают на другую сторону, дверь не отрывается и не проходит сквозь стену. "
+              "Проверь контакт рук с предметами, направление движения, устойчивость мебели, лица и одежду. "
+              "Не оценивай только начальный кадр. Указывай таймкод дефекта.\nЗадание: "
+              + json.dumps(shot, ensure_ascii=False)
+              + '\nОтвет JSON {"critical":["таймкод: физическая ошибка"],"verdict":"..."}. '
+              "Если реальную механику ключевого действия нельзя установить, укажи это как critical.")
+    result = google.generate(os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro", {
+        "contents": [{"role": "user", "parts": [{"text": prompt},
+            {"text": "Исходный кадр:"},
+            {"inlineData": {"mimeType": "image/jpeg", "data": base64.b64encode(source).decode()}},
+            {"text": "Проверяемый клип:"},
+            {"inlineData": {"mimeType": "video/mp4", "data": base64.b64encode(data).decode()}}]}],
+        "generationConfig": {"temperature": .1, "responseMimeType": "application/json"}}, timeout=240)
+    raw = "".join(p.get("text", "") for p in result["candidates"][0]["content"]["parts"] if not p.get("thought"))
+    review = _extract_json(raw)
+    if not isinstance(review.get("critical"), list):
+        raise ValueError("Нет результата проверки механики движения")
+    if review["critical"]:
+        raise ValueError("Брак движения: " + "; ".join(map(str, review["critical"])))
+    return review
+
+
+def critique_video(script, path, timeline=None):
+    """Review the complete rendered video WITH audio, not a selection of source images."""
+    import base64
+    import tempfile
+    from . import video
+    with tempfile.TemporaryDirectory() as folder:
+        proxy = Path(folder) / "review.mp4"
+        video._run(["-i", str(path), "-vf", "scale=540:-2", "-c:v", "libx264", "-crf", "28",
+                    "-c:a", "aac", "-b:a", "64k", "-movflags", "+faststart", str(proxy)])
+        data = proxy.read_bytes()
+    if len(data) > 12_000_000:
+        raise RuntimeError("Видео слишком велико для проверки; согласование заблокировано")
+    prompt = ("Посмотри ВЕСЬ готовый мини-фильм и послушай звук. Аудитория — мамы школьников 8–9 классов. "
+              "Проверь сюжет, возраст/пол и непрерывность внешности героев, соответствие каждого кадра действию, "
+              "артефакты движения, читаемость надписей, незавершённые или обрезанные реплики, совпадение речи со сценой, "
+              "громкость музыки относительно голоса и понятность первого/последнего кадра. "
+              "Проверь физику: двери вращаются вокруг петель, ручка на противоположном движущемся краю; "
+              "предметы не проходят сквозь тела и стены, руки сохраняют контакт с предметами. "
+              "Эмоции могут меняться по сюжету; не требуй улыбок во всех сценах. "
+              "Новая семья в каждом фильме допустима. Не оценивай как кадры, которых не видел или не слышал. "
+              "Дефекты указывай с таймкодом. Не обещай охваты. Не называй ИИ объективным профдиагностом.\n"
+              + RULES + "\nСценарий: " + json.dumps(script, ensure_ascii=False)
+              + "\nФактическая шкала времени: " + json.dumps(timeline, ensure_ascii=False)
+              + '\nВерни JSON {"score":1–10,"verdict":"...","critical":["таймкод: дефект"],"fixes":["..."]}. '
+              "9–10 только при отсутствии существенных недостатков, несоответствие возраста/сцены критично.")
+    result = google.generate(os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro", {
+        "contents": [{"role": "user", "parts": [{"text": prompt},
+            {"inlineData": {"mimeType": "video/mp4", "data": base64.b64encode(data).decode()}}]}],
+        "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"}}, timeout=300)
+    raw = "".join(p.get("text", "") for p in result["candidates"][0]["content"]["parts"] if not p.get("thought"))
+    review = _extract_json(raw)
+    if not isinstance(review.get("critical"), list) or not isinstance(review.get("fixes"), list):
+        raise ValueError("Неполный ответ проверки фильма")
+    review["score"] = max(0, min(10, int(review.get("score", 0))))
+    return review
+
+
 PHOTO_CHECK = """Ты — придирчивый фоторедактор. Перед тобой картинка, нарисованная нейросетью для поста. Она должна выглядеть
 как настоящее фото с телефона. Найди брак. В «critical» пиши ТОЛЬКО то, что заметит обычная мама с первого взгляда на телефоне; мелкие
 шероховатости — в «minor». Критичный брак:
@@ -432,18 +523,26 @@ PHOTO_CHECK = """Ты — придирчивый фоторедактор. Пе�
 Ответь только JSON: {{"score": 1–10 (насколько похоже на настоящее фото без брака), "critical": ["найденный критичный брак"], "minor": ["мелочи"]}}"""
 
 
-def check_photo(img: bytes, scene: str, allow_teen_face: bool = False) -> dict:
+def check_photo(img: bytes, scene: str, allow_teen_face: bool = False, references=None) -> dict:
     """Проверка кадра на брак нейросети. ok — можно использовать."""
     import base64
     mime = "image/png" if img[:4] == b"\x89PNG" else "image/jpeg"
     model = os.environ.get("CRITIC_MODEL") or os.environ.get("GEMINI_TEXT_MODEL") or "gemini-2.5-pro"
     try:
+        ref_parts = []
+        for name, reference in (references or {}).items():
+            ref_parts += [{"text": f"Эталон {name}:"},
+                          {"inlineData": {"mimeType": "image/jpeg", "data": base64.b64encode(reference).decode()}}]
         data = google.generate(model, {
             "contents": [{"role": "user", "parts": [
-                {"text": PHOTO_CHECK.format(scene=scene[:400]).replace(
+                {"text": PHOTO_CHECK.format(scene=scene[:2500]).replace(
                     "искажённое или «пластиковое» лицо; лицо подростка видно спереди",
                     "искажённое или «пластиковое» лицо" if allow_teen_face else
                     "искажённое или «пластиковое» лицо; лицо подростка видно спереди")},
+                *ref_parts,
+                {"text": "ОЦЕНИВАЕМЫЙ КАДР: проверь действие, состав героев и возраст из задания. "
+                         "По эталонам проверь те же лица, одежду и место. Другой возраст, другая семья, "
+                         "действие или потеря нужного героя — critical."},
                 {"inlineData": {"mimeType": mime, "data": base64.b64encode(img).decode()}}]}],
             "generationConfig": {"temperature": 0.1, "responseMimeType": "application/json"},
         }, timeout=180)
@@ -454,3 +553,4 @@ def check_photo(img: bytes, scene: str, allow_teen_face: bool = False) -> dict:
     crit = [c for c in (res.get("critical") or []) if c]
     score = int(res.get("score") or 0)
     return {"ok": not crit and score >= 7, "score": score, "problems": crit + (res.get("minor") or [])[:2]}
+
