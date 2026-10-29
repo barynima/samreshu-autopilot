@@ -2,7 +2,7 @@ name: Пост дня
 
 on:
   schedule:
-    - cron: "47 5 * * *"   # каждый день около 09:00 по Москве
+    - cron: "0 7 * * *"   # ежедневно с 10:00 по Москве, возможна задержка GitHub Actions
   workflow_dispatch:
 
 permissions:
