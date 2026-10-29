@@ -6,6 +6,7 @@ python -m autopilot.main refs      — сгенерировать вариант
 python -m autopilot.main refresh   — продлить маркер Instagram
 python -m autopilot.main stories   — нарисовать сторис для «Актуального» (highlights.yaml)
 """
+import hashlib
 import json
 import os
 import shutil
@@ -127,7 +128,7 @@ def build_post(item: dict, feedback: str = "") -> dict:
         script = json.loads((ROOT / item["script"]).read_text(encoding="utf-8"))
     else:
         script = text.write_post(item, feedback)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
     base = f"posts/{item['id']}/{stamp}"
     (POSTS / item["id"]).mkdir(parents=True, exist_ok=True)
     if not script.get("hook") and script.get("dialog"):
@@ -418,9 +419,107 @@ def assemble(job):
 
 # ---------- Telegram: черновики ----------
 
+def draft_fingerprint(job):
+    """Связывает согласование с текстом и байтами показанных медиа."""
+    digest = hashlib.sha256(json.dumps(
+        {k: job.get(k) for k in ("id", "format", "caption", "stage")},
+        ensure_ascii=False, sort_keys=True).encode())
+    files = job.get("files", []) if job["format"] == "carousel" else [job["video"]]
+    if job.get("cover"):
+        files = [*files, job["cover"]]
+    for name in files:
+        digest.update(name.encode())
+        with (ROOT / name).open("rb") as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(block)
+    return digest.hexdigest()
+
+
+def archive_draft(job):
+    """Сохраняет независимую копию готового варианта, включая медиа."""
+    if job.get("stage") != "ready":
+        return None
+    fingerprint = draft_fingerprint(job)
+    for path in (POSTS / job["id"] / "versions").glob("*/post.json"):
+        prior = json.loads(path.read_text(encoding="utf-8"))
+        if (prior.get("source_fingerprint") == fingerprint
+                and prior.get("snapshot_fingerprint") == draft_fingerprint(prior)):
+            return path.parent.name
+    existing = job.get("archived_version")
+    if existing and (POSTS / job["id"] / "versions" / existing / "post.json").exists():
+        saved = json.loads((POSTS / job["id"] / "versions" / existing / "post.json").read_text())
+        if draft_fingerprint(saved) == draft_fingerprint(job):
+            return existing
+    version = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+    folder = POSTS / job["id"] / "versions" / version
+    folder.mkdir(parents=True)
+    prefix = f"posts/{job['id']}/"
+    replacements = {}
+
+    def copy_value(value):
+        if isinstance(value, dict):
+            return {k: copy_value(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [copy_value(v) for v in value]
+        if isinstance(value, str) and value.startswith(prefix):
+            source = ROOT / value
+            if source.is_file():
+                if value not in replacements:
+                    target = folder / source.name
+                    shutil.copy2(source, target)
+                    replacements[value] = target.relative_to(ROOT).as_posix()
+                return replacements[value]
+        return value
+
+    saved = copy_value(job)
+    # После восстановления новые сборки должны писать вне неизменяемого архива.
+    saved["base"] = f"posts/{job['id']}/{version}_restored"
+    saved["archived_version"] = version
+    saved["source_fingerprint"] = fingerprint
+    saved["snapshot_fingerprint"] = draft_fingerprint(saved)
+    (folder / "post.json").write_text(json.dumps(saved, ensure_ascii=False, indent=2), encoding="utf-8")
+    return version
+
+
+def show_versions(state):
+    pid = state.get("pending")
+    if not pid:
+        telegram.send_text(chat(state), "Сейчас нет поста на согласовании.")
+        return
+    archive_draft(load_job(pid))
+    versions = sorted((POSTS / pid / "versions").glob("*/post.json"))
+    for start in range(0, len(versions), 10):
+        buttons = []
+        for number, path in enumerate(versions[start:start + 10], start + 1):
+            saved = json.loads(path.read_text(encoding="utf-8"))
+            buttons.append([{"text": f"Версия {number}: {saved.get('hook', '')[:35]}",
+                             "callback_data": f"version:{path.parent.name}"}])
+        telegram.send_text(chat(state), "Выберите версию: покажу текст и медиа. "
+                           "Для выхода потребуется отдельное одобрение.", buttons)
+
+
+def restore_version(state, version):
+    pid = state.get("pending")
+    if not pid or len(version) != 20 or not version.isascii() or not version.isdigit():
+        return
+    path = POSTS / pid / "versions" / version / "post.json"
+    if not path.exists():
+        telegram.send_text(chat(state), "Эта версия относится к другому посту или не сохранилась.")
+        return
+    archive_draft(load_job(pid))
+    job = json.loads(path.read_text(encoding="utf-8"))
+    save_job(job)
+    telegram.send_text(chat(state), "Выбрана сохранённая версия. Проверьте её перед публикацией.")
+    send_draft(state, job)
+
+
 def send_draft(state, job):
+    state.pop("draft_review", None)
+    state["awaiting_feedback"] = None
+    save_state(state)
     cid = chat(state)
     pid = job["id"]
+    version = archive_draft(job)
     title = f"{FORMAT_NAMES.get(job['format'], '')}: «{job['hook']}»"
     if job.get("stage") == "clips":
         n = len(job["shots"])
@@ -450,7 +549,8 @@ def send_draft(state, job):
         except Exception:  # noqa: BLE001
             secs = None
         telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title, thumb=thumb, duration=secs)
-    telegram.send_text(cid, job["caption"][:3900])
+    for start in range(0, len(job["caption"]), 3900):
+        telegram.send_text(cid, job["caption"][start:start + 3900])
     rv = job.get("review")
     if rv:
         tries = f" (вариант {job.get('attempt', 1)} из {MAX_TRIES})" if job.get("attempt", 1) > 1 else ""
@@ -461,13 +561,19 @@ def send_draft(state, job):
     for w in job.get("warnings") or []:
         telegram.send_text(cid, f"ℹ️ {w}"[:3900])
     buttons = [[
-        {"text": "✅ Публиковать", "callback_data": f"pub:{pid}"},
+        {"text": "✅ Публиковать в Instagram", "callback_data": f"pub:{pid}"},
         {"text": "🔁 Переделать", "callback_data": f"redo:{pid}"},
     ]]
     if rv and rv.get("fixes"):
         buttons.append([{"text": "🛠 Внести правки критика", "callback_data": f"fix:{pid}"}])
     buttons.append([{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}])
-    telegram.send_text(cid, "Публикуем?", buttons)
+    buttons.append([{"text": "📚 Выбрать другую версию", "callback_data": f"versions:{pid}"}])
+    message = telegram.send_text(cid, "Одобрить показанные текст и медиа для Instagram? "
+                                 "После нажатия бот опубликует их, когда обработает кнопку.\n"
+                                 "Правки — кнопка «Переделать». Без одобрения публикации не будет.", buttons)
+    state["draft_review"] = {"post_id": pid, "message_id": message["message_id"],
+                             "fingerprint": draft_fingerprint(job), "version": version}
+    save_state(state)
 
 
 def receive_clip(state, msg):
@@ -494,8 +600,23 @@ def receive_clip(state, msg):
     send_draft(state, job)
 
 
-def publish(state, post_id):
+def publish(state, post_id, review_message_id=None):
     job = load_job(post_id)
+    review = state.get("draft_review") or {}
+    if (post_id in state.get("done", []) or state.get("pending") != post_id
+            or job.get("stage") != "ready"
+            or review_message_id is None or review.get("message_id") != review_message_id
+            or review.get("post_id") != post_id or state.get("awaiting_feedback")
+            or review.get("fingerprint") != draft_fingerprint(job)):
+        raise RuntimeError("Нужно одобрить актуальную версию. Отправьте /review, чтобы увидеть её заново.")
+    attempts = state.setdefault("publication_attempts", {})
+    if post_id in attempts:
+        raise RuntimeError("Попытка публикации уже была. Проверьте Instagram и журнал Actions: "
+                           "повторная отправка заблокирована, чтобы не создать дубль.")
+    attempts[post_id] = {"status": "started", "fingerprint": review["fingerprint"],
+                         "approved_message_id": review_message_id,
+                         "at": datetime.now(timezone.utc).isoformat()}
+    save_state(state)
     git_sync(f"Файлы поста {post_id}")
     time.sleep(20)
     if job["format"] == "carousel":
@@ -503,20 +624,13 @@ def publish(state, post_id):
     else:
         cover = public_url(job["cover"]) if job.get("cover") else ""
         link = instagram.publish_reel(public_url(job["video"]), job["caption"], cover)
-    if vposter.enabled():
-        try:
-            if job["format"] == "carousel":
-                where = vposter.publish(job["caption"], images=[ROOT / f for f in job["files"]])
-            else:
-                where = vposter.publish(job["caption"], video=ROOT / job["video"])
-            state.setdefault("vk_sent", []).append(link.strip())
-            link += "\nТакже отправлено: " + ", ".join(where) + " (выйдет примерно через минуту)."
-        except Exception as e:
-            link += f"\n⚠️ ВКонтакте не получилось: {e}"[:1500]
+    attempts[post_id].update(status="published", link=link)
     state["done"].append(post_id)
     state["pending"] = None
     state["awaiting_feedback"] = None
     cleanup_media(post_id)
+    state.pop("draft_review", None)
+    save_state(state)
     return link
 
 
@@ -569,10 +683,7 @@ def _prepare(state):
         return
     job = build_checked(item)
     state["pending"] = item["id"]
-    if job.get("stage") == "ready" and os.environ.get("AUTO_PUBLISH", "").lower() == "true":
-        telegram.send_text(chat(state), f"Опубликовано: {publish(state, item['id'])}")
-    else:
-        send_draft(state, job)
+    send_draft(state, job)
 
 
 # ---------- эталоны ----------
@@ -767,7 +878,7 @@ def handle(state, up):
     msg = up.get("message")
     cb = up.get("callback_query")
     src = (msg or {}).get("chat") or ((cb or {}).get("message") or {}).get("chat") or {}
-    if not state.get("chat_id") and src.get("type") == "private":
+    if not chat(state) and src.get("type") == "private":
         state["chat_id"] = src["id"]
         telegram.send_text(src["id"], "Привет! Я автопилот «Сам решу». Буду присылать сюда посты на проверку.\n"
                                       "Команды: /post — сделать пост сейчас, /refs — нарисовать эталоны персонажей, "
@@ -780,13 +891,22 @@ def handle(state, up):
     if cb:
         telegram.answer(cb["id"])
         kind, _, arg = cb["data"].partition(":")
+        if kind == "version":
+            restore_version(state, arg)
+            return
+        if kind == "versions":
+            if state.get("pending") == arg:
+                show_versions(state)
+            return
         if kind in ("pub", "redo", "again", "skip", "veo", "still", "fix") and state.get("pending") != arg:
             telegram.send_text(cid, "Эта кнопка от старого поста, он уже не актуален. "
                                     "Отправьте /post — сделаю следующий пост по новому плану.")
             return
         if kind == "pub" and state.get("pending") == arg:
+            if src.get("type") != "private" or str(cb.get("from", {}).get("id")) != str(cid):
+                return
             telegram.send_text(cid, "Публикую… ⏳")
-            telegram.send_text(cid, f"Готово! {publish(state, arg)}")
+            telegram.send_text(cid, f"Готово! {publish(state, arg, cb['message']['message_id'])}")
         elif kind == "redo" and state.get("pending") == arg:
             state["awaiting_feedback"] = arg
             telegram.send_text(cid, "Напишите одним сообщением, что поправить. Или нажмите кнопку — сделаю другой вариант.",
@@ -872,7 +992,15 @@ def handle(state, up):
         return
 
     body = (msg.get("text") or "").strip()
-    if body.startswith("/post"):
+    if body == "/versions":
+        show_versions(state)
+    elif body in ("/review", "/start"):
+        if state.get("pending"):
+            send_draft(state, load_job(state["pending"]))
+        else:
+            telegram.send_text(cid, "Готов присылать посты на согласование. /post — подготовить пост, "
+                                    "/review — показать текущий. Выход только после кнопки одобрения.")
+    elif body.startswith("/post"):
         if state.get("pending"):
             telegram.send_text(cid, "Сначала решите судьбу предыдущего поста 👆")
         else:
@@ -1040,9 +1168,10 @@ def regenerate(state, ep_id, feedback):
         old = load_job(ep_id)
     except Exception:  # noqa: BLE001
         old = None
+    if old:
+        archive_draft(old)
+        git_sync(f"Сохранена предыдущая версия {ep_id}")
     job = build_checked(post_by_id(ep_id), feedback)
-    if old and old.get("base") and old.get("base") != job.get("base"):
-        _drop_files(old)  # файлы прошлого варианта больше не нужны — не раздуваем репозиторий
     state["awaiting_feedback"] = None
     send_draft(state, job)
 
@@ -1124,3 +1253,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
