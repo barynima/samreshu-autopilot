@@ -21,7 +21,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from . import images, render, text, video, yandex_tts
+from . import images, production, render, text, video, yandex_tts
 
 W, H = 1080, 1920
 FPS = 30
@@ -29,11 +29,10 @@ ACCENT = (255, 138, 61)  # тёплый оранжевый, как в сцена
 FONTS = Path(__file__).resolve().parent.parent / "fonts"
 
 CINE_STYLE = ("Photorealistic still from a modern Russian-language family drama series, shot on a cinema camera, 35mm. "
-              "Modern contemporary 2020s apartment in a new residential building: light walls, light oak laminate, "
-              "recessed ceiling spotlights, warm LED strips, light modern interior doors, Scandinavian furniture; "
-              "lived-in, tidy. No Soviet-style interior, no old wallpaper, no carpets on walls, no worn furniture. "
-              "Warm white and soft cold blue light contrast, cinematic color grading, subtle film grain, but NOT gloomy — "
-              "warm, intimate, hopeful. ANATOMY PERFECT: every person has exactly two arms, two hands, five fingers; "
+              "Follow the location and family references exactly within this episode. Everyday believable homes, "
+              "varied interiors and ordinary clothes, never a generic luxury apartment unless requested. "
+              "Natural readable light, emotions appropriate to the action, no forced smiles or melodramatic gloom. "
+              "ANATOMY PERFECT: every person has exactly two arms, two hands, five fingers; "
               "people sit firmly and stand on the floor; one continuous room with consistent walls and ceiling. "
               "Vertical 9:16, no text, no letters, no captions, no watermark, no logos.")
 CINE_MOTION = "Realistic motion, no morphing, stable faces, no text appearing, static or very slow camera."
@@ -222,7 +221,8 @@ def _shot_image(shot, refs: dict, allow_face=True):
     """Кадр по опорным изображениям; до 3 попыток с проверкой на брак. Возвращает (bytes|None, отчёт)."""
     import base64
     best = (None, None)
-    for _ in range(3):
+    for attempt in range(3):
+        production.progress(f"Проверка кадра: попытка {attempt + 1}/3")
         parts = []
         names = []
         for rid in shot.get("refs") or []:
@@ -237,13 +237,14 @@ def _shot_image(shot, refs: dict, allow_face=True):
         except Exception as e:  # noqa: BLE001
             best = best if best[0] else (None, {"problems": [str(e)[:200]], "score": 0})
             continue
-        rep = text.check_photo(img, shot["visual"], allow_teen_face=allow_face)
+        rep = text.check_photo(img, shot["visual"], allow_teen_face=allow_face,
+                               references={rid: refs[rid] for rid in shot.get("refs", []) if rid in refs})
         if rep["ok"]:
             return img, rep
         if not best[1] or rep["score"] > best[1].get("score", 0):
             bad = any(w in p.lower() for p in rep["problems"] for w in ("рук", "пальц", "букв", "надпис", "текст"))
             best = (img if rep["score"] >= 6 and not bad else None, rep)
-    return best
+    return None, best[1]
 
 
 def _jpg(data: bytes) -> bytes:
@@ -253,24 +254,71 @@ def _jpg(data: bytes) -> bytes:
     return out.getvalue()
 
 
-def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dict:
+def _cached(folder, name, create):
+    path = folder / name
+    if path.exists():
+        return path.read_bytes()
+    data = create()
+    if not data:
+        raise RuntimeError(f"Этап {name} не вернул данные")
+    temporary = path.with_suffix(path.suffix + ".part")
+    temporary.write_bytes(data)
+    temporary.replace(path)
+    return data
+
+
+def _voice_duration(shot, wav_bytes):
+    with wave.open(io.BytesIO(wav_bytes)) as stream:
+        length = stream.getnframes() / stream.getframerate()
+    required = float((shot.get("vo") or {}).get("at", 0.2)) + length + 0.25
+    if required > 8:
+        raise RuntimeError("Реплика длиннее 8 секунд: сократите её перед сборкой")
+    return max(float(shot.get("sec") or 3), required)
+
+
+def render_reel(script: dict, out_path: Path, with_music=True, veo=False, cache_dir=None, family=None) -> dict:
     """Собирает ролик. Возвращает {"warnings", "cover", "pictures"}."""
     warnings, pictures = [], []
+    cache_dir = Path(cache_dir) if cache_dir else out_path.parent / "generation" / production.fingerprint(script)[:20]
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    family_note = production.family_instruction(family) if family else ""
     refs = {}
     for c in script.get("cast") or []:
-        try:
-            refs[c["id"]] = _jpg(images._call([{"text": f"{c['prompt']}\n{CINE_STYLE}"}], "9:16"))
-        except Exception as e:  # noqa: BLE001
-            warnings.append(f"Опорное изображение «{c['id']}» не получилось: {str(e)[:120]}")
+        production.progress(f"Герои и локации: {c['id']}")
+        def reference(c=c):
+            for _ in range(3):
+                img = _jpg(images._call([{"text": f"{c['prompt']}\n{CINE_STYLE}\n{family_note}"}], "9:16"))
+                rep = text.check_photo(img, c["prompt"], allow_teen_face=True)
+                if rep["ok"]:
+                    return img
+            raise RuntimeError(f"Эталон {c['id']} не прошёл проверку: {rep.get('problems')}")
+        key = production.fingerprint(c)[:16]
+        refs[c["id"]] = _cached(cache_dir, f"ref-{key}.jpg", reference)
+    voices = {}
+    timeline = []
+    total = 0.0
+    for i, shot in enumerate(script["shots"]):
+        dur = float(shot.get("sec") or 3)
+        vo = shot.get("vo")
+        if vo and vo.get("text"):
+            production.progress(f"Озвучка: реплика {i + 1}/{len(script['shots'])}")
+            key = production.fingerprint(vo)[:16]
+            voices[i] = _cached(cache_dir, f"voice-{key}.wav", lambda vo=vo: _voice(vo["text"], vo.get("voice") == "teen", warnings))
+            dur = _voice_duration(shot, voices[i])
+        timeline.append({"shot": i + 1, "start": round(total, 3), "duration": round(dur, 3)})
+        total += dur
+    if total > 50:
+        raise RuntimeError(f"После подгонки речи фильм длится {total:.1f} с — сократите сценарий до 50 с")
     frames = []
     for i, shot in enumerate(script["shots"], 1):
-        img, rep = _shot_image(shot, refs)
-        if img is None:
-            img = next((refs[r] for r in reversed(shot.get("refs") or []) if refs.get(r)), None) \
-                or (frames[-1] if frames else None) or next(iter(refs.values()), None) or render._chat_wallpaper()
-            warnings.append(f"Кадр {i} не прошёл проверку ({'; '.join((rep or {}).get('problems', [])[:2])}) — "
-                            "поставила запасной кадр.")
-        frames.append(_jpg(img))
+        production.progress(f"Кадр {i}/{len(script['shots'])}: генерация и проверка")
+        def frame(shot=shot, i=i):
+            img, rep = _shot_image(shot, refs)
+            if img is None:
+                raise RuntimeError(f"Кадр {i} не соответствует сценарию: {(rep or {}).get('problems')}. "
+                                   "Случайная замена не используется")
+            return _jpg(img)
+        frames.append(_cached(cache_dir, f"frame-{i}.jpg", frame))
     # обложка
     ci = max(0, min(len(frames) - 1, int(script.get("cover_shot", 1)) - 1))
     cover_img = Image.open(io.BytesIO(frames[ci])).convert("RGBA")
@@ -284,38 +332,39 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
         tmp = Path(tmp)
         parts, t0, audio = [], 0.0, []  # audio: (start_sec, wav_path, volume, lowpass)
         for i, (shot, frame) in enumerate(zip(script["shots"], frames)):
-            dur = float(shot.get("sec") or 3)
+            production.progress(f"Монтаж сцены {i + 1}/{len(frames)}")
+            dur = timeline[i]["duration"]
             pic = tmp / f"f{i}.png"
             Image.open(io.BytesIO(frame)).save(pic)
             clip = None
             if veo:
                 vsec = 4 if dur <= 4 else 6 if dur <= 6 else 8  # Veo умеет только 4, 6 и 8 секунд
-                try:
+                def animate():
                     data = video.veo_clip(frame, f"{shot.get('motion', '')} {CINE_MOTION}", vsec,
                                           style=video.LIFE_VIDEO, models=video.VEO_FAST)
-                    if not video.clip_problem(data, frame, vsec):
-                        clip = tmp / f"c{i}.mp4"
-                        clip.write_bytes(data)
-                except Exception as e:  # noqa: BLE001
-                    warnings.append(f"Veo, кадр {i + 1}: {str(e)[:100]}")
+                    problem = video.clip_problem(data, frame, vsec)
+                    if problem:
+                        raise RuntimeError(f"Движение кадра {i + 1} не прошло проверку: {problem}")
+                    return data
+                clip = tmp / f"c{i}.mp4"
+                clip.write_bytes(_cached(cache_dir, f"motion-{i}.mp4", animate))
             layers = []
             for j, b in enumerate(shot.get("texts") or []):
                 png = tmp / f"t{i}_{j}.png"
                 text_layer(b).save(png)
-                layers.append((png, float(b.get("at", 0)), float(b.get("to", dur))))
+                end = float(b.get("to", dur))
+                if end >= float(shot.get("sec") or 3):
+                    end = dur
+                layers.append((png, float(b.get("at", 0)), end))
             out = tmp / f"p{i}.mp4"
             video._still_multi(pic, layers, dur, out, zoom=True, clip=clip)
             parts.append(out)
             vo = shot.get("vo")
             if vo and vo.get("text"):
-                try:
-                    wav = tmp / f"vo{i}.wav"
-                    teen = vo.get("voice") == "teen"
-                    wav.write_bytes(_voice(vo["text"], teen, warnings))
-                    audio.append((t0 + float(vo.get("at", 0.2)), wav, 1.6 if not teen else 1.2, teen))
-                except Exception as e:  # noqa: BLE001
-                    if not any("закадрового" in w for w in warnings):
-                        warnings.append(f"Без закадрового голоса: {str(e)[:150]}")
+                wav = tmp / f"vo{i}.wav"
+                teen = vo.get("voice") == "teen"
+                wav.write_bytes(voices[i])
+                audio.append((t0 + float(vo.get("at", 0.2)), wav, 1.6 if not teen else 1.2, teen))
             for k, s in enumerate(shot.get("sfx") or []):
                 wav = tmp / f"sfx{i}_{k}.wav"
                 wav.write_bytes(_sfx(s.get("type", "click")))
@@ -335,7 +384,7 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
                 st = last_end + 0.15
             last_end = st + length
         if last_end > t0:
-            warnings.append("Закадр длиннее ролика: последнюю реплику может обрезать — сократите текст.")
+            raise RuntimeError("Озвучка не укладывается в фильм; экспорт остановлен вместо обрезания речи")
         base = tmp / "base.mp4"
         warnings += video._finish(parts, tmp, base, with_music, music_volume=0.32 if audio else 0.9,
                                   music_prompt=script.get("music"))
@@ -354,6 +403,10 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False) -> dic
                         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(out_path)])
         else:
             out_path.write_bytes(base.read_bytes())
-    for i in sorted({0, ci, len(frames) // 2, len(frames) - 1}):
+    if abs(video.duration(out_path) - total) > 0.5:
+        raise RuntimeError("Длительность экспорта не совпадает с монтажной шкалой")
+    production.progress("Фильм собран: проверяю финальное видео со звуком")
+    for i in range(len(frames)):
         pictures.append(frames[i])
-    return {"warnings": warnings, "cover": cover, "pictures": pictures}
+    return {"warnings": warnings, "cover": cover, "pictures": pictures, "timeline": timeline}
+
