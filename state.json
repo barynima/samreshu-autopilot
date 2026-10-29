@@ -1,5 +1,5 @@
 {
-  "offset": 320005972,
+  "offset": 320005973,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -103,5 +103,18 @@
     "message_id": 649,
     "fingerprint": "f5e7cdee34cd7b1a5cfd11368958f3d7876d98efd47b5fee93a4134b52582d28",
     "version": "20261029222845850753"
+  },
+  "generation": {
+    "post_id": "predmety-oge",
+    "status": "running",
+    "phase": "Сценарий",
+    "family": {
+      "child": "дочь",
+      "mom": "a 36-year-old mom with short dark curly hair, denim jacket and comfortable sneakers",
+      "teen": "14–15-year-old girl",
+      "interest": "music",
+      "home": "a small practical family kitchen with school bags nearby"
+    },
+    "started_at": "2026-10-29T22:47:10.274707+00:00"
   }
 }
