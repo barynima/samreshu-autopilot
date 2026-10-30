@@ -29,13 +29,15 @@ class ApprovalTests(unittest.TestCase):
         self.tg.send_text.side_effect = lambda *a, **kw: {"message_id": self.tg.send_text.call_count}
         self.ig = Mock()
         self.ig.publish_carousel.return_value = "https://instagram.com/p/example"
+        vp = Mock()
+        vp.enabled.return_value = False
         self.ns = dict(hashlib=hashlib, json=json, os=os, shutil=shutil, ROOT=root, POSTS=root / "posts", datetime=datetime, timezone=timezone,
                        telegram=self.tg, instagram=self.ig, time=Mock(), FORMAT_NAMES={}, MAX_TRIES=3,
                        save_state=Mock(), git_sync=Mock(), public_url=lambda f: "https://media/" + f,
                        chat=lambda s: s["chat_id"], load_job=lambda _: self.job, cleanup_media=Mock(),
                        top_up_plan=Mock(), next_post=lambda s: self.job, build_checked=lambda i: self.job,
                        run_generation=lambda s, i: self.job,
-                       vposter=Mock())
+                       vposter=vp)
         tree = ast.parse(SOURCE.read_text())
         names = {"draft_fingerprint", "archive_draft", "restore_version", "show_versions", "send_draft", "publish", "_prepare", "handle"}
         selected = ast.Module(body=[n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names],
@@ -106,12 +108,70 @@ class ApprovalTests(unittest.TestCase):
     def test_ambiguous_failure_blocks_retry(self):
         message = self.show()
         self.ig.publish_carousel.side_effect = TimeoutError("response lost")
-        with self.assertRaises(TimeoutError):
+        with self.assertRaises(RuntimeError):
             self.publish(message)
         with self.assertRaises(RuntimeError):
             self.publish(message)
         self.ig.publish_carousel.assert_called_once()
         self.assertEqual(self.state["publication_attempts"]["episode"]["status"], "started")
+
+    def enable_vk(self):
+        vp = self.ns["vposter"]
+        vp.enabled.return_value = True
+        vp.vk_target.return_value = ("vk", "123", "Сам решу")
+        vp.adapt_caption.side_effect = lambda caption: caption + " https://samreshu.pro/"
+        vp.publish_vk.return_value = {"status": "queued", "group_id": "123", "group_name": "Сам решу"}
+        return vp
+
+    def test_three_platform_buttons_are_shown(self):
+        self.enable_vk()
+        self.show()
+        buttons = self.tg.send_text.call_args.args[2]
+        kinds = {b["callback_data"].partition(":")[0] for row in buttons for b in row}
+        self.assertTrue({"pub", "pubvk", "pubboth"}.issubset(kinds))
+
+    def test_vk_only_never_calls_instagram(self):
+        vp = self.enable_vk()
+        message = self.show()
+        result = self.ns["publish"](self.state, "episode", message, ("vk",))
+        self.ig.publish_carousel.assert_not_called()
+        vp.publish_vk.assert_called_once()
+        self.assertEqual(vp.publish_vk.call_args.args[0], "Caption https://samreshu.pro/")
+        self.assertIn("выход ещё не подтверждён", result)
+
+    def test_both_publish_to_vk_once_and_not_other_vposter_targets(self):
+        vp = self.enable_vk()
+        message = self.show()
+        self.ns["publish"](self.state, "episode", message, ("instagram", "vk"))
+        self.ig.publish_carousel.assert_called_once()
+        vp.publish_vk.assert_called_once()
+        vp.publish.assert_not_called()
+
+    def test_partial_failure_does_not_repeat_instagram(self):
+        vp = self.enable_vk()
+        message = self.show()
+        vp.publish_vk.side_effect = TimeoutError("ambiguous VK response")
+        for _ in range(2):
+            with self.assertRaises(RuntimeError):
+                self.ns["publish"](self.state, "episode", message, ("instagram", "vk"))
+        self.ig.publish_carousel.assert_called_once()
+        vp.publish_vk.assert_called_once()
+        self.assertEqual(self.state["pending"], "episode")
+
+    def test_changed_vk_group_requires_new_review(self):
+        vp = self.enable_vk()
+        message = self.show()
+        vp.vk_target.return_value = ("vk", "456", "Other group")
+        with self.assertRaises(RuntimeError):
+            self.ns["publish"](self.state, "episode", message, ("instagram", "vk"))
+        self.ig.publish_carousel.assert_not_called()
+        vp.publish_vk.assert_not_called()
+
+    def test_vk_not_in_review_cannot_be_selected(self):
+        message = self.show()
+        with self.assertRaises(RuntimeError):
+            self.ns["publish"](self.state, "episode", message, ("vk",))
+        self.ns["vposter"].publish_vk.assert_not_called()
 
     def test_auto_publish_flag_cannot_bypass_review(self):
         self.state["pending"] = None
