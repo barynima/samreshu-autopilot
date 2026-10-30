@@ -34,9 +34,9 @@ def _check(r, what):
     return data
 
 
-def targets() -> list:
+def targets(socials=None) -> list:
     """[(type_social, id_group, name)] — куда публикуем."""
-    want = [t.strip() for t in (os.environ.get("VPOSTER_TARGETS") or "vk").split(",") if t.strip()]
+    want = socials if socials is not None else [t.strip() for t in (os.environ.get("VPOSTER_TARGETS") or "vk").split(",") if t.strip()]
     data = _check(requests.get(f"{API}/groups.getMy", headers=_h(), timeout=60), "groups.getMy")
     pages = {}
 
@@ -107,10 +107,11 @@ def adapt_caption(caption: str) -> str:
     return text
 
 
-def publish(caption: str, images: list = None, video: Path = None) -> list:
+def publish(caption: str, images: list = None, video: Path = None, selected_targets=None,
+            adapt=True, details=False) -> list:
     """Публикует пост сразу (через ~минуту). Возвращает список «куда ушло»."""
     done = []
-    for social, gid, name in targets():
+    for social, gid, name in (targets() if selected_targets is None else selected_targets):
         attachments = []
         if video:
             for a in _upload(Path(video), gid, "video"):
@@ -123,11 +124,23 @@ def publish(caption: str, images: list = None, video: Path = None) -> list:
         for img in images or []:
             attachments += _upload(Path(img), gid, "image")
         body = {"id_group": gid, "type_social": social, "post_day": "oneraz",
-                "message": adapt_caption(caption), "attachments_json": attachments}
+                "message": adapt_caption(caption) if adapt else caption, "attachments_json": attachments}
         if social == "vk" and len(images or []) > 1:
             body["primary_attachments_mode"] = 1  # карусель
         r = requests.post(f"{API}/posts.create", headers={**_h(), "Content-Type": "application/json"},
                           data=json.dumps(body, ensure_ascii=False).encode(), timeout=120)
-        _check(r, "posts.create")
-        done.append(f"{NAMES.get(social, social)} ({name})")
+        result = _check(r, "posts.create")
+        done.append({"status": "queued", "network": social, "group_id": gid, "group_name": name,
+                     "response": result.get("response", result)} if details else f"{NAMES.get(social, social)} ({name})")
     return done
+
+
+def vk_target():
+    return targets(["vk"])[0]
+
+
+def publish_vk(caption, target, images=None, video=None):
+    if target[0] != "vk":
+        raise ValueError("Кнопка ВК разрешает только сообщество ВКонтакте")
+    return publish(caption, images, video, selected_targets=[target], adapt=False, details=True)[0]
+

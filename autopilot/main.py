@@ -458,7 +458,7 @@ def assemble(job):
 def draft_fingerprint(job):
     """Связывает согласование с текстом и байтами показанных медиа."""
     digest = hashlib.sha256(json.dumps(
-        {k: job.get(k) for k in ("id", "format", "caption", "stage")},
+        {k: job.get(k) for k in ("id", "format", "caption", "stage", "vk_caption", "vk_target")},
         ensure_ascii=False, sort_keys=True).encode())
     files = job.get("files", []) if job["format"] == "carousel" else [job["video"]]
     if job.get("cover"):
@@ -555,7 +555,6 @@ def send_draft(state, job):
     save_state(state)
     cid = chat(state)
     pid = job["id"]
-    version = archive_draft(job)
     title = f"{FORMAT_NAMES.get(job['format'], '')}: «{job['hook']}»"
     if job.get("stage") == "clips":
         n = len(job["shots"])
@@ -587,6 +586,30 @@ def send_draft(state, job):
         telegram.send_video(cid, (ROOT / job["video"]).read_bytes(), title, thumb=thumb, duration=secs)
     for start in range(0, len(job["caption"]), 3900):
         telegram.send_text(cid, job["caption"][start:start + 3900])
+    available = ["instagram"]
+    job.pop("vk_target", None)
+    job.pop("vk_caption", None)
+    if vposter.enabled():
+        try:
+            job["vk_target"] = list(vposter.vk_target())
+            job["vk_caption"] = vposter.adapt_caption(job["caption"])
+            available.append("vk")
+            telegram.send_text(cid, f"ВК: {job['vk_target'][2]} (id {job['vk_target'][1]}). "
+                               "После одобрения пост будет передан Впостеру для размещения.")
+            if job["vk_caption"] != job["caption"]:
+                telegram.send_text(cid, "Текст для ВК (ссылка заменяет «ссылку в профиле»):")
+                for start in range(0, len(job["vk_caption"]), 3900):
+                    telegram.send_text(cid, job["vk_caption"][start:start + 3900])
+        except Exception as exc:
+            if "vk" in available:
+                available.remove("vk")
+            job.pop("vk_target", None)
+            job.pop("vk_caption", None)
+            telegram.send_text(cid, f"ВК пока недоступен: {exc}"[:1500])
+    else:
+        telegram.send_text(cid, "ВК не подключён: нет ключа Впостера. Доступна публикация в Instagram.")
+    save_job(job)
+    version = archive_draft(job)
     rv = job.get("review")
     if rv:
         tries = f" (вариант {job.get('attempt', 1)} из {MAX_TRIES})" if job.get("attempt", 1) > 1 else ""
@@ -599,6 +622,9 @@ def send_draft(state, job):
     buttons = [[{"text": "🔁 Переделать", "callback_data": f"redo:{pid}"}]]
     if job.get("quality_status") != "blocked":
         buttons[0].insert(0, {"text": "✅ Публиковать в Instagram", "callback_data": f"pub:{pid}"})
+        if "vk" in available:
+            buttons.insert(1, [{"text": "✅ ВК", "callback_data": f"pubvk:{pid}"},
+                               {"text": "✅ Обе площадки", "callback_data": f"pubboth:{pid}"}])
     else:
         telegram.send_text(cid, "⚠️ Диагностический черновик: проверка качества не пройдена. "
                            "Публикация заблокирована. Можно внести правки или выбрать другую версию.")
@@ -607,12 +633,14 @@ def send_draft(state, job):
     buttons.append([{"text": "⏭ Пропустить", "callback_data": f"skip:{pid}"}])
     buttons.append([{"text": "📚 Выбрать другую версию", "callback_data": f"versions:{pid}"}])
     prompt = ("Материал требует исправления. Выберите правки или сохранённую версию."
-              if job.get("quality_status") == "blocked" else "Одобрить показанные текст и медиа для Instagram? "
-                                 "После нажатия бот опубликует их, когда обработает кнопку.\n"
+              if job.get("quality_status") == "blocked" else "Выберите площадку для показанной версии. "
+                                 "Нажатие разрешает размещение, когда бот обработает кнопку. "
+                                 "Instagram — @samreshu.pro; ВК — указанное выше сообщество.\n"
                                  "Правки — кнопка «Переделать». Без одобрения публикации не будет.")
     message = telegram.send_text(cid, prompt, buttons)
     state["draft_review"] = {"post_id": pid, "message_id": message["message_id"],
-                             "fingerprint": draft_fingerprint(job), "version": version}
+                             "fingerprint": draft_fingerprint(job), "version": version, "platforms": available,
+                             "ui_version": "platforms-v1"}
     save_state(state)
 
 
@@ -640,9 +668,14 @@ def receive_clip(state, msg):
     send_draft(state, job)
 
 
-def publish(state, post_id, review_message_id=None):
+def publish(state, post_id, review_message_id=None, platforms=("instagram",)):
     job = load_job(post_id)
     review = state.get("draft_review") or {}
+    platforms = tuple(dict.fromkeys(platforms))
+    if not platforms or any(p not in ("instagram", "vk") for p in platforms):
+        raise ValueError("Неизвестная площадка")
+    if any(p not in review.get("platforms", ["instagram"]) for p in platforms):
+        raise RuntimeError("Эта площадка не была показана для согласования. Отправьте /review.")
     if (post_id in state.get("done", []) or state.get("pending") != post_id
             or job.get("stage") != "ready"
             or job.get("quality_status") == "blocked"
@@ -650,29 +683,69 @@ def publish(state, post_id, review_message_id=None):
             or review.get("post_id") != post_id or state.get("awaiting_feedback")
             or review.get("fingerprint") != draft_fingerprint(job)):
         raise RuntimeError("Нужно одобрить актуальную версию. Отправьте /review, чтобы увидеть её заново.")
+    if "vk" in platforms:
+        if not vposter.enabled() or list(vposter.vk_target()) != job.get("vk_target"):
+            raise RuntimeError("Сообщество ВК изменилось или недоступно. Отправьте /review для нового согласования.")
     attempts = state.setdefault("publication_attempts", {})
-    if post_id in attempts:
-        raise RuntimeError("Попытка публикации уже была. Проверьте Instagram и журнал Actions: "
-                           "повторная отправка заблокирована, чтобы не создать дубль.")
-    attempts[post_id] = {"status": "started", "fingerprint": review["fingerprint"],
+    attempt = attempts.get(post_id)
+    if attempt and ("platforms" not in attempt or attempt["fingerprint"] != review["fingerprint"]):
+        raise RuntimeError("У этого поста уже есть попытка отправки другой версии. Сначала проверьте площадки.")
+    if not attempt:
+        attempt = attempts[post_id] = {"status": "started", "fingerprint": review["fingerprint"],
                          "approved_message_id": review_message_id,
-                         "at": datetime.now(timezone.utc).isoformat()}
+                         "at": datetime.now(timezone.utc).isoformat(), "platforms": {}}
+    records = attempt["platforms"]
+    for platform in platforms:
+        if records.get(platform, {}).get("status") == "started":
+            raise RuntimeError(f"Результат отправки в {platform} не подтверждён. "
+                               "Проверьте площадку и журнал перед повтором — автоматический повтор заблокирован.")
+    for platform in platforms:
+        if records.get(platform, {}).get("status") in ("published", "queued"):
+            continue
+        records[platform] = {"status": "started", "approved_message_id": review_message_id}
+        save_state(state)
+        git_sync(f"Начата отправка {post_id} в {platform}")
+        try:
+            if platform == "instagram":
+                time.sleep(20)
+                if job["format"] == "carousel":
+                    link = instagram.publish_carousel([public_url(f) for f in job["files"]], job["caption"])
+                else:
+                    cover = public_url(job["cover"]) if job.get("cover") else ""
+                    link = instagram.publish_reel(public_url(job["video"]), job["caption"], cover)
+                records[platform].update(status="published", link=link)
+                if records.get("vk", {}).get("status") == "queued":
+                    state.setdefault("vk_sent", []).append(link)
+            else:
+                media = {"images": [ROOT / f for f in job["files"]]} if job["format"] == "carousel" else {"video": ROOT / job["video"]}
+                result = vposter.publish_vk(job["vk_caption"], job["vk_target"], **media)
+                records[platform].update(result)
+                if "instagram" in records and records["instagram"].get("link"):
+                    state.setdefault("vk_sent", []).append(records["instagram"]["link"])
+            save_state(state)
+            git_sync(f"Результат отправки {post_id} в {platform}")
+        except Exception as exc:
+            records[platform]["error"] = str(exc)[:500]
+            attempt["status"] = "partial" if len(records) > 1 else "started"
+            save_state(state)
+            git_sync(f"Сохранён неполный результат отправки {post_id}")
+            completed = [p for p, r in records.items() if r.get("status") in ("published", "queued")]
+            raise RuntimeError(f"Отправка в {platform} не подтверждена. Уже выполнено: {', '.join(completed) or 'нет'}. "
+                               "Повтор заблокирован до проверки, чтобы избежать дублей.") from exc
+    unresolved = any(r.get("status") == "started" for r in records.values())
+    attempt["status"] = "partial" if unresolved else "published" if platforms == ("instagram",) else "queued" if platforms == ("vk",) else "completed"
+    if not unresolved:
+        state["done"].append(post_id)
+        state["pending"] = None
+        state["awaiting_feedback"] = None
+        state.pop("draft_review", None)
     save_state(state)
-    git_sync(f"Файлы поста {post_id}")
-    time.sleep(20)
-    if job["format"] == "carousel":
-        link = instagram.publish_carousel([public_url(f) for f in job["files"]], job["caption"])
-    else:
-        cover = public_url(job["cover"]) if job.get("cover") else ""
-        link = instagram.publish_reel(public_url(job["video"]), job["caption"], cover)
-    attempts[post_id].update(status="published", link=link)
-    state["done"].append(post_id)
-    state["pending"] = None
-    state["awaiting_feedback"] = None
-    cleanup_media(post_id)
-    state.pop("draft_review", None)
-    save_state(state)
-    return link
+    git_sync(f"Сохранены результаты размещения {post_id}")
+    if not unresolved:
+        cleanup_media(post_id)
+    return "\n".join("Instagram: " + records[p]["link"] if p == "instagram" else
+                     f"ВК: передано Впостеру для размещения в «{records[p].get('group_name', '')}»; выход ещё не подтверждён."
+                     for p in platforms)
 
 
 def cleanup_media(post_id):
@@ -950,6 +1023,10 @@ def session(state, minutes: float):
 
 
 def cmd_poll(state):
+    if state.get("pending") and (state.get("draft_review") or {}).get("ui_version") != "platforms-v1":
+        telegram.send_text(chat(state), "Обновлён выбор площадок. Повторно показываю текущую версию для согласования.")
+        send_draft(state, load_job(state["pending"]))
+        git_sync("Обновлены кнопки согласования площадок")
     if not chat(state):
         me = telegram._api("getMe")
         hook = telegram._api("getWebhookInfo")
@@ -984,15 +1061,16 @@ def handle(state, up):
             if state.get("pending") == arg:
                 show_versions(state)
             return
-        if kind in ("pub", "redo", "again", "skip", "veo", "still", "fix") and state.get("pending") != arg:
+        if kind in ("pub", "pubvk", "pubboth", "redo", "again", "skip", "veo", "still", "fix") and state.get("pending") != arg:
             telegram.send_text(cid, "Эта кнопка от старого поста, он уже не актуален. "
                                     "Отправьте /post — сделаю следующий пост по новому плану.")
             return
-        if kind == "pub" and state.get("pending") == arg:
+        if kind in ("pub", "pubvk", "pubboth") and state.get("pending") == arg:
             if src.get("type") != "private" or str(cb.get("from", {}).get("id")) != str(cid):
                 return
             telegram.send_text(cid, "Публикую… ⏳")
-            telegram.send_text(cid, f"Готово! {publish(state, arg, cb['message']['message_id'])}")
+            selected = {"pub": ("instagram",), "pubvk": ("vk",), "pubboth": ("instagram", "vk")}[kind]
+            telegram.send_text(cid, publish(state, arg, cb['message']['message_id'], selected))
         elif kind == "redo" and state.get("pending") == arg:
             state["awaiting_feedback"] = arg
             telegram.send_text(cid, "Напишите одним сообщением, что поправить. Или нажмите кнопку — сделаю другой вариант.",
