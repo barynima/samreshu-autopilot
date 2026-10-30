@@ -115,8 +115,12 @@
   "last_child": "дочь",
   "draft_review": {
     "post_id": "predmety-oge",
-    "message_id": 660,
-    "fingerprint": "4fae873c1ad1f008f055659f7c98afd06fe2b88438b1c4936a303df621d42630",
-    "version": "20261029225637686892"
+    "message_id": 666,
+    "fingerprint": "202a752a6c72d4ad6b3cd11e08993187349b4318e6d1aa419a4c84ba4d660101",
+    "version": "20261030102117664868",
+    "platforms": [
+      "instagram"
+    ],
+    "ui_version": "platforms-v1"
   }
 }
