@@ -17,7 +17,7 @@
     "popytka-47",
     "predmety-oge"
   ],
-  "pending": null,
+  "pending": "mechtal-pozharnym",
   "awaiting_feedback": null,
   "vk_sent": [
     "https://www.instagram.com/reel/Der-fb8DtoO/",
@@ -101,8 +101,8 @@
   },
   "generation": {
     "post_id": "mechtal-pozharnym",
-    "status": "running",
-    "phase": "Сценарий",
+    "status": "completed",
+    "phase": "Готово к просмотру",
     "family": {
       "child": "сын",
       "mom": "a 44-year-old mom with shoulder-length auburn hair, glasses and a blue cotton shirt",
@@ -110,9 +110,10 @@
       "interest": "biology and animals",
       "home": "a modest lived-in apartment with books and everyday clutter"
     },
-    "started_at": "2026-10-31T13:17:04.822688+00:00"
+    "started_at": "2026-10-31T13:17:04.822688+00:00",
+    "updated_at": "2026-10-31T13:19:30.262988+00:00"
   },
-  "last_child": "дочь",
+  "last_child": "сын",
   "publication_attempts": {
     "predmety-oge": {
       "status": "published",
@@ -127,5 +128,15 @@
         }
       }
     }
+  },
+  "draft_review": {
+    "post_id": "mechtal-pozharnym",
+    "message_id": 675,
+    "fingerprint": "f58f9b27bf56a4649736534315314295e134fcda9b7eb2fccd2a992ef186c69a",
+    "version": "20261031132012356738",
+    "platforms": [
+      "instagram"
+    ],
+    "ui_version": "platforms-v1"
   }
 }
