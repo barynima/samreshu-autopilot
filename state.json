@@ -1,5 +1,5 @@
 {
-  "offset": 320005974,
+  "offset": 320005977,
   "chat_id": 276648205,
   "done": [
     "ne-znayu",
@@ -122,5 +122,19 @@
       "instagram"
     ],
     "ui_version": "platforms-v1"
+  },
+  "publication_attempts": {
+    "predmety-oge": {
+      "status": "started",
+      "fingerprint": "202a752a6c72d4ad6b3cd11e08993187349b4318e6d1aa419a4c84ba4d660101",
+      "approved_message_id": 666,
+      "at": "2026-10-31T07:32:09.817671+00:00",
+      "platforms": {
+        "instagram": {
+          "status": "started",
+          "approved_message_id": 666
+        }
+      }
+    }
   }
 }
