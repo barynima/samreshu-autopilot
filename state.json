@@ -100,18 +100,17 @@
     }
   },
   "generation": {
-    "post_id": "predmety-oge",
-    "status": "completed",
-    "phase": "Готово к просмотру",
+    "post_id": "mechtal-pozharnym",
+    "status": "running",
+    "phase": "Сценарий",
     "family": {
-      "child": "дочь",
-      "mom": "a 36-year-old mom with short dark curly hair, denim jacket and comfortable sneakers",
-      "teen": "14–15-year-old girl",
-      "interest": "music",
-      "home": "a small practical family kitchen with school bags nearby"
+      "child": "сын",
+      "mom": "a 44-year-old mom with shoulder-length auburn hair, glasses and a blue cotton shirt",
+      "teen": "14–15-year-old boy",
+      "interest": "biology and animals",
+      "home": "a modest lived-in apartment with books and everyday clutter"
     },
-    "started_at": "2026-10-29T22:53:27.296359+00:00",
-    "updated_at": "2026-10-29T22:56:28.561247+00:00"
+    "started_at": "2026-10-31T13:17:04.822688+00:00"
   },
   "last_child": "дочь",
   "publication_attempts": {
