@@ -131,8 +131,9 @@
       "at": "2026-10-31T07:32:09.817671+00:00",
       "platforms": {
         "instagram": {
-          "status": "started",
-          "approved_message_id": 666
+          "status": "published",
+          "approved_message_id": 666,
+          "link": "https://www.instagram.com/reel/DfJoO6wAtT9/"
         }
       }
     }
