@@ -170,6 +170,11 @@ score от 1 до 10; 7 и выше только при отсутствии с�
                 "SR-PILOT-01 v1 — экспериментальный фильм. Нужен просмотр целиком со звуком. Публикация не разрешена.")
     (OUT/"status.json").write_text(json.dumps({"status":"rendered_for_human_review","published":False}))
 if __name__=="__main__":
+    if os.environ.get("PILOT_RECOVERY_AUDIT") == "1":
+        ledger = json.loads(LEDGER.read_text())
+        print("RECOVERY_BUDGET=" + json.dumps(ledger), flush=True)
+        print("RECOVERED_FILES=" + json.dumps([str(p.relative_to(OUT)) for p in OUT.rglob("*") if p.is_file()]), flush=True)
+        raise SystemExit(0)
     try:
         main()
     except BaseException as exc:
