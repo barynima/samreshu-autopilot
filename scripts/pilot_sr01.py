@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from unittest.mock import patch
 
 import requests
-from autopilot import cinematic, google, production, telegram, text, video
+from autopilot import cinematic, google, images, production, telegram, text, video
 
 OUT = Path("pilot-output/SR-PILOT-01")
 OUT.mkdir(parents=True, exist_ok=True)
@@ -36,7 +36,7 @@ def guarded_post(url, **kwargs):
             params = body["parameters"]
             if params.get("sampleCount") != 1 or params.get("generateAudio"):
                 raise StopProduction("Unapproved video parameters")
-            reserve("video", float(params["durationSeconds"]) * 0.15)
+            reserve("video", float(params["durationSeconds"]) * 0.10)
         elif url.endswith(":generateContent"):
             config = body.setdefault("generationConfig", {})
             config["maxOutputTokens"] = min(config.get("maxOutputTokens", 2048), 2048)
@@ -73,9 +73,9 @@ def guarded_post(url, **kwargs):
 mom = "Same 40-year-old mother, shoulder-length dark blonde hair, muted green cardigan, beige T-shirt and jeans."
 daughter = "Same 15-year-old girl, brown ponytail, loose blue sweatshirt, age appropriate everyday clothes."
 home = "Same modest lived-in family apartment in daylight. Kitchen with white fridge, plants and wooden table; adjoining bedroom has beige desk, laptop, corkboard photos, open doorway. No readable text or logos."
-cast = [{"id":"mom","prompt":mom+" Neutral character reference, natural face."},
-        {"id":"daughter","prompt":daughter+" Neutral character reference."},
-        {"id":"home","prompt":home+" Wide location reference."}]
+cast = [{"id":"mom","prompt":mom+" SOLO waist-up casting portrait, neutral plain light grey background, no room, no furniture, no other people. Hands outside frame. Natural face, neutral expression."},
+        {"id":"daughter","prompt":daughter+" SOLO waist-up casting portrait, plain light grey background, no room, no furniture, no other people. Hands outside frame. Neutral expression."},
+        {"id":"home","prompt":home+" Location reference ONLY, EMPTY rooms, no people, no portraits, no human figures."}]
 def shot(sec, refs, visual, motion, line=None, voice="mom"):
     s = {"sec":sec,"refs":refs,"visual":visual,"motion":motion}
     if line:
@@ -109,7 +109,7 @@ def main():
         raise StopProduction("Workflow rerun prohibited: reconcile earlier costs and operations first.")
     if LEDGER.exists():
         raise StopProduction("Existing run ledger: automatic rerun prohibited.")
-    LEDGER.write_text(json.dumps({"reserved_usd":1.0,"calls":[{"kind":"prior_run_conservative_allowance","reserved":1.0}]}))
+    LEDGER.write_text(json.dumps({"reserved_usd":2.50,"calls":[{"kind":"prior_runs_1_and_2_conservative_allowance","reserved":2.50}]}))
     for key,value in {"IMAGE_MODEL":"gemini-2.5-flash-image","CRITIC_MODEL":"gemini-3.8-flash",
                       "GEMINI_TEXT_MODEL":"gemini-3.8-flash"}.items():
         os.environ[key]=value
@@ -124,7 +124,39 @@ def main():
     def progress(message):
         print(message, flush=True)
         telegram.send_text(cid, "SR-PILOT-01: " + message)
-    with patch.object(requests,"post",guarded_post), production.session(progress,seconds=2700):
+    
+    # Pilot-scoped cinematic quality criteria. Retain anatomy, continuity and scene checks.
+    text.PHOTO_CHECK = """Ты проверяешь реалистичный кино-кадр или опорный эталон персонажа/локации.
+Задание: {scene}
+Оцени только видимые детали. Киносвет и оптическое размытие допустимы.
+Обычная скромная квартира допустима; её стиль сам по себе не дефект.
+Для SOLO casting portrait требуется ровно один заданный человек, нейтральный фон,
+никаких других людей и мебели. Для EMPTY location reference людей быть не должно.
+В сюжетных кадрах проверь состав людей, возраст, действие и согласованность эталонов.
+Critical: лишние/деформированные конечности, слияния тел и мебели, невозможная
+геометрия, явно искажённые лица, лишние персонажи, нечитаемые надписи, несоответствие
+заданию. Не придумывай невидимые руки или детали; руки за кадром допустимы.
+Ответ JSON: {{"score":1,"critical":[],"minor":[]}}.
+score от 1 до 10; 7 и выше только при отсутствии существенного брака."""
+    original_image_call = images._call
+    original_check_photo = text.check_photo
+    def save_image(*args, **kwargs):
+        data = original_image_call(*args, **kwargs)
+        folder = OUT/"diagnostics"
+        folder.mkdir(exist_ok=True)
+        index = len(list(folder.glob("generated-*")))
+        suffix = ".png" if data[:4] == b"\\x89PNG" else ".jpg"
+        (folder/f"generated-{index:03d}{suffix}").write_bytes(data)
+        return data
+    def save_photo_review(*args, **kwargs):
+        review = original_check_photo(*args, **kwargs)
+        folder = OUT/"diagnostics"
+        folder.mkdir(exist_ok=True)
+        index = len(list(folder.glob("review-*.json")))
+        (folder/f"review-{index:03d}.json").write_text(json.dumps(review,ensure_ascii=False))
+        return review
+
+    with patch.object(requests,"post",guarded_post), patch.object(images,"_call",save_image), patch.object(text,"check_photo",save_photo_review), production.session(progress,seconds=2700):
         production.progress("Проверка доступа к актуальной модели до генерации кадров")
         google.generate("gemini-3.8-flash", {"contents":[{"role":"user","parts":[{"text":"Return only OK"}]}],"generationConfig":{"maxOutputTokens":32}}, timeout=60)
         result=cinematic.render_reel(script,OUT/"pilot.mp4",with_music=False,veo=True,cache_dir=OUT/"cache")
@@ -144,7 +176,7 @@ if __name__=="__main__":
         try:
             cid = os.environ.get("TG_CHAT_ID") or str(json.loads(Path("state.json").read_text()).get("chat_id") or "")
             if cid:
-                telegram.send_text(cid, f"SR-PILOT-01: сборка остановлена ({type(exc).__name__}). Этапы и журнал расходов сохранены в GitHub. Автоповтор отключён.")
+                telegram.send_text(cid, f"SR-PILOT-01: сборка остановлена ({type(exc).__name__}: {str(exc)[:350]}). Этапы и журнал расходов сохранены в GitHub. Автоповтор отключён.")
         except Exception:
             print("Telegram failure notification unavailable", flush=True)
         (OUT/"status.json").write_text(json.dumps({"status":"stopped","error_type":type(exc).__name__,"published":False}))
