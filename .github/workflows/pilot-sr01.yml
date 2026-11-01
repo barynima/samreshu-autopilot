@@ -29,7 +29,7 @@ jobs:
       - name: Generate approved pilot; no publication
         run: python -u -m scripts.pilot_sr01
         env:
-          PILOT_RECOVERY_AUDIT: "1"
+          PILOT_RESUME_FROM_THIRD: "1"
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
@@ -45,3 +45,5 @@ jobs:
 # Owner-approved retry 2: retired critic replaced; prior attempt reserved within $10.
 
 # Owner-approved retry 3: isolated casting, cinematic checks, cumulative prior allowance $2.50.
+
+# Resume approved by owner with $15 total cap; restore and reuse third-run assets.
