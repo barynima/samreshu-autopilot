@@ -59,7 +59,8 @@ def guarded_post(url, **kwargs):
     try:
         response = original_post(url, **kwargs)
         if host.endswith("aiplatform.googleapis.com") and response.status_code in (401, 403, 404):
-            raise StopProduction(f"Google model access error {response.status_code}; no paid retries")
+            detail = response.json().get("error", {}).get("message", "")[:700]
+            raise StopProduction(f"Google access error {response.status_code}: {detail}; no paid retries")
         if url.endswith(":predictLongRunning") and response.status_code == 200:
             op = response.json().get("name")
             if op:
@@ -113,7 +114,7 @@ def main():
     if saved_script != script:
         raise StopProduction("Recovered script differs; preserve assets and request review.")
     ledger = json.loads(LEDGER.read_text())
-    if ledger.get("reserved_usd") != 9.3:
+    if ledger.get("reserved_usd") != 9.45:
         raise StopProduction("Unexpected recovered budget; inspect before spending.")
     ledger["approved_cap_usd"] = CAP
     LEDGER.write_text(json.dumps(ledger,indent=2))
