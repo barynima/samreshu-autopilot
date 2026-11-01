@@ -350,6 +350,7 @@ def render_reel(script: dict, out_path: Path, with_music=True, veo=False, cache_
                 def animate():
                     data = video.veo_clip(frame, motion_instruction(shot), vsec,
                                           style=video.LIFE_VIDEO, models=video.VEO_FAST)
+                    (cache_dir / f"motion-raw-{i}.mp4").write_bytes(data)
                     problem = video.clip_problem(data, frame, vsec)
                     if problem:
                         raise RuntimeError(f"Движение кадра {i + 1} не прошло проверку: {problem}")
