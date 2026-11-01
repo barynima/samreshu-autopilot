@@ -32,3 +32,5 @@ jobs:
           name: pilot-SR-PILOT-01-v1
           path: pilot-output/
           retention-days: 30
+
+# Owner-approved retry 2: retired critic replaced; prior attempt reserved within $10.
