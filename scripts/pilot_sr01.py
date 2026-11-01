@@ -55,7 +55,10 @@ def guarded_post(url, **kwargs):
     elif host != "api.telegram.org":
         raise StopProduction("Unapproved network destination")
     try:
-        return original_post(url, **kwargs)
+        response = original_post(url, **kwargs)
+        if host.endswith("aiplatform.googleapis.com") and response.status_code in (401, 403, 404):
+            raise StopProduction(f"Google model access error {response.status_code}; no paid retries")
+        return response
     except requests.RequestException:
         # No automatic retry after an uncertain paid submission.
         raise StopProduction("Network result uncertain; do not resubmit this run.") from None
@@ -104,9 +107,13 @@ def main():
     os.environ.pop("YANDEX_TTS_KEY", None)
     video.VEO_FAST = ["veo-3.1-fast-generate-001"]
     (OUT/"script.json").write_text(json.dumps(script,ensure_ascii=False,indent=2))
-    cid = os.environ.get("TG_CHAT_ID")
+    cid = os.environ.get("TG_CHAT_ID") or str(json.loads(Path("state.json").read_text()).get("chat_id") or "")
+    if not cid:
+        raise StopProduction("No Telegram recipient; generation not started")
+    telegram.send_text(cid, "SR-PILOT-01: начинаю отдельную сборку. Лимит $10. Публикации отключены.")
     def progress(message):
         print(message, flush=True)
+        telegram.send_text(cid, "SR-PILOT-01: " + message)
     with patch.object(requests,"post",guarded_post), production.session(progress,seconds=2700):
         result=cinematic.render_reel(script,OUT/"pilot.mp4",with_music=False,veo=True,cache_dir=OUT/"cache")
         # Use the same full-film checker that the production bot uses, if compatible.
@@ -119,5 +126,11 @@ if __name__=="__main__":
     try:
         main()
     except BaseException as exc:
+        try:
+            cid = os.environ.get("TG_CHAT_ID") or str(json.loads(Path("state.json").read_text()).get("chat_id") or "")
+            if cid:
+                telegram.send_text(cid, f"SR-PILOT-01: сборка остановлена ({type(exc).__name__}). Этапы и журнал расходов сохранены в GitHub. Автоповтор отключён.")
+        except Exception:
+            print("Telegram failure notification unavailable", flush=True)
         (OUT/"status.json").write_text(json.dumps({"status":"stopped","error_type":type(exc).__name__,"published":False}))
         raise
