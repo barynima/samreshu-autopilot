@@ -12,7 +12,7 @@ from autopilot import cinematic, google, images, production, telegram, text, vid
 OUT = Path("pilot-output/SR-PILOT-01")
 OUT.mkdir(parents=True, exist_ok=True)
 LEDGER = OUT / "budget.json"
-CAP = 10.0
+CAP = 15.0
 class StopProduction(BaseException):
     pass
 
@@ -107,9 +107,16 @@ script["shots"][-1]["texts"]=[{"at":1,"to":4,"pos":"top","lines":[{"t":"Може
 def main():
     if os.environ.get("GITHUB_RUN_ATTEMPT", "1") != "1":
         raise StopProduction("Workflow rerun prohibited: reconcile earlier costs and operations first.")
-    if LEDGER.exists():
-        raise StopProduction("Existing run ledger: automatic rerun prohibited.")
-    LEDGER.write_text(json.dumps({"reserved_usd":2.50,"calls":[{"kind":"prior_runs_1_and_2_conservative_allowance","reserved":2.50}]}))
+    if os.environ.get("PILOT_RESUME_FROM_THIRD") != "1" or not LEDGER.exists():
+        raise StopProduction("Expected recovered third-run ledger; refuse a fresh paid run.")
+    saved_script = json.loads((OUT/"script.json").read_text())
+    if saved_script != script:
+        raise StopProduction("Recovered script differs; preserve assets and request review.")
+    ledger = json.loads(LEDGER.read_text())
+    if ledger.get("reserved_usd") != 9.3:
+        raise StopProduction("Unexpected recovered budget; inspect before spending.")
+    ledger["approved_cap_usd"] = CAP
+    LEDGER.write_text(json.dumps(ledger,indent=2))
     for key,value in {"IMAGE_MODEL":"gemini-2.5-flash-image","CRITIC_MODEL":"gemini-3.8-flash",
                       "GEMINI_TEXT_MODEL":"gemini-3.8-flash"}.items():
         os.environ[key]=value
@@ -120,7 +127,7 @@ def main():
     cid = os.environ.get("TG_CHAT_ID") or str(json.loads(Path("state.json").read_text()).get("chat_id") or "")
     if not cid:
         raise StopProduction("No Telegram recipient; generation not started")
-    telegram.send_text(cid, "SR-PILOT-01: начинаю отдельную сборку. Лимит $10. Публикации отключены.")
+    telegram.send_text(cid, "SR-PILOT-01: продолжаю сборку с сохранённых этапов. Общий лимит $15. Публикации отключены.")
     def progress(message):
         print(message, flush=True)
         telegram.send_text(cid, "SR-PILOT-01: " + message)
