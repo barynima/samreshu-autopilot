@@ -41,10 +41,12 @@ def guarded_post(url, **kwargs):
             config = body.setdefault("generationConfig", {})
             config["maxOutputTokens"] = min(config.get("maxOutputTokens", 2048), 2048)
             model = url.split("/models/")[-1].split(":")[0]
-            if model not in ("gemini-2.5-flash-image", "gemini-2.5-flash"):
+            if model not in ("gemini-2.5-flash-image", "gemini-3.8-flash"):
                 raise StopProduction("Unapproved image/critic model")
             # Conservative allowance for the bounded image output or short clip check.
             reserve("image" if model.endswith("image") else "critic", 0.15)
+            if model == "gemini-3.8-flash":
+                url = url.replace("/locations/us-central1/", "/locations/global/")
         elif not url.endswith(":fetchPredictOperation"):
             raise StopProduction("Unrecognized Google operation")
     elif host == "texttospeech.googleapis.com":
@@ -58,6 +60,11 @@ def guarded_post(url, **kwargs):
         response = original_post(url, **kwargs)
         if host.endswith("aiplatform.googleapis.com") and response.status_code in (401, 403, 404):
             raise StopProduction(f"Google model access error {response.status_code}; no paid retries")
+        if url.endswith(":predictLongRunning") and response.status_code == 200:
+            op = response.json().get("name")
+            if op:
+                index = len(list(OUT.glob("operation-*.json")))
+                (OUT/f"operation-{index}.json").write_text(json.dumps({"name":op}))
         return response
     except requests.RequestException:
         # No automatic retry after an uncertain paid submission.
@@ -98,10 +105,13 @@ script = {"hook":"Да ей вообще ничего не интересно","
 script["shots"][-1]["texts"]=[{"at":1,"to":4,"pos":"top","lines":[{"t":"Может, мы не всё замечаем?","w":"regular"}]}]
 
 def main():
+    if os.environ.get("GITHUB_RUN_ATTEMPT", "1") != "1":
+        raise StopProduction("Workflow rerun prohibited: reconcile earlier costs and operations first.")
     if LEDGER.exists():
         raise StopProduction("Existing run ledger: automatic rerun prohibited.")
-    for key,value in {"IMAGE_MODEL":"gemini-2.5-flash-image","CRITIC_MODEL":"gemini-2.5-flash",
-                      "GEMINI_TEXT_MODEL":"gemini-2.5-flash"}.items():
+    LEDGER.write_text(json.dumps({"reserved_usd":1.0,"calls":[{"kind":"prior_run_conservative_allowance","reserved":1.0}]}))
+    for key,value in {"IMAGE_MODEL":"gemini-2.5-flash-image","CRITIC_MODEL":"gemini-3.8-flash",
+                      "GEMINI_TEXT_MODEL":"gemini-3.8-flash"}.items():
         os.environ[key]=value
     # Disable alternate providers and fallback video models for deterministic budget.
     os.environ.pop("YANDEX_TTS_KEY", None)
@@ -115,8 +125,13 @@ def main():
         print(message, flush=True)
         telegram.send_text(cid, "SR-PILOT-01: " + message)
     with patch.object(requests,"post",guarded_post), production.session(progress,seconds=2700):
+        production.progress("Проверка доступа к актуальной модели до генерации кадров")
+        google.generate("gemini-3.8-flash", {"contents":[{"role":"user","parts":[{"text":"Return only OK"}]}],"generationConfig":{"maxOutputTokens":32}}, timeout=60)
         result=cinematic.render_reel(script,OUT/"pilot.mp4",with_music=False,veo=True,cache_dir=OUT/"cache")
-        # Use the same full-film checker that the production bot uses, if compatible.
+        review = text.critique_video(script, OUT/"pilot.mp4", result.get("timeline"))
+        (OUT/"quality.json").write_text(json.dumps(review,ensure_ascii=False,indent=2))
+        if review.get("critical"):
+            raise StopProduction("Full-film quality check failed; see quality.json")
         (OUT/"render.json").write_text(json.dumps({k:v for k,v in result.items() if k not in ("cover","pictures")},ensure_ascii=False,indent=2))
         if cid:
             telegram.send_video(cid,(OUT/"pilot.mp4").read_bytes(),
