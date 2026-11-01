@@ -5,6 +5,7 @@ on:
     paths: [".github/workflows/pilot-sr01.yml"]
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: pilot-sr01-single-run
   cancel-in-progress: false
@@ -18,9 +19,17 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - name: Restore saved stages from third attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: pilot-SR-PILOT-01-v1
+          run-id: 41295675172
+          github-token: ${{ github.token }}
+          path: pilot-output/
       - name: Generate approved pilot; no publication
         run: python -u -m scripts.pilot_sr01
         env:
+          PILOT_RECOVERY_AUDIT: "1"
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
